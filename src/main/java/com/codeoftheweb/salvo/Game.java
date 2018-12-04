@@ -1,23 +1,27 @@
 package com.codeoftheweb.salvo;
+
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import java.util.Date;
+
 @Entity
-public class Player {
+public class Game {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
-    private String userName;
+    private Date date;
 
-    public Player() { }
 
-    public Player(String email){
-        this.userName = email;
+    public Game() { }
+
+    public Game(Date date) {
+        this.date = date;
     }
 
     public long getId() {
@@ -28,15 +32,15 @@ public class Player {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public Date getDate() {
+        return date;
     }
 
-    public void setUserName(String email) {
-        this.userName = email;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-//    public String toString() {
-//        return userName;
+    //    public Date toString() {
+//        return date;
 //    }
 }
