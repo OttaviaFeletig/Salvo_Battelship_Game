@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,6 +49,7 @@ public class GamePlayer {
     public void setPlayer(Player player) {
         this.player = player;
     }
+
 
     public Game getGame() {
         return game;

@@ -15,7 +15,7 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    private long playerId;
     private String userName;
 
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
@@ -28,12 +28,12 @@ public class Player {
         this.userName = email;
     }
 
-    public long getId() {
-        return id;
+    public long getPlayerId() {
+        return playerId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setPlayerId(long id) {
+        this.playerId = id;
     }
 
     public String getUserName() {

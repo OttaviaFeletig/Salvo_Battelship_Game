@@ -18,7 +18,7 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    private long gameId;
     private Date date;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
@@ -29,12 +29,12 @@ public class Game {
         this.date = date;
     }
 
-    public long getId() {
-        return id;
+    public long getGameId() {
+        return gameId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setGameId(long id) {
+        this.gameId = id;
     }
 
     public Date getDate() {
@@ -49,9 +49,13 @@ public class Game {
         gamePlayer.setGame(this);
         gamePlayers.add(gamePlayer);
     }
-
     @JsonIgnore
     public List<Player> getPlayers(){
+
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
     }
+
+//    public Set<GamePlayer> getGamePlayers() {
+//        return gamePlayers;
+//    }
 }
