@@ -1,12 +1,16 @@
 package com.codeoftheweb.salvo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Game {
@@ -17,7 +21,8 @@ public class Game {
     private long id;
     private Date date;
 
-
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    private Set<GamePlayer> gamePlayers = new HashSet<>();
     public Game() { }
 
     public Game(Date date) {
@@ -40,7 +45,13 @@ public class Game {
         this.date = date;
     }
 
-    //    public Date toString() {
-//        return date;
-//    }
+    public void addGamePlayer(GamePlayer gamePlayer){
+        gamePlayer.setGame(this);
+        gamePlayers.add(gamePlayer);
+    }
+
+    @JsonIgnore
+    public List<Player> getPlayers(){
+        return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
+    }
 }
