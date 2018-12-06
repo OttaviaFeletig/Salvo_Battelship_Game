@@ -5,10 +5,22 @@
     <title>Salvo!</title>
 </head>
 <body>
-    <ol>
-        
-    </ol>
+   
+   <div v-if="isLoading">
+       <p>Loading...</p>
+   </div>
+   
+        <ol id="gameList" v-else>
+           <div v-for="(game, index) in gameList" :key="index">
+               <div v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
+                   <li>{{game.created}} {{gamePlayer.player.email}}</li>
+               </div>
+           </div>  
+        </ol>
+   
     
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="script/games.js"></script>
 </body>
 </html>
