@@ -24,6 +24,16 @@ public class SalvoController {
                 .stream().map(game -> new HashMap<String, Object>(){{
                     put("id", game.getGameId());
                     put("created", game.getDate());
+                    put("gamePlayers", game.getGamePlayers()
+                            .stream()
+                            .map(gamePlayer -> new HashMap<String, Object>(){{
+                                put("id", gamePlayer.getGamePlayerId());
+                                put("player", new HashMap<String, Object>(){{
+                                    put("id", gamePlayer.getPlayer().getPlayerId());
+                                    put("email", gamePlayer.getPlayer().getUserName());
+                                }});
+                            }}).collect(toList())
+                    );
                 }}).collect(Collectors.toList());
     }
 }

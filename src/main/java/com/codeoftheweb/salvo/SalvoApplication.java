@@ -41,7 +41,7 @@ public class SalvoApplication {
 
 			GamePlayer gamePlayer1 = new GamePlayer(date1);
 			username1.addGamePlayer(gamePlayer1);
-//			username2.addGamePlayer(gamePlayer1);
+			username2.addGamePlayer(gamePlayer1);
 			game1.addGamePlayer(gamePlayer1);
 
 			GamePlayer gamePlayer2 = new GamePlayer(date2);

@@ -50,6 +50,15 @@ public class Game {
         gamePlayers.add(gamePlayer);
     }
     @JsonIgnore
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
+    }
+
+    @JsonIgnore
     public List<Player> getPlayers(){
 
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
