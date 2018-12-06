@@ -63,8 +63,4 @@ public class Game {
 
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
     }
-
-//    public Set<GamePlayer> getGamePlayers() {
-//        return gamePlayers;
-//    }
 }

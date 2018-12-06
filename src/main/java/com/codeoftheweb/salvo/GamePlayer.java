@@ -50,7 +50,6 @@ public class GamePlayer {
         this.player = player;
     }
 
-
     public Game getGame() {
         return game;
     }
