@@ -21,22 +21,9 @@ public class SalvoController {
     @RequestMapping("/games")
     public List<Map<String, Object>> getGamesId() {
         return gameRepository.findAll()
-                .stream().map(game -> new HashMap()).collect(toList());
+                .stream().map(game -> new HashMap<String, Object>(){{
+                    put("id", game.getGameId());
+                    put("created", game.getDate());
+                }}).collect(Collectors.toList());
     }
-//    private Object getGameIdAndDate(){
-//        Map<String, Object> gameIdAndDate = new HashMap<>();
-//        gameRepository.findAll().stream().forEach(game -> {
-//            gameIdAndDate.put("id", game.getGameId());
-//            gameIdAndDate.put("created", game.getDate());
-//        });
-//        return gameIdAndDate;
-//    }
-
-//    private Map<String, Object> getGameIdAndDate(){
-//        return gameRepository.findAll().stream().forEach(game -> {
-////            gameIdAndDate.put("id", game.getGameId());
-////            gameIdAndDate.put("created", game.getDate());
-////        });
-//    }
-
 }
