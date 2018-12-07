@@ -5,20 +5,26 @@
     <title>Salvo!</title>
 </head>
 <body>
+  <div id="gameList">
    
-   <div v-if="isLoading">
+   <div v-if="isLoading==true">
        <p>Loading...</p>
    </div>
    
-        <ol id="gameList" v-else>
+   <div v-else>
+        <ol>
            <div v-for="(game, index) in gameList" :key="index">
-               <div v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
-                   <li>{{game.created}} {{gamePlayer.player.email}}</li>
-               </div>
+               <li>Game: {{game.id}}</li>
+                <ul>
+                    <li>Date: {{game.created}}</li>
+                    <ul v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
+                        <li>Player {{gamePlayer.player.id}}: {{gamePlayer.player.email}}</li>
+                    </ul>
+                </ul>    
            </div>  
         </ol>
-   
-    
+   </div>
+   </div>
     
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="script/games.js"></script>

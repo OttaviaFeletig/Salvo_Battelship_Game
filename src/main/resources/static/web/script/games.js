@@ -4,10 +4,11 @@ var dataObj = new Vue({
     data: {
         urlGame: 'http://localhost:8080/api/games',
         gameList: [],
+        date: [],
         isLoading: true        
     },
     created(){
-        this.loadFetchGame(this.urlGame)
+        this.loadFetchGame(this.urlGame)   
     },
     methods: {
         loadFetchGame(url){
@@ -16,10 +17,14 @@ var dataObj = new Vue({
             })
                 .then(response => response.json())
                 .then(data => {
-                this.isLoading = false;
-                this.gameList = data;
-                console.log(this.gameList)
+                    this.isLoading = false;
+                    this.gameList = data;
+                    console.log(this.gameList);
+                    this.convertDate();
             })
+        },
+        convertDate(){    
+            this.gameList.map(game => game.created = new Date(game.created).toLocaleString())
         }
     }
     
