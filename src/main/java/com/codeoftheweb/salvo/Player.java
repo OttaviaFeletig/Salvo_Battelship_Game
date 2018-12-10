@@ -1,13 +1,11 @@
 package com.codeoftheweb.salvo;
+
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Entity
 public class Player {
@@ -19,7 +17,7 @@ public class Player {
     private String userName;
 
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
-    private List<GamePlayer> gamePlayers = new ArrayList<>();
+    private Set<GamePlayer> gamePlayers = new HashSet<>();
 
 //    private List<Game> getGames = new ArrayList<>();
     public Player() { }
@@ -49,7 +47,7 @@ public class Player {
         gamePlayers.add(gamePlayer);
     }
 
-    public List<Game> getGames(){
-        return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
+    public Set<Game> getGames(){
+        return gamePlayers.stream().map(sub -> sub.getGame()).collect(Collectors.toSet());
     }
 }

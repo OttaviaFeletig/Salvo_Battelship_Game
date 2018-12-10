@@ -1,12 +1,11 @@
 package com.codeoftheweb.salvo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class GamePlayer {
@@ -26,7 +25,7 @@ public class GamePlayer {
     private Date date;
 
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
-    private List<Ship> shipTypes = new ArrayList<>();
+    private Set<Ship> shipTypes = new HashSet<>();
 
 
     public GamePlayer() { }
@@ -65,4 +64,10 @@ public class GamePlayer {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public void addShipTypes(Ship shipType){
+        shipType.setGamePlayer(this);
+        shipTypes.add(shipType);
+    }
+
 }

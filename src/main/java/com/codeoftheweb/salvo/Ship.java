@@ -2,6 +2,8 @@ package com.codeoftheweb.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Ship {
@@ -11,7 +13,10 @@ public class Ship {
     @GenericGenerator(name = "native", strategy = "native")
     private long shipId;
     private String shipType;
-    private String shipLocation;
+
+    @ElementCollection
+    @Column(name = "ship_location")
+    private List<String> shipLocations = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gamePlayer_id")
@@ -19,8 +24,9 @@ public class Ship {
 
     public Ship() { }
 
-    public Ship(String shipType){
+    public Ship(String shipType, List<String> shipLocations){
         this.shipType = shipType;
+        this.shipLocations = shipLocations;
     }
 
     public long getShipId() {
@@ -37,5 +43,21 @@ public class Ship {
 
     public void setShipType(String shipType) {
         this.shipType = shipType;
+    }
+
+    public GamePlayer getGamePlayer() {
+        return gamePlayer;
+    }
+
+    public List<String> getShipLocations() {
+        return shipLocations;
+    }
+
+    public void setShipLocations(List<String> shipLocations) {
+        this.shipLocations = shipLocations;
+    }
+
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
     }
 }

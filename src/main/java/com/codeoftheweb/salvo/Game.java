@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Entity
 public class Game {
@@ -59,8 +56,8 @@ public class Game {
     }
 
     @JsonIgnore
-    public List<Player> getPlayers(){
+    public Set<Player> getPlayers(){
 
-        return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
+        return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(Collectors.toSet());
     }
 }
