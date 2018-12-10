@@ -46,7 +46,7 @@ public class Game {
         gamePlayer.setGame(this);
         gamePlayers.add(gamePlayer);
     }
-    @JsonIgnore
+//    @JsonIgnore
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }
