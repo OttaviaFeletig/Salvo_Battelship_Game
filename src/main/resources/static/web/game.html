@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ship Locations!</title>
+</head>
+
+<body>
+
+    <div id="shipLocationTable">
+
+        <div v-if="isLoading">
+            <p>Loading...</p>
+        </div>
+
+        <div v-else>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th v-for="(number, index) in gridNumbers" :key="index"> {{number}}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(location, index) in cellsLocation" :key="index">
+                        <td>{{location[0]}}</td>
+                        <td>{{location[1]}}</td>
+                        <td>{{location[2]}}</td>
+                        <td>{{location[3]}}</td>
+                        <td>{{location[4]}}</td>
+                        <td>{{location[5]}}</td>
+                        <td>{{location[6]}}</td>
+                        <td>{{location[7]}}</td>
+                        <td>{{location[8]}}</td>
+                        <td>{{location[9]}}</td>
+                        <td>{{location[10]}}</td>
+                    </tr>
+<!--
+                    <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[1]}}</td>
+                    </tr>
+                     <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[2]}}</td>
+                    </tr>
+                     <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[3]}}</td>
+                    </tr>
+                     <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[4]}}</td>
+                    </tr>
+                     <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[5]}}</td>
+                    </tr>
+                     <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[6]}}</td>
+                    </tr>
+                     <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[7]}}</td>
+                    </tr>
+                     <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[8]}}</td>
+                    </tr>
+                     <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[9]}}</td>
+                    </tr>
+                    <tr>
+                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[10]}}</td>
+                    </tr>
+-->
+                </tbody>
+            </table>
+        </div>
+
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="script/game.js"></script>
+</body>
+
+</html>
