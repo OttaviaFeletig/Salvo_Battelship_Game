@@ -5,10 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -27,14 +24,14 @@ public class SalvoController {
     }
 
     @RequestMapping("/games")
-    public List<Map<String, Object>> getGamesId() {
+    public List<HashMap<String, Object>> getGamesId() {
         return gameRepository.findAll()
-                .stream().map(game -> new HashMap<String, Object>(){{
+                .stream().map(game -> new LinkedHashMap<String, Object>(){{
                     put("id", game.getGameId());
                     put("created", game.getDate());
                     put("gamePlayers", game.getGamePlayers()
                             .stream()
-                            .map(gamePlayer -> new HashMap<String, Object>(){{
+                            .map(gamePlayer -> new LinkedHashMap<String, Object>(){{
                                 put("id", gamePlayer.getGamePlayerId());
                                 put("player", getHashPlayer(gamePlayer.getPlayer()));
                             }}).collect(toList())
@@ -42,30 +39,41 @@ public class SalvoController {
                 }}).collect(Collectors.toList());
     }
 
-    private Map<String, Object> getHashPlayer(Player player){
-        return new HashMap<String, Object>() {{
+    private HashMap<String, Object> getHashPlayer(Player player){
+        return new LinkedHashMap<String, Object>() {{
             put("id", player.getPlayerId());
             put("email", player.getUserName());
         }};
     }
 
-    @RequestMapping("/game_view/{urlGamePlayerId}")
-    public Map<String, Object> getOneGame(@PathVariable Long urlGamePlayerId){
-        GamePlayer gamePlayerId = gamePlayerRepository.findOne(urlGamePlayerId);
+    @RequestMapping("/game_view/{gamePlayerId}")
+    private HashMap<String, Object> getOneGame(@PathVariable Long gamePlayerId){
+        GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
 
-        return new HashMap<String, Object>(){{
-            put("id", gamePlayerId.getGame().getGameId());
-            put("created", gamePlayerId.getGame().getDate());
-            put("gamePlayers", new ArrayList<Map<String, Object>>(){{
-                add(new HashMap<String, Object>(){{
-                    gamePlayerId.getGame().getGamePlayers()
-                            .stream().forEach(gamePlayer -> {
-                                put("id", gamePlayer.getGamePlayerId());
-                                put("player", getHashPlayer(gamePlayer.getPlayer()));
-                    });
-                }});
-            }});
+        return new LinkedHashMap<String, Object>(){{
+            put("id", gamePlayer.getGame().getGameId());
+            put("created", gamePlayer.getGame().getDate());
+            put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
+            put("ships", getGamePlayerShipType(gamePlayer));
         }};
+    }
+
+    private List<HashMap<String, Object>> getGamePlayers (Game game){
+        return game.getGamePlayers()
+                .stream()
+                .map(gamePlayer -> new LinkedHashMap<String, Object>(){{
+                    put("id", gamePlayer.getGamePlayerId());
+                    put("player", getHashPlayer(gamePlayer.getPlayer()));
+                }}).collect(toList());
+    }
+
+    private List<HashMap<String, Object>> getGamePlayerShipType(GamePlayer gamePlayer){
+        return gamePlayer.getShipTypes()
+                .stream()
+                .map(ship -> new LinkedHashMap<String, Object>(){{
+                    put("type", ship.getShipType());
+                    put("locations", ship.getShipLocations());
+                }}).collect(Collectors.toList());
     }
 
 }

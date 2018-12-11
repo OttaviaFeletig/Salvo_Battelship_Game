@@ -70,4 +70,11 @@ public class GamePlayer {
         shipTypes.add(shipType);
     }
 
+    public Set<Ship> getShipTypes() {
+        return shipTypes;
+    }
+
+    public void setShipTypes(Set<Ship> shipTypes) {
+        this.shipTypes = shipTypes;
+    }
 }
