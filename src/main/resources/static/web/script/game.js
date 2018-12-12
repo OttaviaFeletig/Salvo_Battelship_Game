@@ -6,7 +6,9 @@ var dataObject = new Vue({
         gamePlayerId: null,
         data: {},
         ships: [],
-        shipLocations: [],
+        gamePlayers: [],
+        principalGamePlayer: "",
+        opponentGamePlayer: "",
         gridNumbers: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
         gridLetters: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         cellsLocation: [],
@@ -26,9 +28,12 @@ var dataObject = new Vue({
                 this.isLoading = false;
                 this.data = data;
                 this.ships = data.ships;
+                this.gamePlayers = data.gamePlayers
                 console.log(this.data);
-                console.log(this.ships);
-                this.createGridCellsLocation();                
+                console.log(this.gamePlayers);
+                this.createGridCellsLocation();
+                this.renderGamePlayers();
+                this.convertDate();
             })
         },
         changeDinamicallyUrl(){
@@ -47,25 +52,31 @@ var dataObject = new Vue({
                 var startSlice = k * 11;
                 this.cellsLocation.push(allCells.slice(startSlice, startSlice + 11))
             }
-            console.log(this.cellsLocation)
         },
         renderShips(location){
-            console.log(location)
             for(var i = 0; i < this.ships.length; i++){
-                
-                console.log(this.ships[i].locations.includes(location))
-//                return this.ships[i].locations.includes(location)
                 if(this.ships[i].locations.includes(location)){
                     return true;
-                }
-                
+                }   
             }
         },
-//        locateShips(ships){
-//            for(var i = 0; i < ships.length; i++){
-//                
-//            }
-//        }
+        renderGamePlayers(){
+            console.log(this.gamePlayers);
+            for(var i = 0; i < this.gamePlayers.length; i++){
+                if(this.gamePlayers[i].id == this.gamePlayerId){
+                    this.principalGamePlayer = this.gamePlayers[i].player.email
+                } else{
+                    this.opponentGamePlayer = this.gamePlayers[i].player.email
+                }
+            }
+            console.log(this.principalGamePlayer)
+            console.log(this.opponentGamePlayer)
+        },
+        convertDate(){ 
+            console.log(this.data.created)
+            this.data.created = new Date(this.data.created).toLocaleString()
+            console.log(this.data.created)
+        }
         
     }
 

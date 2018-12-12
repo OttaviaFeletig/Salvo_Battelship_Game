@@ -19,30 +19,28 @@
         </div>
 
         <div v-else>
-
+           <p>GAME {{data.id}}, {{data.created}}</p>
+            <p>{{principalGamePlayer}} vs {{opponentGamePlayer}}</p>
             <table class="grid_view">
                 <thead class="grid_view">
                     <tr>
-                        <th v-for="(number, index) in gridNumbers" :key="index" class="grid_view"> {{number}}
+                        <th v-for="(number, index) in gridNumbers" :key="index" class="grid_view_numbers"> {{number}}
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(location, index) in cellsLocation" :key="index" class="grid_view">
-                       <div class="test">
-                           <td :id="location[0]" class="grid_view" :class="{ship: renderShips(location[0])}">{{location[0]}}</td>
-                       </div>
-                        
-                        <td :id="location[1]" class="grid_view" :class="{ship: renderShips(location[1])}">{{location[1]}}</td>
-                        <td :id="location[2]" class="grid_view" :class="{ship: renderShips(location[2])}">{{location[2]}}</td>
-                        <td :id="location[3]" class="grid_view" :class="{ship: renderShips(location[3])}">{{location[3]}}</td>
-                        <td :id="location[4]" class="grid_view" :class="{ship: renderShips(location[4])}">{{location[4]}}</td>
-                        <td :id="location[5]" class="grid_view" :class="{ship: renderShips(location[5])}">{{location[5]}}</td>
-                        <td :id="location[6]" class="grid_view" :class="{ship: renderShips(location[6])}">{{location[6]}}</td>
-                        <td :id="location[7]" class="grid_view" :class="{ship: renderShips(location[7])}">{{location[7]}}</td>
-                        <td :id="location[8]" class="grid_view" :class="{ship: renderShips(location[8])}">{{location[8]}}</td>
-                        <td :id="location[9]" class="grid_view" :class="{ship: renderShips(location[9])}">{{location[9]}}</td>
-                        <td :id="location[10]" class="grid_view" :class="{ship: renderShips(location[10])}">{{location[10]}}</td>
+                        <td :id="location[0]" class="grid_view bold_grid" :class="{ship: renderShips(location[0])}">{{location[0]}}</td>
+                        <td :id="location[1]" class="grid_view" :class="{ship: renderShips(location[1])}"></td>
+                        <td :id="location[2]" class="grid_view" :class="{ship: renderShips(location[2])}"></td>
+                        <td :id="location[3]" class="grid_view" :class="{ship: renderShips(location[3])}"></td>
+                        <td :id="location[4]" class="grid_view" :class="{ship: renderShips(location[4])}"></td>
+                        <td :id="location[5]" class="grid_view" :class="{ship: renderShips(location[5])}"></td>
+                        <td :id="location[6]" class="grid_view" :class="{ship: renderShips(location[6])}"></td>
+                        <td :id="location[7]" class="grid_view" :class="{ship: renderShips(location[7])}"></td>
+                        <td :id="location[8]" class="grid_view" :class="{ship: renderShips(location[8])}"></td>
+                        <td :id="location[9]" class="grid_view" :class="{ship: renderShips(location[9])}"></td>
+                        <td :id="location[10]" class="grid_view" :class="{ship: renderShips(location[10])}"></td>
                     </tr>
                 </tbody>
             </table>
