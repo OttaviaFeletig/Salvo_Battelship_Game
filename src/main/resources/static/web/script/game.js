@@ -5,6 +5,8 @@ var dataObject = new Vue({
         urlGameView: 'http://localhost:8080/api/game_view/',
         gamePlayerId: null,
         data: {},
+        ships: [],
+        shipLocations: [],
         gridNumbers: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
         gridLetters: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         cellsLocation: [],
@@ -23,9 +25,10 @@ var dataObject = new Vue({
                 .then(data => {
                 this.isLoading = false;
                 this.data = data;
+                this.ships = data.ships;
                 console.log(this.data);
-                this.createGridCellsLocation();
-                
+                console.log(this.ships);
+                this.createGridCellsLocation();                
             })
         },
         changeDinamicallyUrl(){
@@ -45,7 +48,24 @@ var dataObject = new Vue({
                 this.cellsLocation.push(allCells.slice(startSlice, startSlice + 11))
             }
             console.log(this.cellsLocation)
-        }
+        },
+        renderShips(location){
+            console.log(location)
+            for(var i = 0; i < this.ships.length; i++){
+                
+                console.log(this.ships[i].locations.includes(location))
+//                return this.ships[i].locations.includes(location)
+                if(this.ships[i].locations.includes(location)){
+                    return true;
+                }
+                
+            }
+        },
+//        locateShips(ships){
+//            for(var i = 0; i < ships.length; i++){
+//                
+//            }
+//        }
         
     }
 

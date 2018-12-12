@@ -1,0 +1,9 @@
+.grid_view{
+    border: solid;
+    margin: 20px;
+    padding: 20px;
+    border-color: #33ade3;
+}
+.ship{
+    background-color: blue;
+}

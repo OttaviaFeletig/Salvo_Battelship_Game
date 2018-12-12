@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Ship Locations!</title>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="style/style.css">
 </head>
 
 <body>
@@ -16,59 +20,30 @@
 
         <div v-else>
 
-            <table>
-                <thead>
+            <table class="grid_view">
+                <thead class="grid_view">
                     <tr>
-                        <th v-for="(number, index) in gridNumbers" :key="index"> {{number}}
+                        <th v-for="(number, index) in gridNumbers" :key="index" class="grid_view"> {{number}}
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(location, index) in cellsLocation" :key="index">
-                        <td>{{location[0]}}</td>
-                        <td>{{location[1]}}</td>
-                        <td>{{location[2]}}</td>
-                        <td>{{location[3]}}</td>
-                        <td>{{location[4]}}</td>
-                        <td>{{location[5]}}</td>
-                        <td>{{location[6]}}</td>
-                        <td>{{location[7]}}</td>
-                        <td>{{location[8]}}</td>
-                        <td>{{location[9]}}</td>
-                        <td>{{location[10]}}</td>
+                    <tr v-for="(location, index) in cellsLocation" :key="index" class="grid_view">
+                       <div class="test">
+                           <td :id="location[0]" class="grid_view" :class="{ship: renderShips(location[0])}">{{location[0]}}</td>
+                       </div>
+                        
+                        <td :id="location[1]" class="grid_view" :class="{ship: renderShips(location[1])}">{{location[1]}}</td>
+                        <td :id="location[2]" class="grid_view" :class="{ship: renderShips(location[2])}">{{location[2]}}</td>
+                        <td :id="location[3]" class="grid_view" :class="{ship: renderShips(location[3])}">{{location[3]}}</td>
+                        <td :id="location[4]" class="grid_view" :class="{ship: renderShips(location[4])}">{{location[4]}}</td>
+                        <td :id="location[5]" class="grid_view" :class="{ship: renderShips(location[5])}">{{location[5]}}</td>
+                        <td :id="location[6]" class="grid_view" :class="{ship: renderShips(location[6])}">{{location[6]}}</td>
+                        <td :id="location[7]" class="grid_view" :class="{ship: renderShips(location[7])}">{{location[7]}}</td>
+                        <td :id="location[8]" class="grid_view" :class="{ship: renderShips(location[8])}">{{location[8]}}</td>
+                        <td :id="location[9]" class="grid_view" :class="{ship: renderShips(location[9])}">{{location[9]}}</td>
+                        <td :id="location[10]" class="grid_view" :class="{ship: renderShips(location[10])}">{{location[10]}}</td>
                     </tr>
-<!--
-                    <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[1]}}</td>
-                    </tr>
-                     <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[2]}}</td>
-                    </tr>
-                     <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[3]}}</td>
-                    </tr>
-                     <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[4]}}</td>
-                    </tr>
-                     <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[5]}}</td>
-                    </tr>
-                     <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[6]}}</td>
-                    </tr>
-                     <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[7]}}</td>
-                    </tr>
-                     <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[8]}}</td>
-                    </tr>
-                     <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[9]}}</td>
-                    </tr>
-                    <tr>
-                        <td v-for="(location, index) in cellsLocation" :key="index">{{location[10]}}</td>
-                    </tr>
--->
                 </tbody>
             </table>
         </div>
