@@ -1,12 +1,13 @@
 var dataObject = new Vue({
     
-    el: '#shipLocationTable',
+    el: '#gameView',
     data: {
         urlGameView: 'http://localhost:8080/api/game_view/',
         gamePlayerId: null,
         data: {},
         ships: [],
         gamePlayers: [],
+        salvos: [],
         principalGamePlayer: "",
         opponentGamePlayer: "",
         gridNumbers: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
@@ -28,9 +29,10 @@ var dataObject = new Vue({
                 this.isLoading = false;
                 this.data = data;
                 this.ships = data.ships;
-                this.gamePlayers = data.gamePlayers
+                this.gamePlayers = data.gamePlayers;
+                this.salvos = data.salvos;
                 console.log(this.data);
-                console.log(this.gamePlayers);
+                console.log(this.salvos)
                 this.createGridCellsLocation();
                 this.renderGamePlayers();
                 this.convertDate();
@@ -55,13 +57,12 @@ var dataObject = new Vue({
         },
         renderShips(location){
             for(var i = 0; i < this.ships.length; i++){
-                if(this.ships[i].locations.includes(location)){
+                if(this.ships[i].location.includes(location)){
                     return true;
                 }   
             }
         },
         renderGamePlayers(){
-            console.log(this.gamePlayers);
             for(var i = 0; i < this.gamePlayers.length; i++){
                 if(this.gamePlayers[i].id == this.gamePlayerId){
                     this.principalGamePlayer = this.gamePlayers[i].player.email
@@ -69,13 +70,27 @@ var dataObject = new Vue({
                     this.opponentGamePlayer = this.gamePlayers[i].player.email
                 }
             }
-            console.log(this.principalGamePlayer)
-            console.log(this.opponentGamePlayer)
         },
-        convertDate(){ 
-            console.log(this.data.created)
+        convertDate(){
             this.data.created = new Date(this.data.created).toLocaleString()
-            console.log(this.data.created)
+        },
+        renderSalvosOpponent(location){
+            for(var i = 0; i < this.salvos.length; i++){
+                if(this.salvos[i].gamePlayerId == this.gamePlayerId){
+                    if(this.salvos[i].location.includes(location)){
+                        return true;
+                    }
+                }
+            }
+        },
+        renderSalvosPrincipal(location){
+            for(var i = 0; i < this.salvos.length; i++){
+                if(this.salvos[i].gamePlayerId != this.gamePlayerId){
+                     if(this.salvos[i].location.includes(location)){
+                        return true;
+                        }
+                }
+            }
         }
         
     }

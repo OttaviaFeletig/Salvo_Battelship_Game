@@ -74,7 +74,7 @@ public class SalvoController {
                 .stream()
                 .map(ship -> new LinkedHashMap<String, Object>(){{
                     put("type", ship.getShipType());
-                    put("locations", ship.getShipLocations());
+                    put("location", ship.getShipLocations());
                 }}).collect(Collectors.toList());
     }
 

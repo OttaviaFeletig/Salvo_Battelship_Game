@@ -78,7 +78,7 @@ public class SalvoApplication {
 			Ship shipType6_2 = new Ship("Submarine", shipLocation7);
 
 			List<String> salvoLocation1 = Arrays.asList("B5", "C5", "F1");
-			List<String> salvoLocation2 = Arrays.asList("F2", "D5");
+			List<String> salvoLocation2 = Arrays.asList("F2", "D5", "H2");
 			List<String> salvoLocation3 = Arrays.asList("A2", "A4", "G6");
 			List<String> salvoLocation4 = Arrays.asList("A3", "H6");
 			List<String> salvoLocation5 = Arrays.asList("G6", "H6", "A4");

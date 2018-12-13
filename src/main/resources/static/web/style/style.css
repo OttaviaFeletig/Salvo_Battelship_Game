@@ -1,19 +1,17 @@
 .grid_view_numbers{
     border: solid;
-    margin: 20px;
-    padding: 25px;
-    border-color: #33ade3;
+    padding: 15px;
 }
 .grid_view{
     border: solid;
-    margin: 20px;
-    padding: 20px;
-    border-color: #33ade3;
+    padding: 10px;
 }
 .bold_grid{
     font-weight: bold;
 }
 .ship{
-    background-color: #33ade3;
-    border-radius: 50%;    
+    background-color: #33ade3;  
+}
+.salvo{
+    background-color: #ff8000;
 }
