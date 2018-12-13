@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @RestController
 @RequestMapping("/api")
@@ -55,6 +56,7 @@ public class SalvoController {
             put("created", gamePlayer.getGame().getDate());
             put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
             put("ships", getGamePlayerShipType(gamePlayer));
+            put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
         }};
     }
 
@@ -67,13 +69,25 @@ public class SalvoController {
                 }}).collect(toList());
     }
 
-    private List<HashMap<String, Object>> getGamePlayerShipType(GamePlayer gamePlayer){
-        return gamePlayer.getShipTypes()
+    private List<HashMap<String, Object>> getGamePlayerShipType(GamePlayer gamePlayers){
+        return gamePlayers.getShipTypes()
                 .stream()
                 .map(ship -> new LinkedHashMap<String, Object>(){{
                     put("type", ship.getShipType());
                     put("locations", ship.getShipLocations());
                 }}).collect(Collectors.toList());
+    }
+
+    private List<HashMap<String, Object>> getGameSalvos(Set<GamePlayer> gamePlayer){
+        return gamePlayer
+                .stream()
+                .flatMap(oneGamePlayer -> oneGamePlayer.getSalvos()
+                        .stream()
+                        .map(salvo -> new LinkedHashMap<String, Object>(){{
+                            put("gamePlayerId", salvo.getGamePlayer().getGamePlayerId());
+                            put("turnNumber", salvo.getTurnNumber());
+                            put("location", salvo.getSalvoLocations());
+                        }})).collect(toList());
     }
 
 }
