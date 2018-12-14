@@ -13,9 +13,10 @@ var dataObject = new Vue({
         gridNumbers: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
         gridLetters: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         cellsLocation: [],
-        isLoading: true
+        isLoading: false
     },
     created(){
+        this.createGridCellsLocation();
         this.changeDinamicallyUrl();
         this.loadFetchGameView(this.urlGameView + this.gamePlayerId)
     },
@@ -26,16 +27,16 @@ var dataObject = new Vue({
             })
                 .then(response => response.json())
                 .then(data => {
-                this.isLoading = false;
                 this.data = data;
                 this.ships = data.ships;
                 this.gamePlayers = data.gamePlayers;
                 this.salvos = data.salvos;
                 console.log(this.data);
                 console.log(this.salvos)
-                this.createGridCellsLocation();
                 this.renderGamePlayers();
                 this.convertDate();
+                this.isLoading = true;
+
             })
         },
         changeDinamicallyUrl(){
@@ -74,7 +75,7 @@ var dataObject = new Vue({
         convertDate(){
             this.data.created = new Date(this.data.created).toLocaleString()
         },
-        renderSalvosOpponent(location){
+        renderSalvosPrincipal(location){
             for(var i = 0; i < this.salvos.length; i++){
                 if(this.salvos[i].gamePlayerId == this.gamePlayerId){
                     if(this.salvos[i].location.includes(location)){
@@ -83,15 +84,26 @@ var dataObject = new Vue({
                 }
             }
         },
-        renderSalvosPrincipal(location){
+        renderSalvosOpponent(location){
             for(var i = 0; i < this.salvos.length; i++){
                 if(this.salvos[i].gamePlayerId != this.gamePlayerId){
                      if(this.salvos[i].location.includes(location)){
-                        return true;
-                        }
+                        const div = this.$el
+//                        console.log(div.childNodes[0])
+                        console.log(div.querySelector(`#g1${location}`))
+        console.log(document.querySelector(`#g1${location}`).classList.contains(".ship"))
+//                        if(document.querySelector(`#g1${location}`).classList){
+//                            console.log("colpito")
+//                        }else{
+//                          return true;  
+//                        }
+                        
+                    }
                 }
             }
-        }
+        },
+        
+
         
     }
 

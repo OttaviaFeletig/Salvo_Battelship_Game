@@ -14,11 +14,13 @@
 
     <div id="gameView">
 
+<!--
         <div v-if="isLoading">
             <p>Loading...</p>
         </div>
+-->
 
-        <div v-else class="container">
+        <div v-show="isLoading" class="container">
             <div class="row">
                 <p>GAME {{data.id}}, {{data.created}}</p>
             </div>
@@ -36,17 +38,17 @@
                         </thead>
                         <tbody>
                             <tr v-for="(location, index) in cellsLocation" :key="index" class="grid_view">
-                                <td :id="location[0]" class="grid_view bold_grid">{{location[0]}}</td>
-                                <td :id="location[1]" class="grid_view" :class="{ship: renderShips(location[1]), salvo: renderSalvosPrincipal(location[1])}"></td>
-                                <td :id="location[2]" class="grid_view" :class="{ship: renderShips(location[2]), salvo: renderSalvosPrincipal(location[2])}"></td>
-                                <td :id="location[3]" class="grid_view" :class="{ship: renderShips(location[3]), salvo: renderSalvosPrincipal(location[3])}"></td>
-                                <td :id="location[4]" class="grid_view" :class="{ship: renderShips(location[4]), salvo: renderSalvosPrincipal(location[4])}"></td>
-                                <td :id="location[5]" class="grid_view" :class="{ship: renderShips(location[5]), salvo: renderSalvosPrincipal(location[5])}"></td>
-                                <td :id="location[6]" class="grid_view" :class="{ship: renderShips(location[6]), salvo: renderSalvosPrincipal(location[6])}"></td>
-                                <td :id="location[7]" class="grid_view" :class="{ship: renderShips(location[7]), salvo: renderSalvosPrincipal(location[7])}"></td>
-                                <td :id="location[8]" class="grid_view" :class="{ship: renderShips(location[8]), salvo: renderSalvosPrincipal(location[8])}"></td>
-                                <td :id="location[9]" class="grid_view" :class="{ship: renderShips(location[9]), salvo: renderSalvosPrincipal(location[9])}"></td>
-                                <td :id="location[10]" class="grid_view" :class="{ship: renderShips(location[10]), salvo: renderSalvosPrincipal(location[10])}"></td>
+                                <td :id=`g1${location[0]}` class="grid_view bold_grid">{{location[0]}}</td>
+                                <td :id=`g1${location[1]}` class="grid_view" :class="{ship: renderShips(location[1]), salvo: renderSalvosOpponent(location[1])}"></td>
+                                <td :id=`g1${location[2]}` class="grid_view" :class="{ship: renderShips(location[2]), salvo: renderSalvosOpponent(location[2])}"></td>
+                                <td :id=`g1${location[3]}` class="grid_view" :class="{ship: renderShips(location[3]), salvo: renderSalvosOpponent(location[3])}"></td>
+                                <td :id=`g1${location[4]}` class="grid_view" :class="{ship: renderShips(location[4]), salvo: renderSalvosOpponent(location[4])}"></td>
+                                <td :id=`g1${location[5]}` class="grid_view" :class="{ship: renderShips(location[5]), salvo: renderSalvosOpponent(location[5])}"></td>
+                                <td :id=`g1${location[6]}` class="grid_view" :class="{ship: renderShips(location[6]), salvo: renderSalvosOpponent(location[6])}"></td>
+                                <td :id=`g1${location[7]}` class="grid_view" :class="{ship: renderShips(location[7]), salvo: renderSalvosOpponent(location[7])}"></td>
+                                <td :id=`g1${location[8]}` class="grid_view" :class="{ship: renderShips(location[8]), salvo: renderSalvosOpponent(location[8])}"></td>
+                                <td :id=`g1${location[9]}` class="grid_view" :class="{ship: renderShips(location[9]), salvo: renderSalvosOpponent(location[9])}"></td>
+                                <td :id=`g1${location[10]}` class="grid_view" :class="{ship: renderShips(location[10]), salvo: renderSalvosOpponent(location[10])}"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -61,17 +63,17 @@
                         </thead>
                         <tbody>
                             <tr v-for="(location, index) in cellsLocation" :key="index" class="grid_view">
-                                <td :id="location[0]" class="grid_view bold_grid">{{location[0]}}</td>
-                                <td :id="location[1]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[1])}"></td>
-                                <td :id="location[2]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[2])}"></td>
-                                <td :id="location[3]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[3])}"></td>
-                                <td :id="location[4]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[4])}"></td>
-                                <td :id="location[5]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[5])}"></td>
-                                <td :id="location[6]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[6])}"></td>
-                                <td :id="location[7]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[7])}"></td>
-                                <td :id="location[8]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[8])}"></td>
-                                <td :id="location[9]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[9])}"></td>
-                                <td :id="location[10]" class="grid_view" :class="{salvo: renderSalvosOpponent(location[10])}"></td>
+                                <td :id=`g2${location[0]}` class="grid_view bold_grid">{{location[0]}}</td>
+                                <td :id=`g2${location[1]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[1])}"></td>
+                                <td :id=`g2${location[2]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[2])}"></td>
+                                <td :id=`g2${location[3]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[3])}"></td>
+                                <td :id=`g2${location[4]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[4])}"></td>
+                                <td :id=`g2${location[5]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[5])}"></td>
+                                <td :id=`g2${location[6]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[6])}"></td>
+                                <td :id=`g2${location[7]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[7])}"></td>
+                                <td :id=`g2${location[8]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[8])}"></td>
+                                <td :id=`g2${location[9]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[9])}"></td>
+                                <td :id=`g2${location[0]}` class="grid_view" :class="{salvo: renderSalvosPrincipal(location[10])}"></td>
                             </tr>
                         </tbody>
                     </table>
