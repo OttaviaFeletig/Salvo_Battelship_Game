@@ -23,6 +23,12 @@ public class Score {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    public Score() { }
+    public Score(Date finishDate, double score){
+        this.finishDate = finishDate;
+        this.score = score;
+    }
+
     public long getScoreId() {
         return scoreId;
     }

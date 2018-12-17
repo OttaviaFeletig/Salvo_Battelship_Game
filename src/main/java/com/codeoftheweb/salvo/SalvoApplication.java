@@ -18,7 +18,7 @@ public class SalvoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository repositoryPlayer, GameRepository repositoryGame, GamePlayerRepository repositoryGamePlayer, ShipRepository repositoryShip, SalvoRepository repositorySalvo) {
+	public CommandLineRunner initData(PlayerRepository repositoryPlayer, GameRepository repositoryGame, GamePlayerRepository repositoryGamePlayer, ShipRepository repositoryShip, SalvoRepository repositorySalvo, ScoreRepository repositoryScore) {
 		return (args -> {
 		    Player username1 = new Player("j.bauer@ctu.gov");
 		    Player username2 = new Player("c.obrian@ctu.gov");
@@ -139,6 +139,36 @@ public class SalvoApplication {
 			gamePlayer6.addSalvos(salvo3_2_1);
 			gamePlayer6.addSalvos(salvo3_2_2);
 
+			Date finishDate = Date.from(date.toInstant().plusSeconds(1800));
+			Date finishDate1 = Date.from(date1.toInstant().plusSeconds(1800));
+
+			Score score1 = new Score(finishDate, 1.0);
+			Score score2 = new Score(finishDate, 0.5);
+			Score score3 = new Score(finishDate, 0.5);
+			Score score4 = new Score(finishDate, 0.0);
+			Score score5 = new Score(finishDate, 2.0);
+			Score score6 = new Score(finishDate, 1.5);
+
+			//game 1
+			game1.addScore(score1);
+			username1.addScore(score1);
+			game1.addScore(score2);
+			username2.addScore(score2);
+
+			//game 2
+
+            game2.addScore(score3);
+            username1.addScore(score3);
+            game2.addScore(score4);
+            username2.addScore(score4);
+
+            //game3
+
+            game3.addScore(score5);
+            username3.addScore(score5);
+            game3.addScore(score6);
+            username3.addScore(score6);
+
 			repositoryGame.save(game1);
 			repositoryGame.save(game2);
 			repositoryGame.save(game3);
@@ -181,6 +211,11 @@ public class SalvoApplication {
 			repositorySalvo.save(salvo3_1_2);
 			repositorySalvo.save(salvo3_2_1);
 			repositorySalvo.save(salvo3_2_2);
+
+			repositoryScore.save(score1);
+			repositoryScore.save(score2);
+			repositoryScore.save(score3);
+			repositoryScore.save(score4);
 
         });
 	}
