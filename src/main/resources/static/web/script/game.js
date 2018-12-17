@@ -30,6 +30,7 @@ var dataObject = new Vue({
                 })
                 .then(response => response.json())
                 .then(data => {
+                    this.isLoading = false;
                     this.data = data;
                     this.ships = data.ships;
                     this.gamePlayers = data.gamePlayers;
@@ -41,8 +42,6 @@ var dataObject = new Vue({
                     this.renderShips(this.ships);
                     this.renderSalvosPrincipal(this.salvos);
                     this.renderSalvosOpponent(this.salvos);
-                    this.isLoading = false;
-
                 })
         },
         changeDinamicallyUrl() {
@@ -87,12 +86,6 @@ var dataObject = new Vue({
                         document.querySelector(`#g2${location}`).classList.add("salvo")
                         document.querySelector(`#g2${location}`).innerHTML = salvos[i].turnNumber;
                     })
-                    //                    console.log(this.salvoPrincipalLocations)
-                    //                    this.salvoPrincipalLocations.forEach(loc => {
-                    //                        document.querySelector(`#g2${loc}`).classList.add("salvo")
-                    //                        document.querySelector(`#g2${loc}`).innerHTML = salvos[i].turnNumber;
-                    //                    })
-
                 }
             }
         },
@@ -112,19 +105,7 @@ var dataObject = new Vue({
                     })
                 }
             }
-//            this.shipLocations.forEach(shipLoc => {
-//                if (this.salvoOpponentLocations.includes(shipLoc)) {
-//                    document.querySelector(`#g1${shipLoc}`).classList.add("hit")
-//                } else {
-//                    this.salvoOpponentLocations.forEach(salvoLoc => {
-//                        document.querySelector(`#g1${salvoLoc}`).classList.add("salvo")
-//                    })
-//                }
-//            })
         },
-
-
-
     }
 
 
