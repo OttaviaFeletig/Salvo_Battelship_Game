@@ -16,7 +16,7 @@ var dataObject = new Vue({
         gridNumbers: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
         gridLetters: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         cellsLocation: [],
-        isLoading: false
+        isLoading: true
     },
     created() {
         this.createGridCellsLocation();
@@ -41,7 +41,7 @@ var dataObject = new Vue({
                     this.renderShips(this.ships);
                     this.renderSalvosPrincipal(this.salvos);
                     this.renderSalvosOpponent(this.salvos);
-                    this.isLoading = true;
+                    this.isLoading = false;
 
                 })
         },
@@ -82,52 +82,45 @@ var dataObject = new Vue({
         renderSalvosPrincipal(salvos) {
             for (var i = 0; i < salvos.length; i++) {
                 if (salvos[i].gamePlayerId == this.gamePlayerId) {
-//                    console.log(salvos[i])
-                    salvos[i].location.forEach(location => this.salvoPrincipalLocations.push(location))
-//                    console.log(this.salvoPrincipalLocations)
-                    this.salvoPrincipalLocations.forEach(loc => document.querySelector(`#g2${loc}`).classList.add("salvo"))
+                    console.log(salvos[i])
+                    salvos[i].location.forEach(location => {
+                        document.querySelector(`#g2${location}`).classList.add("salvo")
+                        document.querySelector(`#g2${location}`).innerHTML = salvos[i].turnNumber;
+                    })
+                    //                    console.log(this.salvoPrincipalLocations)
+                    //                    this.salvoPrincipalLocations.forEach(loc => {
+                    //                        document.querySelector(`#g2${loc}`).classList.add("salvo")
+                    //                        document.querySelector(`#g2${loc}`).innerHTML = salvos[i].turnNumber;
+                    //                    })
+
                 }
             }
         },
         renderSalvosOpponent(salvos) {
             for (var i = 0; i < salvos.length; i++) {
                 if (salvos[i].gamePlayerId != this.gamePlayerId) {
-                    salvos[i].location.forEach(location => this.salvoOpponentLocations.push(location))
-                }
-            }
-            console.log(this.salvoOpponentLocations)
-            console.log(this.shipLocations)
-            
-            this.shipLocations.forEach(shipLoc => {
-                if(this.salvoOpponentLocations.includes(shipLoc)){
-                    document.querySelector(`#g1${shipLoc}`).classList.add("hit")
-                    
-                }else{
-                    this.salvoOpponentLocations.forEach(salvoLoc => {
-                        document.querySelector(`#g1${salvoLoc}`).classList.add("salvo")
+                    salvos[i].location.forEach(location => {
+                        this.shipLocations.forEach(shipLoc => {
+                            if (location == shipLoc) {
+                                document.querySelector(`#g1${shipLoc}`).classList.add("hit");
+                                document.querySelector(`#g1${location}`).innerHTML = salvos[i].turnNumber;
+                            }else {
+                                document.querySelector(`#g1${location}`).classList.add("salvo");
+                                document.querySelector(`#g1${location}`).innerHTML = salvos[i].turnNumber;
+                            }
+                        })
                     })
                 }
-            })
-            
-//            for(var i = 0; i < this.shipLocations.length; i++){
-//                if(this.salvoOpponentLocations.includes(this.shipLocations[i])){
-//                    console.log(this.shipLocations[i])
-//                    
+            }
+//            this.shipLocations.forEach(shipLoc => {
+//                if (this.salvoOpponentLocations.includes(shipLoc)) {
+//                    document.querySelector(`#g1${shipLoc}`).classList.add("hit")
+//                } else {
+//                    this.salvoOpponentLocations.forEach(salvoLoc => {
+//                        document.querySelector(`#g1${salvoLoc}`).classList.add("salvo")
+//                    })
 //                }
-//            }
-            
-//            for(var i = 0; this.salvoOpponentLocations.length; i++){
-//                if(this.shipLocations.includes(this.salvoOpponentLocations[i])){
-//                    console.log("colpito")
-//                }
-//            }
-            
-//            for(var i = 0; i < this.shipLocations.length; i++){
-//                console.log(this.shipLocations[i])
-//                if(this.shipLocations[i] == this.salvoOpponentLocations){
-//                    console.log("colpito")
-//                }
-//            }
+//            })
         },
 
 

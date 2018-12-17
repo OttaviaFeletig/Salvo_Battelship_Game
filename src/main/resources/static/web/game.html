@@ -14,13 +14,11 @@
 
     <div id="gameView">
 
-<!--
-        <div v-if="isLoading">
+        <div v-show="isLoading">
             <p>Loading...</p>
         </div>
--->
 
-        <div v-show="isLoading" class="container">
+        <div v-show="!isLoading" class="container">
             <div class="row">
                 <p>GAME {{data.id}}, {{data.created}}</p>
             </div>
