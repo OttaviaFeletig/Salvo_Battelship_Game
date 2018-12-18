@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 @RestController
 @RequestMapping("/api")
@@ -30,14 +29,23 @@ public class SalvoController {
                 .stream().map(game -> new LinkedHashMap<String, Object>(){{
                     put("id", game.getGameId());
                     put("created", game.getDate());
+                    put("finished", maybeScore(game.getScores()));
                     put("gamePlayers", game.getGamePlayers()
                             .stream()
                             .map(gamePlayer -> new LinkedHashMap<String, Object>(){{
                                 put("id", gamePlayer.getGamePlayerId());
                                 put("player", getHashPlayer(gamePlayer.getPlayer()));
+                                put("score", gamePlayer.getScoreInGame(game));
                             }}).collect(toList())
                     );
                 }}).collect(Collectors.toList());
+    }
+
+    private Date maybeScore(Set<Score> scores){
+        return scores.stream()
+                .findFirst()
+                .map(score -> score.getFinishDate())
+                .orElse(null);
     }
 
     private HashMap<String, Object> getHashPlayer(Player player){

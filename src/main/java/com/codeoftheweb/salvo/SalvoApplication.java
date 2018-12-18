@@ -144,10 +144,10 @@ public class SalvoApplication {
 
 			Score score1 = new Score(finishDate, 1.0);
 			Score score2 = new Score(finishDate, 0.5);
-			Score score3 = new Score(finishDate, 0.5);
-			Score score4 = new Score(finishDate, 0.0);
-			Score score5 = new Score(finishDate, 2.0);
-			Score score6 = new Score(finishDate, 1.5);
+			Score score3 = new Score(finishDate1, 0.5);
+			Score score4 = new Score(finishDate1, 0.0);
+//			Score score5 = new Score(finishDate, 2.0);
+//			Score score6 = new Score(finishDate, 1.5);
 
 			//game 1
 			game1.addScore(score1);
@@ -164,10 +164,10 @@ public class SalvoApplication {
 
             //game3
 
-            game3.addScore(score5);
-            username3.addScore(score5);
-            game3.addScore(score6);
-            username3.addScore(score6);
+//            game3.addScore(score5);
+//            username3.addScore(score5);
+//            game3.addScore(score6);
+//            username3.addScore(score6);
 
 			repositoryGame.save(game1);
 			repositoryGame.save(game2);

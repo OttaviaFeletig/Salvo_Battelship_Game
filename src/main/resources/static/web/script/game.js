@@ -94,10 +94,10 @@ var dataObject = new Vue({
                 if (salvos[i].gamePlayerId != this.gamePlayerId) {
                     salvos[i].location.forEach(location => {
                         this.shipLocations.forEach(shipLoc => {
-                            if (location == shipLoc) {
+                            if(location == shipLoc){
                                 document.querySelector(`#g1${shipLoc}`).classList.add("hit");
                                 document.querySelector(`#g1${location}`).innerHTML = salvos[i].turnNumber;
-                            }else {
+                            }else{
                                 document.querySelector(`#g1${location}`).classList.add("salvo");
                                 document.querySelector(`#g1${location}`).innerHTML = salvos[i].turnNumber;
                             }

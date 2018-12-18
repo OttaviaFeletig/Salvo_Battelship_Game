@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 @Entity
@@ -91,5 +92,17 @@ public class GamePlayer {
 
     public void setSalvos(Set<Salvo> salvos) {
         this.salvos = salvos;
+    }
+
+    public LinkedHashMap<String, Object> getScoreInGame(Game game){
+        return player.getScores()
+                .stream()
+                .filter(score -> game.equals(score.getGame()))
+                .map(score -> new LinkedHashMap<String, Object>(){{
+                    put("scoreId", score.getScoreId());
+                    put("score", score.getScore());
+                }})
+                .findFirst()
+                .orElse(null);
     }
 }
