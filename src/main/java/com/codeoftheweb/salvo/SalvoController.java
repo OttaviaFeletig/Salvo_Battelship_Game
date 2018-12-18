@@ -29,7 +29,7 @@ public class SalvoController {
                 .stream().map(game -> new LinkedHashMap<String, Object>(){{
                     put("id", game.getGameId());
                     put("created", game.getDate());
-                    put("finished", maybeScore(game.getScores()));
+                    put("finished", getScoreDate(game.getScores()));
                     put("gamePlayers", game.getGamePlayers()
                             .stream()
                             .map(gamePlayer -> new LinkedHashMap<String, Object>(){{
@@ -41,7 +41,7 @@ public class SalvoController {
                 }}).collect(Collectors.toList());
     }
 
-    private Date maybeScore(Set<Score> scores){
+    private Date getScoreDate(Set<Score> scores){
         return scores.stream()
                 .findFirst()
                 .map(score -> score.getFinishDate())

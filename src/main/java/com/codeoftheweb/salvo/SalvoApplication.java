@@ -20,7 +20,7 @@ public class SalvoApplication {
 	@Bean
 	public CommandLineRunner initData(PlayerRepository repositoryPlayer, GameRepository repositoryGame, GamePlayerRepository repositoryGamePlayer, ShipRepository repositoryShip, SalvoRepository repositorySalvo, ScoreRepository repositoryScore) {
 		return (args -> {
-		    Player username1 = new Player("j.bauer@ctu.gov");
+				Player username1 = new Player("j.bauer@ctu.gov");
 		    Player username2 = new Player("c.obrian@ctu.gov");
 		    Player username3 = new Player("kim_bauer@gmail.com");
 		    Player username4 = new Player("t.almeida@ctu.gov");
@@ -143,9 +143,9 @@ public class SalvoApplication {
 			Date finishDate1 = Date.from(date1.toInstant().plusSeconds(1800));
 
 			Score score1 = new Score(finishDate, 1.0);
-			Score score2 = new Score(finishDate, 0.5);
+			Score score2 = new Score(finishDate, 0.0);
 			Score score3 = new Score(finishDate1, 0.5);
-			Score score4 = new Score(finishDate1, 0.0);
+			Score score4 = new Score(finishDate1, 0.5);
 //			Score score5 = new Score(finishDate, 2.0);
 //			Score score6 = new Score(finishDate, 1.5);
 

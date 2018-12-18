@@ -99,8 +99,8 @@ public class GamePlayer {
                 .stream()
                 .filter(score -> game.equals(score.getGame()))
                 .map(score -> new LinkedHashMap<String, Object>(){{
-                    put("scoreId", score.getScoreId());
-                    put("score", score.getScore());
+                    put("id", score.getScoreId());
+                    put("scorePoint", score.getScore());
                 }})
                 .findFirst()
                 .orElse(null);
