@@ -16,11 +16,25 @@ public class SalvoController {
 
     private GameRepository gameRepository;
     private GamePlayerRepository gamePlayerRepository;
+    private PlayerRepository playerRepository;
 
     @Autowired
-    public SalvoController(GameRepository gameRepository, GamePlayerRepository gamePlayerRepository) {
+    public SalvoController(GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, PlayerRepository playerRepository) {
         this.gameRepository = gameRepository;
         this.gamePlayerRepository = gamePlayerRepository;
+        this.playerRepository = playerRepository;
+    }
+
+    @RequestMapping("/leader_board")
+    public List<HashMap<String, Object>> getPlayersScore(){
+        return playerRepository.findAll()
+                .stream()
+                .map(player -> new LinkedHashMap<String, Object>(){{
+                    put("player", player.getUserName());
+                    put("scores", player.getScores()
+                            .stream()
+                            .map(score -> score.getScore()).collect(toList()));
+                }}).collect(toList());
     }
 
     @RequestMapping("/games")

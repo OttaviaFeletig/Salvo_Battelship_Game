@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leader Board!</title>
+</head>
+<body>
+      <div id="leaderBoard">
+   
+   <div v-if="isLoading==true">
+       <p>Loading...</p>
+   </div>
+   
+   <div v-else>
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Win</th>
+                <th>Loss</th>
+                <th>Tie</th>
+            </thead>
+            <tbody>
+                <tr v-for="(playerList, index) in playersList" :key="index">
+                    <td>{{playerList.player}}</td>
+                </tr>
+            </tbody>
+        </table>
+   </div>
+   </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="script/leader_board.js"></script>
+</body>
+</html>
