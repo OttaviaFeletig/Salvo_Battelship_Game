@@ -16,13 +16,17 @@
             <thead>
                 <th>Name</th>
                 <th>Total</th>
-                <th>Win</th>
-                <th>Loss</th>
-                <th>Tie</th>
+                <th>Won</th>
+                <th>Lost</th>
+                <th>Tied</th>
             </thead>
             <tbody>
                 <tr v-for="(playerList, index) in playersList" :key="index">
                     <td>{{playerList.player}}</td>
+                    <td>{{playerList.total_score}}</td>
+                    <td>{{playerList.won}}</td>
+                    <td>{{playerList.lost}}</td>
+                    <td>{{playerList.tied}}</td>
                 </tr>
             </tbody>
         </table>
