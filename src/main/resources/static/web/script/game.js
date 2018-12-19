@@ -83,8 +83,8 @@ var dataObject = new Vue({
                 if (salvos[i].gamePlayerId == this.gamePlayerId) {
                     console.log(salvos[i])
                     salvos[i].location.forEach(location => {
-                        document.querySelector(`#g2${location}`).classList.add("salvo")
-                        document.querySelector(`#g2${location}`).innerHTML = salvos[i].turnNumber;
+                        document.querySelector(`#g2${location}`).innerHTML = `<div class='salvo'>${salvos[i].turnNumber}</div>`;
+//                        document.querySelector(`#g2${location}`).innerHTML = salvos[i].turnNumber;
                     })
                 }
             }
@@ -95,11 +95,11 @@ var dataObject = new Vue({
                     salvos[i].location.forEach(location => {
                         this.shipLocations.forEach(shipLoc => {
                             if(location == shipLoc){
-                                document.querySelector(`#g1${shipLoc}`).classList.add("hit");
-                                document.querySelector(`#g1${location}`).innerHTML = salvos[i].turnNumber;
+                                document.querySelector(`#g1${shipLoc}`).innerHTML = `<div class='hit'>${salvos[i].turnNumber}</div>`;
                             }else{
-                                document.querySelector(`#g1${location}`).classList.add("salvo");
-                                document.querySelector(`#g1${location}`).innerHTML = salvos[i].turnNumber;
+                               if(!document.querySelector(`#g1${location}`).childNodes[0]){
+                                   document.querySelector(`#g1${location}`).innerHTML = `<div class='salvo'>${salvos[i].turnNumber}</div>`;
+                               }
                             }
                         })
                     })

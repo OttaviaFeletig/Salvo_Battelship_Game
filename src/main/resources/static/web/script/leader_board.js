@@ -4,9 +4,6 @@ var dataObj = new Vue({
     data: {
         urlGame: 'http://localhost:8080/api/leader_board',
         playersList: [],
-        won: 0,
-        lost: 0,
-        tied: 0,
         isLoading: true
     },
     created() {
@@ -59,8 +56,6 @@ var dataObj = new Vue({
                     this.playersList[i]["tied"] = "-";
                     this.playersList[i]["lost"] = "-";
                 }
-
-                //                console.log(wins)
             }
         }
     },

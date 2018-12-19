@@ -14,11 +14,11 @@
 
     <div id="gameView">
 
-        <div v-show="isLoading">
-            <p>Loading...</p>
+        <div v-show="isLoading==true">
+            <div class="lds-dual-ring"></div>
         </div>
 
-        <div v-show="!isLoading" class="container">
+        <div v-show="isLoading==false" class="container mt-4">
             <div class="row">
                 <p>GAME {{data.id}}, {{data.created}}</p>
             </div>
@@ -27,51 +27,51 @@
             </div>
             <div class="row">
                <div class="col">
-                    <table class="grid_view">
-                        <thead class="grid_view">
+                    <table class="table-bordered">
+                        <thead>
                             <tr>
-                                <th v-for="(number, index) in gridNumbers" :key="index" class="grid_view_numbers"> {{number}}
+                                <th v-for="(number, index) in gridNumbers" :key="index" class="p-3">{{number}}
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(location, index) in cellsLocation" :key="index" class="grid_view">
-                                <td :id=`g1${location[0]}` class="grid_view bold_grid">{{location[0]}}</td>
-                                <td :id=`g1${location[1]}` class="grid_view"></td>
-                                <td :id=`g1${location[2]}` class="grid_view"></td>
-                                <td :id=`g1${location[3]}` class="grid_view"></td>
-                                <td :id=`g1${location[4]}` class="grid_view"></td>
-                                <td :id=`g1${location[5]}` class="grid_view"></td>
-                                <td :id=`g1${location[6]}` class="grid_view"></td>
-                                <td :id=`g1${location[7]}` class="grid_view"></td>
-                                <td :id=`g1${location[8]}` class="grid_view"></td>
-                                <td :id=`g1${location[9]}` class="grid_view"></td>
-                                <td :id=`g1${location[10]}` class="grid_view"></td>
+                            <tr v-for="(location, index) in cellsLocation" :key="index">
+                                <td :id=`g1${location[0]}` class=" bold_grid p-2">{{location[0]}}</td>
+                                <td :id=`g1${location[1]}`></td>
+                                <td :id=`g1${location[2]}`></td>
+                                <td :id=`g1${location[3]}`></td>
+                                <td :id=`g1${location[4]}`></td>
+                                <td :id=`g1${location[5]}`></td>
+                                <td :id=`g1${location[6]}`></td>
+                                <td :id=`g1${location[7]}`></td>
+                                <td :id=`g1${location[8]}`></td>
+                                <td :id=`g1${location[9]}`></td>
+                                <td :id=`g1${location[10]}`></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col">
-                    <table class="grid_view">
-                        <thead class="grid_view">
+                    <table class="table-bordered">
+                        <thead>
                             <tr>
-                                <th v-for="(number, index) in gridNumbers" :key="index" class="grid_view_numbers"> {{number}}
+                                <th v-for="(number, index) in gridNumbers" :key="index" class="p-3"> {{number}}
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(location, index) in cellsLocation" :key="index" class="grid_view">
-                                <td :id=`g2${location[0]}` class="grid_view bold_grid">{{location[0]}}</td>
-                                <td :id=`g2${location[1]}` class="grid_view"></td>
-                                <td :id=`g2${location[2]}` class="grid_view"></td>
-                                <td :id=`g2${location[3]}` class="grid_view"></td>
-                                <td :id=`g2${location[4]}` class="grid_view"></td>
-                                <td :id=`g2${location[5]}` class="grid_view"></td>
-                                <td :id=`g2${location[6]}` class="grid_view"></td>
-                                <td :id=`g2${location[7]}` class="grid_view"></td>
-                                <td :id=`g2${location[8]}` class="grid_view"></td>
-                                <td :id=`g2${location[9]}` class="grid_view"></td>
-                                <td :id=`g2${location[0]}` class="grid_view"></td>
+                            <tr v-for="(location, index) in cellsLocation" :key="index">
+                                <td :id=`g2${location[0]}` class="p-2 bold_grid">{{location[0]}}</td>
+                                <td :id=`g2${location[1]}`></td>
+                                <td :id=`g2${location[2]}`></td>
+                                <td :id=`g2${location[3]}`></td>
+                                <td :id=`g2${location[4]}`></td>
+                                <td :id=`g2${location[5]}`></td>
+                                <td :id=`g2${location[6]}`></td>
+                                <td :id=`g2${location[7]}`></td>
+                                <td :id=`g2${location[8]}`></td>
+                                <td :id=`g2${location[9]}`></td>
+                                <td :id=`g2${location[0]}`></td>
                             </tr>
                         </tbody>
                     </table>
@@ -84,7 +84,12 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    
     <script src="script/game.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>
 
 </html>
