@@ -1,32 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Salvo!</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="style/style.css">
 </head>
+
 <body>
-  <div id="gameList">
-   
-   <div v-if="isLoading==true">
-       <p>Loading...</p>
-   </div>
-   
-   <div v-else>
-        <ol>
-           <div v-for="(game, index) in gameList" :key="index">
-               <li>Game: {{game.id}}</li>
-                <ul>
-                    <li>Date: {{game.created}}</li>
-                    <ul v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
-                        <li>Player {{gamePlayer.player.id}}: {{gamePlayer.player.email}}</li>
+    <div id="games">
+
+        <div v-if="isLoading==true">
+            <p>Loading...</p>
+        </div>
+
+        <div v-else>
+            <ol>
+                <div v-for="(game, index) in gameList" :key="index">
+                    <li>Game: {{game.id}}</li>
+                    <ul>
+                        <li>Date: {{game.created}}</li>
+                        <ul v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
+                            <li>Player {{gamePlayer.player.id}}: {{gamePlayer.player.email}}</li>
+                        </ul>
                     </ul>
-                </ul>    
-           </div>  
-        </ol>
-   </div>
-   </div>
-    
+                </div>
+            </ol>
+
+            <div class="container mt-4">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <th>Name</th>
+                        <th>Total</th>
+                        <th>Won</th>
+                        <th>Lost</th>
+                        <th>Tied</th>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(playerList, index) in playersList" :key="index">
+                            <td>{{playerList.player}}</td>
+                            <td>{{playerList.total_score}}</td>
+                            <td>{{playerList.won}}</td>
+                            <td>{{playerList.lost}}</td>
+                            <td>{{playerList.tied}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="script/games.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>
+
 </html>
