@@ -17,6 +17,7 @@ var dataObj = new Vue({
                     .map(url => fetch(url)
                         .then(response => response.json())))
                 .then(values => {
+                console.log(values)
                     this.gameList = values[0];
                     this.playersList = values[1];
 
@@ -29,7 +30,15 @@ var dataObj = new Vue({
                 })
         },
         convertDate() {
-            this.gameList.map(game => game.created = new Date(game.created).toLocaleString())
+            this.gameList.map(game => {
+                game.created = new Date(game.created).toLocaleString()
+                if(game.finished){
+                    game.finished = new Date(game.finished).toLocaleString()
+                }else{
+                    game.finished = "still playing"
+                }
+                
+            })
         },
         calculateTotalScore() {
             for (var i = 0; i < this.playersList.length; i++) {

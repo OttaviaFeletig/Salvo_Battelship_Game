@@ -17,12 +17,13 @@
             <p>Loading...</p>
         </div>
 
-        <div v-else>
+        <div v-else class="container mt-4">
             <ol>
                 <div v-for="(game, index) in gameList" :key="index">
                     <li>Game: {{game.id}}</li>
                     <ul>
-                        <li>Date: {{game.created}}</li>
+                        <li>Creation date: {{game.created}}</li>
+                        <li>Finish date: {{game.finished}}</li>
                         <ul v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
                             <li>Player {{gamePlayer.player.id}}: {{gamePlayer.player.email}}</li>
                         </ul>
