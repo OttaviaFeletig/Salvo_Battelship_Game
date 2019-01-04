@@ -30,7 +30,7 @@ public class SalvoController {
         return playerRepository.findAll()
                 .stream()
                 .map(player -> new LinkedHashMap<String, Object>(){{
-                    put("player", player.getUserName());
+                    put("player", player.getName());
                     put("scores", player.getScores()
                             .stream()
                             .map(score -> score.getScore()).collect(toList()));
@@ -65,6 +65,7 @@ public class SalvoController {
     private HashMap<String, Object> getHashPlayer(Player player){
         return new LinkedHashMap<String, Object>() {{
             put("id", player.getPlayerId());
+            put("name", player.getName());
             put("email", player.getUserName());
         }};
     }

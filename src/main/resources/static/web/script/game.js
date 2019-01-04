@@ -69,9 +69,9 @@ var dataObject = new Vue({
         renderGamePlayers() {
             for (var i = 0; i < this.gamePlayers.length; i++) {
                 if (this.gamePlayers[i].id == this.gamePlayerId) {
-                    this.principalGamePlayer = this.gamePlayers[i].player.email
+                    this.principalGamePlayer = this.gamePlayers[i].player.name
                 } else {
-                    this.opponentGamePlayer = this.gamePlayers[i].player.email
+                    this.opponentGamePlayer = this.gamePlayers[i].player.name
                 }
             }
         },

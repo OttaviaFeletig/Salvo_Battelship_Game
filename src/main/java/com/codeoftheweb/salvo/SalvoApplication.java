@@ -1,9 +1,16 @@
 package com.codeoftheweb.salvo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -20,10 +27,10 @@ public class SalvoApplication {
 	@Bean
 	public CommandLineRunner initData(PlayerRepository repositoryPlayer, GameRepository repositoryGame, GamePlayerRepository repositoryGamePlayer, ShipRepository repositoryShip, SalvoRepository repositorySalvo, ScoreRepository repositoryScore) {
 		return (args -> {
-				Player username1 = new Player("j.bauer@ctu.gov");
-		    Player username2 = new Player("c.obrian@ctu.gov");
-		    Player username3 = new Player("kim_bauer@gmail.com");
-		    Player username4 = new Player("t.almeida@ctu.gov");
+				Player username1 = new Player("j.bauer@ctu.gov", "24", "Jack Bauer");
+		    Player username2 = new Player("c.obrian@ctu.gov", "42", "Chloe O'Brian");
+		    Player username3 = new Player("kim_bauer@gmail.com", "kb", "Kim Bauer");
+		    Player username4 = new Player("t.almeida@ctu.gov", "mole", "Tony Almeida");
 
 			Date date = new Date();
 			Date date1 = Date.from(date.toInstant().plusSeconds(3600));
@@ -218,5 +225,25 @@ public class SalvoApplication {
 			repositoryScore.save(score4);
 
         });
+	}
+}
+
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+
+	@Autowired
+	PlayerRepository playerRepository;
+
+	@Override
+	public void init(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userName-> {
+			Player player = playerRepository.findByUserName(userName);
+			if (player != null) {
+				return new User(player.getUserName(), player.getPassword(),
+						AuthorityUtils.createAuthorityList("USER"));
+			} else {
+				throw new UsernameNotFoundException("Unknown user: " + userName);
+			}
+		});
 	}
 }

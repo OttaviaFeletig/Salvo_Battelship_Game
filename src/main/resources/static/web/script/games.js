@@ -17,7 +17,6 @@ var dataObj = new Vue({
                     .map(url => fetch(url)
                         .then(response => response.json())))
                 .then(values => {
-                console.log(values)
                     this.gameList = values[0];
                     this.playersList = values[1];
 

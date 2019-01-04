@@ -25,7 +25,7 @@
                         <li>Creation date: {{game.created}}</li>
                         <li>Finish date: {{game.finished}}</li>
                         <ul v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
-                            <li>Player {{gamePlayer.player.id}}: {{gamePlayer.player.email}}</li>
+                            <li>Player {{gamePlayer.player.id}}: {{gamePlayer.player.name}}</li>
                         </ul>
                     </ul>
                 </div>
