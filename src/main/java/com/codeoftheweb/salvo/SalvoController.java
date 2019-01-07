@@ -1,6 +1,8 @@
 package com.codeoftheweb.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +40,20 @@ public class SalvoController {
     }
 
     @RequestMapping("/games")
-    public List<HashMap<String, Object>> getGamesId() {
+    public HashMap<String, Object> getGames(Authentication authentication){
+        if(!(isGuest(authentication))){
+            return new LinkedHashMap<String, Object>(){{
+                put("player", getHashPlayer(getLoggedInPlayer(authentication)));
+                put("games", getAllGames());
+            }};
+        }else{
+            return new LinkedHashMap<String, Object>(){{
+                put("player", null);
+                put("games", getAllGames());
+            }};
+        }
+    }
+    private List<HashMap<String, Object>> getAllGames() {
         return gameRepository.findAll()
                 .stream().map(game -> new LinkedHashMap<String, Object>(){{
                     put("id", game.getGameId());
@@ -68,6 +83,14 @@ public class SalvoController {
             put("name", player.getName());
             put("email", player.getUserName());
         }};
+    }
+
+    private Player getLoggedInPlayer(Authentication authentication){
+        return playerRepository.findByUserName(authentication.getName());
+    }
+
+    private boolean isGuest(Authentication authentication){
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
     @RequestMapping("/game_view/{gamePlayerId}")
