@@ -19,6 +19,9 @@
         </div>
 
         <div v-show="isLoading==false" class="container mt-4">
+           <form class="form-inline" onsubmit="return false">
+                    <button type="logout" class="btn btn-primary mb-2" v-on:click="logOut">LogOut</button>
+                </form>
             <div class="row">
                 <p>GAME {{data.id}}, {{data.created}}</p>
             </div>

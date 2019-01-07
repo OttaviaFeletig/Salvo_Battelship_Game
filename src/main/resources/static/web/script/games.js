@@ -6,7 +6,10 @@ var dataObj = new Vue({
         gameList: [],
         date: [],
         playersList: [],
-        isLoading: true
+        email: "",
+        password: "",
+        isLoading: true,
+        isLoggedOut: true
     },
     created() {
         this.loadFetchGame(this.urlArray)
@@ -70,6 +73,40 @@ var dataObj = new Vue({
                     this.playersList[i]["lost"] = "-";
                 }
             }
+        },
+        logIn(){
+            fetch("/api/login", {
+                method: 'POST',
+                credentials: "include",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `email=${ this.email }&password=${ this.password }`
+            })
+            .then(response => {
+                if(response.status == 200){
+//                    window.location.reload()
+                    console.log("logged in!")
+                    this.isLoggedOut = false
+                }else{
+                    alert("Invalid email or passsword")
+                }
+            })
+            .catch(error => error)
+        },
+        logOut(){
+            fetch("/api/logout", {
+                method: 'POST'
+            })
+            .then(response => {
+                if(response.status == 200){
+                    window.location.reload()
+//                    this.isLoggedOut = true;
+                }else{
+                    alert("You didn't logout")
+                }
+            })
         }
     }
 

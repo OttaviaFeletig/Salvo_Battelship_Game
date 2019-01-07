@@ -16,7 +16,8 @@ var dataObject = new Vue({
         gridNumbers: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
         gridLetters: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         cellsLocation: [],
-        isLoading: true
+        isLoading: true,
+//        isLoggedOut: true
     },
     created() {
         this.createGridCellsLocation();
@@ -106,6 +107,19 @@ var dataObject = new Vue({
                 }
             }
         },
+        logOut(){
+            fetch("/api/logout", {
+                method: 'POST'
+            })
+            .then(response => {
+                if(response.status == 200){
+                    window.location.reload()
+//                    this.isLoggedOut = true;
+                }else{
+                    alert("You didn't logout")
+                }
+            })
+        }
     }
 
 
