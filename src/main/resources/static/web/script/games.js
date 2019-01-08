@@ -6,10 +6,14 @@ var dataObj = new Vue({
         gameList: [],
         date: [],
         playersList: [],
-        email: "",
-        password: "",
+        emailLogIn: "",
+        passwordLogIn: "",
+        nameSignIn: "",
+        emailSignIn: "",
+        passwordSignIn: "",
         isLoading: true,
-        isLoggedOut: true
+        isRegistered: true,
+        playerLoggedIn: null
     },
     created() {
         this.loadFetchGame(this.urlArray)
@@ -20,6 +24,8 @@ var dataObj = new Vue({
                     .map(url => fetch(url)
                         .then(response => response.json())))
                 .then(values => {
+                    this.playerLoggedIn = values[0].player
+                    console.log(this.playerLoggedIn)
                     this.gameList = values[0].games;
                     this.playersList = values[1];
 
@@ -34,12 +40,12 @@ var dataObj = new Vue({
         convertDate() {
             this.gameList.map(game => {
                 game.created = new Date(game.created).toLocaleString()
-                if(game.finished){
+                if (game.finished) {
                     game.finished = new Date(game.finished).toLocaleString()
-                }else{
+                } else {
                     game.finished = "still playing"
                 }
-                
+
             })
         },
         calculateTotalScore() {
@@ -74,39 +80,69 @@ var dataObj = new Vue({
                 }
             }
         },
-        logIn(){
+        logIn() {
             fetch("/api/login", {
-                method: 'POST',
-                credentials: "include",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `email=${ this.email }&password=${ this.password }`
-            })
-            .then(response => {
-                if(response.status == 200){
-//                    window.location.reload()
-                    console.log("logged in!")
-                    this.isLoggedOut = false
-                }else{
-                    alert("Invalid email or passsword")
-                }
-            })
-            .catch(error => error)
+                    method: 'POST',
+                    credentials: "include",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `email=${ this.emailLogIn }&password=${ this.passwordLogIn }`
+                })
+                .then(response => {
+                    if (response.status == 200) {
+//                        window.location.reload()
+                        console.log("logged in!")
+
+                    } else {
+                        alert("Invalid email or password")
+                    }
+                })
+                .catch(error => error)
         },
-        logOut(){
+        logOut() {
             fetch("/api/logout", {
-                method: 'POST'
-            })
-            .then(response => {
-                if(response.status == 200){
-                    window.location.reload()
-//                    this.isLoggedOut = true;
-                }else{
-                    alert("You didn't logout")
-                }
-            })
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.status == 200) {
+
+                        window.location.reload()
+                                            this.playerLoggedIn = null
+                        //                    this.isLoggedOut = true;
+                    } else {
+                        alert("You didn't logout")
+                    }
+                })
+        },
+        signIn() {
+            fetch("/api/players", {
+                    method: 'POST',
+                    credentials: "include",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `email=${ this.emailSignIn }&password=${ this.passwordSignIn }&name=${ this.nameSignIn }`
+                })
+                .then(response => {
+                    if (response.status == 201) {
+                        //                    window.location.reload()
+                        console.log("user added")
+                        this.emailLogIn = this.emailSignIn
+                        this.passwordLogIn = this.passwordSignIn
+                        this.logIn()
+                    } else if (response.status == 409) {
+                        alert("This email has been already used")
+                    } else {
+                        alert("Field missing")
+                    }
+
+                })
+        },
+        register(){
+           this.isRegistered = false 
         }
     }
 

@@ -15,7 +15,7 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long playerId;
-    private String userName;
+    private String email;
     private String password;
     private String name;
 
@@ -29,7 +29,7 @@ public class Player {
     public Player() { }
 
     public Player(String email, String password, String name){
-        this.userName = email;
+        this.email = email;
         this.password = password;
         this.name = name;
     }
@@ -42,12 +42,12 @@ public class Player {
         this.playerId = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserName(String email) {
-        this.userName = email;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

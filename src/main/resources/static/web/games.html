@@ -18,32 +18,56 @@
         </div>
 
         <div v-else class="container mt-4">
-            <div v-if="isLoggedOut==true">
-                <form class="form-inline" onsubmit="return false">
+            <div v-if="playerLoggedIn==null">
+                <form class="form-inline">
                     <label class="sr-only" for="email">email</label>
                     <div class="input-group mb-2 mr-sm-2">
                         <div class="input-group-prepend">
                             <div class="input-group-text">@</div>
                         </div>
-                        <input type="text" class="form-control" id="email" placeholder="email" v-model="email">
+                        <input type="text" class="form-control" id="email" placeholder="email" v-model="emailLogIn">
                     </div>
 
                     <label class="sr-only" for="password">Password</label>
-                    <input type="text" class="form-control mb-2 mr-sm-2" id="password" placeholder="Password" v-model="password">
+                    <input type="text" class="form-control mb-2 mr-sm-2" id="password" placeholder="Password" v-model="passwordLogIn">
 
                     <button type="login" class="btn btn-primary mb-2" v-on:click="logIn">LogIn</button>
 
                 </form>
 
-                <form class="form-inline">
+                <form onsubmit="return false">
                     <p>You don't have an account? </p>
-                    <button type="signin" class="btn btn-primary mb-2 ml-2">SignIn</button>
+                    <button type="register" class="btn btn-primary mb-2 ml-2" v-on:click="register">Register</button>
+
                 </form>
+                <form>
+                    <div v-show="isRegistered==false">
+
+                        <label class="sr-only" for="name">Name</label>
+                        <input type="text" class="form-control mb-2 mr-sm-2" id="name" placeholder="Name" v-model="nameSignIn">
+                        <label class="sr-only" for="email">email</label>
+                        <div class="input-group mb-2 mr-sm-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">@</div>
+                            </div>
+                            <input type="text" class="form-control" id="email" placeholder="email" v-model="emailSignIn">
+                        </div>
+
+                        <label class="sr-only" for="password">Password</label>
+                        <input type="text" class="form-control mb-2 mr-sm-2" id="password" placeholder="Password" v-model="passwordSignIn">
+                        <button type="signin" class="btn btn-primary mb-2 ml-2" v-on:click="signIn">SignIn</button>
+
+                    </div>
+
+                </form>
+
+
             </div>
             <div v-else>
                 <form class="form-inline" onsubmit="return false">
                     <button type="logout" class="btn btn-primary mb-2" v-on:click="logOut">LogOut</button>
                 </form>
+                <p>Welcome {{playerLoggedIn.name}}</p>
             </div>
             <ol>
                 <div v-for="(game, index) in gameList" :key="index">

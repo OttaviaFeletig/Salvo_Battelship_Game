@@ -1,11 +1,11 @@
 package com.codeoftheweb.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -81,12 +81,12 @@ public class SalvoController {
         return new LinkedHashMap<String, Object>() {{
             put("id", player.getPlayerId());
             put("name", player.getName());
-            put("email", player.getUserName());
+            put("email", player.getEmail());
         }};
     }
 
     private Player getLoggedInPlayer(Authentication authentication){
-        return playerRepository.findByUserName(authentication.getName());
+        return playerRepository.findByEmail(authentication.getName());
     }
 
     private boolean isGuest(Authentication authentication){
@@ -134,6 +134,25 @@ public class SalvoController {
                             put("turnNumber", salvo.getTurnNumber());
                             put("location", salvo.getSalvoLocations());
                         }})).collect(toList());
+    }
+
+    @RequestMapping(path = "/players", method = RequestMethod.POST)
+    public ResponseEntity<HashMap<String, Object>> createPlayer(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("name") String name){
+        if(email.isEmpty()){
+            return new ResponseEntity<>(makeMap("error", "No email given"), HttpStatus.FORBIDDEN);
+        }
+        Player player = playerRepository.findByEmail(email);
+        if(player != null){
+            return new ResponseEntity<>(makeMap("error", "Email already used"), HttpStatus.CONFLICT);
+        }
+        Player newPlayer = playerRepository.save(new Player(email, password, name));
+        return new ResponseEntity<>(makeMap("email", newPlayer.getEmail()), HttpStatus.CREATED);
+    }
+
+    private HashMap<String, Object> makeMap(String key, Object value){
+        HashMap<String, Object> map = new LinkedHashMap<>();
+        map.put(key, value);
+        return map;
     }
 
 }
