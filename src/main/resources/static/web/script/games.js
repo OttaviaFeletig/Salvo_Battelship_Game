@@ -13,7 +13,8 @@ var dataObj = new Vue({
         passwordSignIn: "",
         isLoading: true,
         isRegistered: true,
-        playerLoggedIn: null
+        playerLoggedIn: null,
+        viewingPlayerId: ""
     },
     created() {
         this.loadFetchGame(this.urlArray)
@@ -24,17 +25,20 @@ var dataObj = new Vue({
                     .map(url => fetch(url)
                         .then(response => response.json())))
                 .then(values => {
+                    this.isLoading = false;
                     this.playerLoggedIn = values[0].player
                     console.log(this.playerLoggedIn)
                     this.gameList = values[0].games;
+                    console.log(this.gameList)
                     this.playersList = values[1];
-
                     console.log(this.gameList)
                     console.log(this.playersList)
                     this.convertDate();
                     this.calculateTotalScore();
                     this.calculateResults();
-                    this.isLoading = false;
+                    //                    if(this.playerLoggedIn != null && this.gameList.length > 0){
+                    //                        this.setGameAttribute();
+                    //                    }
                 })
         },
         convertDate() {
@@ -92,7 +96,6 @@ var dataObj = new Vue({
                 })
                 .then(response => {
                     if (response.status == 200) {
-//                        window.location.reload()
                         console.log("logged in!")
 
                     } else {
@@ -107,10 +110,8 @@ var dataObj = new Vue({
                 })
                 .then(response => {
                     if (response.status == 200) {
-
                         window.location.reload()
-                                            this.playerLoggedIn = null
-                        //                    this.isLoggedOut = true;
+                        this.playerLoggedIn = null
                     } else {
                         alert("You didn't logout")
                     }
@@ -128,7 +129,6 @@ var dataObj = new Vue({
                 })
                 .then(response => {
                     if (response.status == 201) {
-                        //                    window.location.reload()
                         console.log("user added")
                         this.emailLogIn = this.emailSignIn
                         this.passwordLogIn = this.passwordSignIn
@@ -141,8 +141,25 @@ var dataObj = new Vue({
 
                 })
         },
-        register(){
-           this.isRegistered = false 
+        register() {
+            this.isRegistered = false
+        },
+        checkPlayer(game) {
+//            console.log(game.gamePlayers.length)
+            for(let i = 0; i < game.gamePlayers.length; i++){
+                
+                if(game.gamePlayers[i] && this.playerLoggedIn){
+                    if(this.playerLoggedIn.id == game.gamePlayers[i].player.id){
+                        console.log("yes")
+                        this.viewingPlayerId = game.gamePlayers[i].id
+//                        console.log(this.viewingPlayerId)
+                        return true
+                    }
+                }else{
+                    return false
+                }
+                
+            }
         }
     }
 

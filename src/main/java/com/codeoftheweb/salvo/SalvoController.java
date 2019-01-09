@@ -25,6 +25,7 @@ public class SalvoController {
         this.gameRepository = gameRepository;
         this.gamePlayerRepository = gamePlayerRepository;
         this.playerRepository = playerRepository;
+
     }
 
     @RequestMapping("/leader_board")
@@ -106,7 +107,7 @@ public class SalvoController {
         }};
     }
 
-    private List<HashMap<String, Object>> getGamePlayers (Game game){
+    private List<Map<String, Object>> getGamePlayers (Game game){
         return game.getGamePlayers()
                 .stream()
                 .map(gamePlayer -> new LinkedHashMap<String, Object>(){{
@@ -115,13 +116,13 @@ public class SalvoController {
                 }}).collect(toList());
     }
 
-    private List<HashMap<String, Object>> getGamePlayerShipType(GamePlayer gamePlayers){
+    private List<Map<String, Object>> getGamePlayerShipType(GamePlayer gamePlayers){
         return gamePlayers.getShipTypes()
                 .stream()
                 .map(ship -> new LinkedHashMap<String, Object>(){{
                     put("type", ship.getShipType());
                     put("location", ship.getShipLocations());
-                }}).collect(Collectors.toList());
+                }}).collect(toList());
     }
 
     private List<HashMap<String, Object>> getGameSalvos(Set<GamePlayer> gamePlayer){

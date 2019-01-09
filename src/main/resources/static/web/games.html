@@ -13,11 +13,11 @@
 <body>
     <div id="games">
 
-        <div v-if="isLoading==true">
-            <p>Loading...</p>
+        <div v-show="isLoading==true">
+            <div class="lds-dual-ring"></div>
         </div>
 
-        <div v-else class="container mt-4">
+        <div v-show="isLoading==false" class="container mt-4">
             <div v-if="playerLoggedIn==null">
                 <form class="form-inline">
                     <label class="sr-only" for="email">email</label>
@@ -71,12 +71,21 @@
             </div>
             <ol>
                 <div v-for="(game, index) in gameList" :key="index">
-                    <li>Game: {{game.id}}</li>
+                   <p>{{index}}</p>
+                    <li>Game: {{game.id}}
+                        
+                             <div v-if="checkPlayer(game)">
+                            <a :href=`http://localhost:8080/web/game.html?gp=${viewingPlayerId}` target="_blank"><button>Go to Game</button></a>
+                        </div>
+                            
+                       
+                    </li>
                     <ul>
                         <li>Creation date: {{game.created}}</li>
                         <li>Finish date: {{game.finished}}</li>
                         <ul v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
                             <li>Player {{gamePlayer.player.id}}: {{gamePlayer.player.name}}</li>
+                           
                         </ul>
                     </ul>
                 </div>
