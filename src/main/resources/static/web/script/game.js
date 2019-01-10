@@ -20,17 +20,26 @@ var dataObject = new Vue({
 //        isLoggedOut: true
     },
     created() {
+        
         this.createGridCellsLocation();
         this.changeDinamicallyUrl();
         this.loadFetchGameView(this.urlGameView + this.gamePlayerId)
+        
     },
     methods: {
         loadFetchGameView(url) {
+            console.log(url)
             fetch(url, {
                     method: 'GET'
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(response => {
+                if(response.status == 200){
+                    return response.json()
+                }else{
+                    alert("You are not authorized, I will not let you cheat!")
+                }
+            }
+            ).then(data => {
                     this.isLoading = false;
                     this.data = data;
                     this.ships = data.ships;

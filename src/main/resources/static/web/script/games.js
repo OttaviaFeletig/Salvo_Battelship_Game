@@ -145,20 +145,14 @@ var dataObj = new Vue({
             this.isRegistered = false
         },
         checkPlayer(game) {
-//            console.log(game.gamePlayers.length)
             for(let i = 0; i < game.gamePlayers.length; i++){
-                
                 if(game.gamePlayers[i] && this.playerLoggedIn){
                     if(this.playerLoggedIn.id == game.gamePlayers[i].player.id){
-                        console.log("yes")
-                        this.viewingPlayerId = game.gamePlayers[i].id
-//                        console.log(this.viewingPlayerId)
-                        return true
+                        return i
                     }
                 }else{
-                    return false
-                }
-                
+                    return null
+                }  
             }
         }
     }

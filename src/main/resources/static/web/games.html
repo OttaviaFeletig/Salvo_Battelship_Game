@@ -71,21 +71,24 @@
             </div>
             <ol>
                 <div v-for="(game, index) in gameList" :key="index">
-                   <p>{{index}}</p>
+
                     <li>Game: {{game.id}}
-                        
-                             <div v-if="checkPlayer(game)">
-                            <a :href=`http://localhost:8080/web/game.html?gp=${viewingPlayerId}` target="_blank"><button>Go to Game</button></a>
+
+                        <div v-if="checkPlayer(game)===0">
+                            <a :href=`game.html?gp=${game.gamePlayers[0].id}` target="_blank"><button>Go to Game</button></a>
                         </div>
-                            
-                       
+
+                        <div v-if="checkPlayer(game)===1">
+                            <a :href=`game.html?gp=${game.gamePlayers[1].id}` target="_blank"><button>Go to Game</button></a>
+                        </div>
+
                     </li>
                     <ul>
                         <li>Creation date: {{game.created}}</li>
                         <li>Finish date: {{game.finished}}</li>
                         <ul v-for="(gamePlayer, index) in game.gamePlayers" :key="index">
                             <li>Player {{gamePlayer.player.id}}: {{gamePlayer.player.name}}</li>
-                           
+
                         </ul>
                     </ul>
                 </div>

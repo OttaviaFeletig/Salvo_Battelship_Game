@@ -95,16 +95,33 @@ public class SalvoController {
     }
 
     @RequestMapping("/game_view/{gamePlayerId}")
-    private HashMap<String, Object> getOneGame(@PathVariable Long gamePlayerId){
+    private Object gameView(@PathVariable Long gamePlayerId, Authentication authentication){
         GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        if(getLoggedInGamePlayer(authentication, gamePlayer)){
+            return getOneGame(gamePlayer);
+        }else{
+            return unauthorizedGameView();
+        }
+    }
 
-        return new LinkedHashMap<String, Object>(){{
-            put("id", gamePlayer.getGame().getGameId());
-            put("created", gamePlayer.getGame().getDate());
-            put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
-            put("ships", getGamePlayerShipType(gamePlayer));
-            put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
-        }};
+    private boolean getLoggedInGamePlayer(Authentication authentication, GamePlayer gamePlayer){
+        if(authentication.getName() == gamePlayer.getPlayer().getEmail()){
+            return true;
+        }
+        return false;
+    }
+    private Map<String, Object> getOneGame(GamePlayer gamePlayer){
+            return new LinkedHashMap<String, Object>(){{
+                put("id", gamePlayer.getGame().getGameId());
+                put("created", gamePlayer.getGame().getDate());
+                put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
+                put("ships", getGamePlayerShipType(gamePlayer));
+                put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
+            }};
+    }
+
+    private ResponseEntity<String> unauthorizedGameView(){
+        return new ResponseEntity<>("You are not authorized", HttpStatus.UNAUTHORIZED);
     }
 
     private List<Map<String, Object>> getGamePlayers (Game game){
