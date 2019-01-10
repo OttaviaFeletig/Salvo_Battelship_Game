@@ -1,3 +1,4 @@
+
 package com.codeoftheweb.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,25 @@ public class SalvoController {
                             .stream()
                             .map(score -> score.getScore()).collect(toList()));
                 }}).collect(toList());
+    }
+
+    @RequestMapping(path = "/games", method = RequestMethod.POST)
+    public ResponseEntity<String> createNewGame(Authentication authentication){
+        if(authentication.getName().isEmpty()){
+            return new ResponseEntity<>("error", HttpStatus.UNAUTHORIZED);
+        }
+        Date newDate = new Date();
+        Game newGame = new Game(newDate);
+        Player player = playerRepository.findByEmail(authentication.getName());
+        GamePlayer newGamePlayer = new GamePlayer(newDate);
+        gamePlayerRepository.save(newGamePlayer);
+        player.addGamePlayer(newGamePlayer);
+        newGame.addGamePlayer(newGamePlayer);
+
+        playerRepository.save(player);
+        gameRepository.save(newGame);
+
+        return new ResponseEntity<>("Game created", HttpStatus.CREATED);
     }
 
     @RequestMapping("/games")
@@ -111,13 +131,13 @@ public class SalvoController {
         return false;
     }
     private Map<String, Object> getOneGame(GamePlayer gamePlayer){
-            return new LinkedHashMap<String, Object>(){{
-                put("id", gamePlayer.getGame().getGameId());
-                put("created", gamePlayer.getGame().getDate());
-                put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
-                put("ships", getGamePlayerShipType(gamePlayer));
-                put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
-            }};
+        return new LinkedHashMap<String, Object>(){{
+            put("id", gamePlayer.getGame().getGameId());
+            put("created", gamePlayer.getGame().getDate());
+            put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
+            put("ships", getGamePlayerShipType(gamePlayer));
+            put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
+        }};
     }
 
     private ResponseEntity<String> unauthorizedGameView(){

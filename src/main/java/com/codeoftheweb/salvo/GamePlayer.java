@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.Authentication;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -30,10 +31,10 @@ public class GamePlayer {
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
     private Set<Salvo> salvos = new HashSet<>();
 
-
-    public GamePlayer() { }
+    public GamePlayer(){}
     public GamePlayer(Date date){
         this.date = date;
+
     }
 
     public long getGamePlayerId() {

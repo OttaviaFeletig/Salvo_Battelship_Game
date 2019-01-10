@@ -36,9 +36,6 @@ var dataObj = new Vue({
                     this.convertDate();
                     this.calculateTotalScore();
                     this.calculateResults();
-                    //                    if(this.playerLoggedIn != null && this.gameList.length > 0){
-                    //                        this.setGameAttribute();
-                    //                    }
                 })
         },
         convertDate() {
@@ -154,6 +151,26 @@ var dataObj = new Vue({
                     return null
                 }  
             }
+        },
+        createNewGame(){
+            fetch("/api/games", {
+                    method: 'POST',
+                    credentials: "include",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                })
+                .then(response => {
+                    if (response.status == 201) {
+                        console.log(response)
+                        window.location.reload()
+                        console.log(this.gameList)
+                       
+                    }else {
+                        alert("error")
+                    }
+                })
         }
     }
 

@@ -68,6 +68,7 @@
                     <button type="logout" class="btn btn-primary mb-2" v-on:click="logOut">LogOut</button>
                 </form>
                 <p>Welcome {{playerLoggedIn.name}}</p>
+                <button v-on:click="createNewGame">Create New Game</button>
             </div>
             <ol>
                 <div v-for="(game, index) in gameList" :key="index">
