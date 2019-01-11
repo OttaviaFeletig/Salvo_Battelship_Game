@@ -42,9 +42,9 @@ public class SalvoController {
     }
 
     @RequestMapping(path = "/games", method = RequestMethod.POST)
-    public ResponseEntity<String> createNewGame(Authentication authentication){
+    public ResponseEntity<Map<String, Object>> createNewGame(Authentication authentication){
         if(authentication.getName().isEmpty()){
-            return new ResponseEntity<>("error", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(makeMapForNewGame("error", "You are not logged in"), HttpStatus.UNAUTHORIZED);
         }
         Date newDate = new Date();
         Game newGame = new Game(newDate);
@@ -54,14 +54,20 @@ public class SalvoController {
         gamePlayerRepository.save(newGamePlayer);
         playerRepository.save(player);
         gameRepository.save(newGame);
-        
+
         player.addGamePlayer(newGamePlayer);
         newGame.addGamePlayer(newGamePlayer);
 
         playerRepository.save(player);
         gameRepository.save(newGame);
 
-        return new ResponseEntity<>("Game created", HttpStatus.CREATED);
+        return new ResponseEntity<>(makeMapForNewGame("gamePlayerId", newGamePlayer.getGamePlayerId()), HttpStatus.CREATED);
+    }
+
+    private Map<String, Object> makeMapForNewGame(String key, Object value){
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put(key, value);
+        return map;
     }
 
     @RequestMapping("/games")

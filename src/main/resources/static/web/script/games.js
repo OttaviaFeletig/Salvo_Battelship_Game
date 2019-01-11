@@ -142,17 +142,17 @@ var dataObj = new Vue({
             this.isRegistered = false
         },
         checkPlayer(game) {
-            for(let i = 0; i < game.gamePlayers.length; i++){
-                if(game.gamePlayers[i] && this.playerLoggedIn){
-                    if(this.playerLoggedIn.id == game.gamePlayers[i].player.id){
+            for (let i = 0; i < game.gamePlayers.length; i++) {
+                if (game.gamePlayers[i] && this.playerLoggedIn) {
+                    if (this.playerLoggedIn.id == game.gamePlayers[i].player.id) {
                         return i
                     }
-                }else{
+                } else {
                     return null
-                }  
+                }
             }
         },
-        createNewGame(){
+        createNewGame() {
             fetch("/api/games", {
                     method: 'POST',
                     credentials: "include",
@@ -161,15 +161,17 @@ var dataObj = new Vue({
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                 })
-                .then(response => {
-                    if (response.status == 201) {
-                        console.log(response)
+                .then(response => response.json())
+                .then(data => {
+                    if (data != undefined) {
+                        console.log(data.gamePlayerId)
+//                        window.location.href = `game.html?gp=${data.gamePlayerId}`
                         window.location.reload()
-                        console.log(this.gameList)
-                       
-                    }else {
+                        window.open(`game.html?gp=${data.gamePlayerId}`)
+                    } else {
                         alert("error")
                     }
+
                 })
         }
     }
