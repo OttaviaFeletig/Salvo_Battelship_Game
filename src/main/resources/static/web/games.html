@@ -78,9 +78,11 @@
                         <div v-if="checkPlayer(game)===0">
                             <a :href=`game.html?gp=${game.gamePlayers[0].id}` target="_blank"><button>Go to Game</button></a>
                         </div>
-
                         <div v-if="checkPlayer(game)===1">
                             <a :href=`game.html?gp=${game.gamePlayers[1].id}` target="_blank"><button>Go to Game</button></a>
+                        </div>
+                        <div v-if="playerLoggedIn!=null&&checkGamePlayer(game)">
+                            <button v-on:click="joinGame(game)">Join Game</button>
                         </div>
 
                     </li>

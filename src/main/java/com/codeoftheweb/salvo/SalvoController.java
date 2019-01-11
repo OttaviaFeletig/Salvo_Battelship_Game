@@ -73,6 +73,7 @@ public class SalvoController {
     @RequestMapping(path = "/games/{gameId}/players", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameId, Authentication authentication){
         Game currentGame = gameRepository.findByGameId(gameId);
+        Player player = playerRepository.findByEmail(authentication.getName());
         if(authentication.getName().isEmpty()){
             return new ResponseEntity<>(makeMapForResponseEntity("error", "You are not logged in"), HttpStatus.UNAUTHORIZED);
         }
@@ -82,9 +83,12 @@ public class SalvoController {
         if(currentGame.getGamePlayers().size() > 1){
             return new ResponseEntity<>(makeMapForResponseEntity("error", "This game is full"), HttpStatus.FORBIDDEN);
         }
+        if(currentGame.getPlayers().contains(player)){
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "You are already in this game"), HttpStatus.CONFLICT);
+        }
+        System.out.println(currentGame.getPlayers().contains(authentication.getName()));
         Date newDate = new Date();
         GamePlayer newGamePlayer = new GamePlayer(newDate);
-        Player player = playerRepository.findByEmail(authentication.getName());
 
         gamePlayerRepository.save(newGamePlayer);
         playerRepository.save(player);

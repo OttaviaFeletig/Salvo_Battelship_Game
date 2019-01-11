@@ -14,7 +14,7 @@ var dataObj = new Vue({
         isLoading: true,
         isRegistered: true,
         playerLoggedIn: null,
-        viewingPlayerId: ""
+        viewingPlayerId: "",
     },
     created() {
         this.loadFetchGame(this.urlArray)
@@ -161,19 +161,56 @@ var dataObj = new Vue({
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data != undefined) {
-                        console.log(data.gamePlayerId)
-//                        window.location.href = `game.html?gp=${data.gamePlayerId}`
-                        window.location.reload()
-                        window.open(`game.html?gp=${data.gamePlayerId}`)
-                    } else {
+                .then(response => {
+                    if (response.status == 401) {
                         alert("error")
                     }
+                    return response.json()
+                })
+                .then(data => {
+                    console.log(data.gamePlayerId)
+                    window.location.reload()
+                    window.open(`game.html?gp=${data.gamePlayerId}`)
+                })
+        },
+        checkGamePlayer(game) {
+            console.log(game)
+            if (game.gamePlayers.length > 1) {
+                return false
+            }
+            if (game.gamePlayers[0].player.id == this.playerLoggedIn.id) {
+                return false
+            }
+            return true
+        },
+        joinGame(game) {
+            fetch("/api/games/" + game.id + "/players", {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                })
+                .then(response => {
+                    console.log(response)
+                    if (response.status == 403) {
+                        alert("The game is full")
+                    }
+                    if (response.status == 401) {
+                        alert("You are not logged in")
+                    }
+                    if (response.status == 409) {
+                        alert("You are already in this game")
+                    }
+                    return response.json()
 
                 })
-        }
+                .then(data => {
+                    window.location.reload()
+                    window.open(`game.html?gp=${data.gamePlayerId}`)
+                })
+        },
     }
 
 
