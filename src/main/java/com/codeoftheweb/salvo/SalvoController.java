@@ -48,9 +48,13 @@ public class SalvoController {
         }
         Date newDate = new Date();
         Game newGame = new Game(newDate);
-        Player player = playerRepository.findByEmail(authentication.getName());
         GamePlayer newGamePlayer = new GamePlayer(newDate);
+        Player player = playerRepository.findByEmail(authentication.getName());
+
         gamePlayerRepository.save(newGamePlayer);
+        playerRepository.save(player);
+        gameRepository.save(newGame);
+        
         player.addGamePlayer(newGamePlayer);
         newGame.addGamePlayer(newGamePlayer);
 
