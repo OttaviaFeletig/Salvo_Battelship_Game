@@ -17,14 +17,25 @@ var dataObject = new Vue({
         gridLetters: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         cellsLocation: [],
         isLoading: true,
-//        isLoggedOut: true
+        //        isLoggedOut: true
+        testShipType: "test",
+        testShipLocations: ["A1", "A2"],
+        testShipList: [{
+                "shipType": "destroyer",
+                "shipLocations": ["A1", "B1", "C1"]
+            },
+            {
+                "shipType": "patrol boat",
+                "shipLocations": ["H5", "H6"]
+            }
+]
     },
     created() {
-        
+
         this.createGridCellsLocation();
         this.changeDinamicallyUrl();
         this.loadFetchGameView(this.urlGameView + this.gamePlayerId)
-        
+
     },
     methods: {
         loadFetchGameView(url) {
@@ -33,13 +44,12 @@ var dataObject = new Vue({
                     method: 'GET'
                 })
                 .then(response => {
-                if(response.status == 200){
-                    return response.json()
-                }else{
-                    alert("You are not authorized, I will not let you cheat!")
-                }
-            }
-            ).then(data => {
+                    if (response.status == 200) {
+                        return response.json()
+                    } else {
+                        alert("You are not authorized, I will not let you cheat!")
+                    }
+                }).then(data => {
                     this.isLoading = false;
                     this.data = data;
                     this.ships = data.ships;
@@ -94,7 +104,7 @@ var dataObject = new Vue({
                     console.log(salvos[i])
                     salvos[i].location.forEach(location => {
                         document.querySelector(`#g2${location}`).innerHTML = `<div class='salvo'>${salvos[i].turnNumber}</div>`;
-//                        document.querySelector(`#g2${location}`).innerHTML = salvos[i].turnNumber;
+                        //                        document.querySelector(`#g2${location}`).innerHTML = salvos[i].turnNumber;
                     })
                 }
             }
@@ -104,30 +114,43 @@ var dataObject = new Vue({
                 if (salvos[i].gamePlayerId != this.gamePlayerId) {
                     salvos[i].location.forEach(location => {
                         this.shipLocations.forEach(shipLoc => {
-                            if(location == shipLoc){
+                            if (location == shipLoc) {
                                 document.querySelector(`#g1${shipLoc}`).innerHTML = `<div class='hit'>${salvos[i].turnNumber}</div>`;
-                            }else{
-                               if(!document.querySelector(`#g1${location}`).childNodes[0]){
-                                   document.querySelector(`#g1${location}`).innerHTML = `<div class='salvo'>${salvos[i].turnNumber}</div>`;
-                               }
+                            } else {
+                                if (!document.querySelector(`#g1${location}`).childNodes[0]) {
+                                    document.querySelector(`#g1${location}`).innerHTML = `<div class='salvo'>${salvos[i].turnNumber}</div>`;
+                                }
                             }
                         })
                     })
                 }
             }
         },
-        logOut(){
+        logOut() {
             fetch("/api/logout", {
-                method: 'POST'
-            })
-            .then(response => {
-                if(response.status == 200){
-                    window.location.reload()
-//                    this.isLoggedOut = true;
-                }else{
-                    alert("You didn't logout")
-                }
-            })
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.status == 200) {
+                        window.location.reload()
+                        //                    this.isLoggedOut = true;
+                    } else {
+                        alert("You didn't logout")
+                    }
+                })
+        },
+        sendShips() {
+            fetch("/api/games/players/" + this.gamePlayerId + "/ships", {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: JSON.stringify(this.testShipList)
+                })
+                .then(response => console.log(response))
+//                .then(data => console.log(data))
         }
     }
 

@@ -20,13 +20,14 @@ public class SalvoController {
     private GameRepository gameRepository;
     private GamePlayerRepository gamePlayerRepository;
     private PlayerRepository playerRepository;
+    private ShipRepository shipRepository;
 
     @Autowired
-    public SalvoController(GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, PlayerRepository playerRepository) {
+    public SalvoController(GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, PlayerRepository playerRepository, ShipRepository shipRepository) {
         this.gameRepository = gameRepository;
         this.gamePlayerRepository = gamePlayerRepository;
         this.playerRepository = playerRepository;
-
+        this.shipRepository = shipRepository;
     }
 
     @RequestMapping("/leader_board")
@@ -64,12 +65,6 @@ public class SalvoController {
         return new ResponseEntity<>(makeMapForResponseEntity("gamePlayerId", newGamePlayer.getGamePlayerId()), HttpStatus.CREATED);
     }
 
-//    private Map<String, Object> makeMapForNewGame(String key, Object value){
-//        Map<String, Object> map = new LinkedHashMap<>();
-//        map.put(key, value);
-//        return map;
-//    }
-
     @RequestMapping(path = "/games/{gameId}/players", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameId, Authentication authentication){
         Game currentGame = gameRepository.findByGameId(gameId);
@@ -101,11 +96,41 @@ public class SalvoController {
         return new ResponseEntity<>(makeMapForResponseEntity("gamePlayerId", newGamePlayer.getGamePlayerId()), HttpStatus.CREATED);
     }
 
-//    private Map<String, Object> makeMapForJoinGame(String key, Object value){
-//        Map<String, Object> map = new LinkedHashMap<>();
-//        map.put(key, value);
-//        return map;
-//    }
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<List<Ship>> getShipLocation(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody List<Ship> shipList){
+        GamePlayer currentGamePlayer = gamePlayerRepository.findByGamePlayerId(gamePlayerId);
+//        Game currentGame = currentGamePlayer.getGame();
+        Integer currentGameShips = currentGamePlayer.getShipTypes().size();
+        if(authentication.getName().isEmpty()){
+            return new ResponseEntity<>(makeListForShipResponseEntity(null), HttpStatus.UNAUTHORIZED);
+        }
+        if(currentGamePlayer == null){
+            return new ResponseEntity<>(makeListForShipResponseEntity(null), HttpStatus.UNAUTHORIZED);
+        }
+        if(!getLoggedInGamePlayer(authentication, currentGamePlayer)){
+            return new ResponseEntity<>(makeListForShipResponseEntity(null), HttpStatus.UNAUTHORIZED);
+        }
+        if(currentGameShips > 0){
+            return new ResponseEntity<>(makeListForShipResponseEntity(null), HttpStatus.FORBIDDEN);
+        }
+        shipList.stream().forEach(ship -> {
+            String newShipType = new String(ship.getShipType());
+            List<String> newShipLocations = new ArrayList<>(ship.getShipLocations());
+            Ship newShip = new Ship(newShipType, newShipLocations);
+            shipRepository.save(newShip);
+            gamePlayerRepository.save(currentGamePlayer);
+            currentGamePlayer.addShipTypes(newShip);
+            gamePlayerRepository.save(currentGamePlayer);
+        });
+
+        return new ResponseEntity<>(shipList, HttpStatus.CREATED);
+    }
+
+    private List<Ship> makeListForShipResponseEntity(Ship ship){
+        List<Ship> listOfShips = new ArrayList<>();
+        listOfShips.add(ship);
+        return listOfShips;
+    }
 
     @RequestMapping("/games")
     public HashMap<String, Object> getGames(Authentication authentication){

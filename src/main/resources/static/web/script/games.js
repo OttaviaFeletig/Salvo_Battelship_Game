@@ -135,7 +135,6 @@ var dataObj = new Vue({
                     } else {
                         alert("Field missing")
                     }
-
                 })
         },
         register() {
