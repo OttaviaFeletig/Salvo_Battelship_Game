@@ -97,33 +97,34 @@ public class SalvoController {
     }
 
     @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
-    public ResponseEntity<List<Ship>> getShipLocation(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody List<Ship> shipList){
+    public ResponseEntity<Map<String, Object>> getShipLocation(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody List<Ship> shipList){
         GamePlayer currentGamePlayer = gamePlayerRepository.findByGamePlayerId(gamePlayerId);
 //        Game currentGame = currentGamePlayer.getGame();
         Integer currentGameShips = currentGamePlayer.getShipTypes().size();
         if(authentication.getName().isEmpty()){
-            return new ResponseEntity<>(makeListForShipResponseEntity(null), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "The player is not logged in"), HttpStatus.UNAUTHORIZED);
         }
         if(currentGamePlayer == null){
-            return new ResponseEntity<>(makeListForShipResponseEntity(null), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "There is not current game player"), HttpStatus.UNAUTHORIZED);
         }
         if(!getLoggedInGamePlayer(authentication, currentGamePlayer)){
-            return new ResponseEntity<>(makeListForShipResponseEntity(null), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "The current game player is not the logged in player"), HttpStatus.UNAUTHORIZED);
         }
         if(currentGameShips > 0){
-            return new ResponseEntity<>(makeListForShipResponseEntity(null), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "The ships have already been added"), HttpStatus.FORBIDDEN);
         }
-        shipList.stream().forEach(ship -> {
-            String newShipType = new String(ship.getShipType());
-            List<String> newShipLocations = new ArrayList<>(ship.getShipLocations());
-            Ship newShip = new Ship(newShipType, newShipLocations);
-            shipRepository.save(newShip);
-            gamePlayerRepository.save(currentGamePlayer);
-            currentGamePlayer.addShipTypes(newShip);
-            gamePlayerRepository.save(currentGamePlayer);
+        shipList.forEach(ship -> {
+
+//            String newShipType = new String(ship.getShipType());
+//            List<String> newShipLocations = new ArrayList<>(ship.getShipLocations());
+//            Ship newShip = new Ship(newShipType, newShipLocations);
+//            gamePlayerRepository.save(currentGamePlayer);
+            shipRepository.save(ship);
+            currentGamePlayer.addShipTypes(ship);
+//            gamePlayerRepository.save(currentGamePlayer);
         });
 
-        return new ResponseEntity<>(shipList, HttpStatus.CREATED);
+        return new ResponseEntity<>(makeMapForResponseEntity("success", "The ships have been added successfully"), HttpStatus.CREATED);
     }
 
     private List<Ship> makeListForShipResponseEntity(Ship ship){

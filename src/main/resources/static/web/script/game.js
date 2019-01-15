@@ -17,9 +17,6 @@ var dataObject = new Vue({
         gridLetters: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         cellsLocation: [],
         isLoading: true,
-        //        isLoggedOut: true
-        testShipType: "test",
-        testShipLocations: ["A1", "A2"],
         testShipList: [{
                 "shipType": "destroyer",
                 "shipLocations": ["A1", "B1", "C1"]
@@ -28,7 +25,12 @@ var dataObject = new Vue({
                 "shipType": "patrol boat",
                 "shipLocations": ["H5", "H6"]
             }
-]
+        ],
+        aircraftOptions: false,
+        battleshipOptions: false,
+        submarineOptions: false,
+        destroyerOptions: false,
+        patrolBoatOptions: false
     },
     created() {
 
@@ -145,13 +147,34 @@ var dataObject = new Vue({
                     credentials: 'include',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(this.testShipList)
                 })
-                .then(response => console.log(response))
-//                .then(data => console.log(data))
-        }
+                .then(response => {
+                    console.log(response)
+                return response.json()
+                })
+            .then(data => {
+                console.log(data)
+                window.location.reload()
+            })
+        },
+        showAircraftOptions(){
+            this.aircraftOptions = true;
+        },
+        showBattleshipOptions(){
+            this.battleshipOptions = true;
+        },
+        showSubmarineOptions(){
+            this.submarineOptions = true;
+        },
+        showDestroyerOptions(){
+            this.destroyerOptions = true;
+        },
+        showPatrolBoatOptions(){
+            this.patrolBoatOptions = true;
+        },
     }
 
 

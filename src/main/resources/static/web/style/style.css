@@ -39,3 +39,27 @@
         transform: rotate(360deg);
     }
 }
+.aircraft {
+    width: 200px;
+    height: 40px;
+}
+
+.battleship {
+    height: 40px;
+    width: 160px;
+}
+
+.submarine {
+    height: 40px;
+    width: 120px;
+}
+
+.destroyer {
+    height: 40px;
+    width: 120px;
+}
+
+.patrolboat {
+    height: 40px;
+    width: 80px;
+}

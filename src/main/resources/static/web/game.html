@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Ship Locations!</title>
-    
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
     <link rel="stylesheet" href="style/style.css">
@@ -19,20 +19,20 @@
         </div>
 
         <div v-show="isLoading==false" class="container mt-4">
-           <form class="form-inline" onsubmit="return false">
-                    <button type="logout" class="btn btn-primary mb-2" v-on:click="logOut">LogOut</button>
-                </form>
+            <form class="form-inline" onsubmit="return false">
+                <button type="logout" class="btn btn-primary mb-2" v-on:click="logOut">LogOut</button>
+            </form>
             <div class="row">
                 <p>GAME {{data.id}}, {{data.created}}</p>
             </div>
             <div class="row">
                 <p>{{principalGamePlayer}} vs {{opponentGamePlayer}}</p>
             </div>
-            
-            <button v-on:click="sendShips">Done</button>
-            
+
+
+
             <div class="row">
-               <div class="col">
+                <div class="col">
                     <table class="table-bordered">
                         <thead>
                             <tr>
@@ -82,7 +82,81 @@
                         </tbody>
                     </table>
                 </div>
-            </div>    
+            </div>
+            <div class="row mt-4">
+                <div v-on:click="showAircraftOptions" class="ship aircraft"></div>
+                <p>Aircraft Carrier</p>
+            </div>
+            <div v-show="aircraftOptions==true">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="aircraftHorizontal" value="aircraftHorizontal">
+                    <label class="form-check-label" for="aircraftHorizontal">Horizontal</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="aircraftVertical" value="aircraftVertical">
+                    <label class="form-check-label" for="aircraftVertical">Vertical</label>
+                </div>
+            </div>
+
+
+
+            <div class="row mt-4">
+                <div v-on:click="showBattleshipOptions" class="ship battleship"></div>
+                <p>Battleship</p>
+            </div>
+            <div v-show="battleshipOptions==true">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="battleshipHorizontal" value="battleshipHorizontal">
+                    <label class="form-check-label" for="battleshipHorizontal">Horizontal</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="battleshipVertical" value="battleshipVertical">
+                    <label class="form-check-label" for="battleshipVertical">Vertical</label>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div v-on:click="showSubmarineOptions" class="ship submarine"></div>
+                <p>Submarine</p>
+            </div>
+            <div v-show="submarineOptions==true">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="submarineHorizontal" value="submarineHorizontal">
+                    <label class="form-check-label" for="submarineHorizontal">Horizontal</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="submarineVertical" value="submarineVertical">
+                    <label class="form-check-label" for="submarineVertical">Vertical</label>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div v-on:click="showDestroyerOptions" class="ship destroyer"></div>
+                <p>Destroyer</p>
+            </div>
+            <div v-show="destroyerOptions==true">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="destroyerHorizontal" value="destroyerHorizontal">
+                    <label class="form-check-label" for="destroyerHorizontal">Horizontal</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="destroyerVertical" value="destroyerVertical">
+                    <label class="form-check-label" for="destroyerVertical">Vertical</label>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div v-on:click="showPatrolBoatOptions" class="ship patrolboat"></div>
+                <p>Patrol Boat</p>
+            </div>
+            <div v-show="patrolBoatOptions==true">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="patrolBoatHorizontal" value="patrolBoatHorizontal">
+                    <label class="form-check-label" for="patrolBoatHorizontal">Horizontal</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="patrolBoatVertical" value="patrolBoatVertical">
+                    <label class="form-check-label" for="patrolBoatVertical">Vertical</label>
+                </div>
+            </div>
+            <button class="btn btn-primary mt-4" v-on:click="sendShips">Done</button>
         </div>
 
 
@@ -90,14 +164,14 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    
-    <script src="script/game.js"></script>
-    
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="script/game.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
 </body>
 
 </html>
