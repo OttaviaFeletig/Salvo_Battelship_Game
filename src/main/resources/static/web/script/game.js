@@ -26,11 +26,20 @@ var dataObject = new Vue({
                 "shipLocations": ["H5", "H6"]
             }
         ],
-        aircraftOptions: false,
-        battleshipOptions: false,
-        submarineOptions: false,
-        destroyerOptions: false,
-        patrolBoatOptions: false
+        orientationOption: false,
+        selectedShip: null,
+        selectedOrientation: null,
+        placingShipLocation: [],
+        shipLength: null,
+        errorLocation: [],
+
+
+
+        aircraftCarrier: {
+            "type": "",
+            "location": []
+        },
+        shipList: []
     },
     created() {
 
@@ -55,6 +64,7 @@ var dataObject = new Vue({
                     this.isLoading = false;
                     this.data = data;
                     this.ships = data.ships;
+                    console.log(this.ships)
                     this.gamePlayers = data.gamePlayers;
                     this.salvos = data.salvos;
                     console.log(this.data);
@@ -153,28 +163,81 @@ var dataObject = new Vue({
                 })
                 .then(response => {
                     console.log(response)
-                return response.json()
+                    return response.json()
                 })
-            .then(data => {
-                console.log(data)
-                window.location.reload()
-            })
+                .then(data => {
+                    console.log(data)
+                    window.location.reload()
+                })
         },
-        showAircraftOptions(){
-            this.aircraftOptions = true;
+        handler(event) {
+            this.getShipValue(event)
+            this.showOrientation()
         },
-        showBattleshipOptions(){
-            this.battleshipOptions = true;
+        getShipValue(event) {
+            console.log(event.toElement.value)
+            this.selectedShip = event.toElement.value
+            this.selectedOrientation = null
         },
-        showSubmarineOptions(){
-            this.submarineOptions = true;
+        showOrientation() {
+            this.orientationOption = true;
         },
-        showDestroyerOptions(){
-            this.destroyerOptions = true;
+        recognizeShip(location) {
+            if (this.selectedShip == "aircraft_carrier") {
+                this.shipLength = 5;
+            }
+            if (this.selectedShip == "battleship") {
+                this.shipLength = 4
+            }
+            if (this.selectedShip == "submarine" || this.selectedShip == "destroyer") {
+                this.shipLength = 3
+            }
+            if (this.selectedShip == "p_boat") {
+                this.shipLength = 2
+            }
+            this.hoverShipOnGridHorizontal(location, this.shipLength)
         },
-        showPatrolBoatOptions(){
-            this.patrolBoatOptions = true;
+        hoverShipOnGridHorizontal(location, shipLength) {
+            if (this.selectedShip != null && this.selectedOrientation == "horizontal") {
+                var locationNumber = [];
+                for (var i = 0; i < shipLength; i++) {
+                    locationNumber.push(parseInt(location.substr(1, 2)) + i)
+                }
+                if (locationNumber[locationNumber.length - 1] < 11) {
+                    locationNumber
+                        .forEach(oneNumber => this.placingShipLocation.push(location.split("")[0] + oneNumber))
+                    this.placingShipLocation
+                        .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("ship_hover"))
+                } else {
+                    var numberOutGrid = locationNumber.filter(oneLocation => oneLocation < 11)
+                    numberOutGrid.forEach(oneNumber => this.errorLocation.push(location.split("")[0] + oneNumber))
+                    this.errorLocation
+                        .map(oneCell => {
+                            document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
+                        })
+                }
+            }
         },
+        removeHover(location) {
+            if (this.selectedShip != null && this.selectedOrientation != null) {
+                this.placingShipLocation
+                    .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.remove("ship_hover"))
+                this.placingShipLocation = []
+                this.errorLocation
+                    .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.remove("error_hover"))
+                this.errorLocation = []
+            }
+        },
+        placeShipOnGrid(location) {
+            if (this.selectedShip != null && this.selectedOrientation != null) {
+                this.aircraftCarrier.type = this.selectedShip
+                this.aircraftCarrier.location = this.placingShipLocation
+                console.log(this.aircraftCarrier)
+                this.ships.push(this.aircraftCarrier)
+                console.log(this.ships)
+                this.renderShips(this.ships);
+            }
+        }
     }
 
 

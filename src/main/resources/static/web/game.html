@@ -33,7 +33,7 @@
 
             <div class="row">
                 <div class="col">
-                    <table class="table-bordered">
+                    <table id="g1" class="table-bordered">
                         <thead>
                             <tr>
                                 <th v-for="(number, index) in gridNumbers" :key="index" class="p-3">{{number}}
@@ -43,16 +43,16 @@
                         <tbody>
                             <tr v-for="(location, index) in cellsLocation" :key="index">
                                 <td :id=`g1${location[0]}` class=" bold_grid p-2">{{location[0]}}</td>
-                                <td :id=`g1${location[1]}`></td>
-                                <td :id=`g1${location[2]}`></td>
-                                <td :id=`g1${location[3]}`></td>
-                                <td :id=`g1${location[4]}`></td>
-                                <td :id=`g1${location[5]}`></td>
-                                <td :id=`g1${location[6]}`></td>
-                                <td :id=`g1${location[7]}`></td>
-                                <td :id=`g1${location[8]}`></td>
-                                <td :id=`g1${location[9]}`></td>
-                                <td :id=`g1${location[10]}`></td>
+                                <td :id=`g1${location[1]}` @mouseover="recognizeShip(location[1])" @mouseleave="removeHover" @click="placeShipOnGrid(location[1])"></td>
+                                <td :id=`g1${location[2]}` @mouseover="recognizeShip(location[2])" @mouseleave="removeHover" @click="placeShipOnGrid(location[2])"></td>
+                                <td :id=`g1${location[3]}` @mouseover="recognizeShip(location[3])" @mouseleave="removeHover" @click="placeShipOnGrid(location[3])"></td>
+                                <td :id=`g1${location[4]}` @mouseover="recognizeShip(location[4])" @mouseleave="removeHover" @click="placeShipOnGrid(location[4])"></td>
+                                <td :id=`g1${location[5]}` @mouseover="recognizeShip(location[5])" @mouseleave="removeHover" @click="placeShipOnGrid(location[5])"></td>
+                                <td :id=`g1${location[6]}` @mouseover="recognizeShip(location[6])" @mouseleave="removeHover" @click="placeShipOnGrid(location[6])"></td>
+                                <td :id=`g1${location[7]}` @mouseover="recognizeShip(location[7])" @mouseleave="removeHover" @click="placeShipOnGrid(location[7])"></td>
+                                <td :id=`g1${location[8]}` @mouseover="recognizeShip(location[8])" @mouseleave="removeHover" @click="placeShipOnGrid(location[8])"></td>
+                                <td :id=`g1${location[9]}` @mouseover="recognizeShip(location[9])" @mouseleave="removeHover" @click="placeShipOnGrid(location[9])"></td>
+                                <td :id=`g1${location[10]}` @mouseover="recognizeShip(location[10])" @mouseleave="removeHover" @click="placeShipOnGrid(location[10])"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -83,79 +83,41 @@
                     </table>
                 </div>
             </div>
-            <div class="row mt-4">
-                <div v-on:click="showAircraftOptions" class="ship aircraft"></div>
-                <p>Aircraft Carrier</p>
+            <div class="row">
+                <p>You selected: {{selectedShip}}</p>
+                <div class="ml-4" v-show="orientationOption==true">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="horizontal" name="inlineRadioOptions" value="horizontal" v-model="selectedOrientation">
+                        <label class="form-check-label" for="horizontal">Horizontal</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="vertical" name="inlineRadioOptions" value="vertical" v-model="selectedOrientation">
+                        <label class="form-check-label" for="vertical">Vertical</label>
+                    </div>
+                </div>
+                <p>{{selectedOrientation}}</p>
             </div>
-            <div v-show="aircraftOptions==true">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="aircraftHorizontal" value="aircraftHorizontal">
-                    <label class="form-check-label" for="aircraftHorizontal">Horizontal</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="aircraftVertical" value="aircraftVertical">
-                    <label class="form-check-label" for="aircraftVertical">Vertical</label>
-                </div>
+            <div class="row mt-4">
+                <button @click="handler(this.event)" class="btn button ship aircraft" value="aircraft_carrier">Aircraft Carrier
+                </button>
+            </div>
+ 
+            <div class="row mt-4">
+                <button class="ship battleship btn button" @click="handler(this.event)" value="battleship">Battleship</button>
             </div>
 
+            <div class="row mt-4">
+                <button class="ship submarine btn button" @click="handler(this.event)" value="submarine">Submarine</button>
+            </div>
 
+            <div class="row mt-4">
+                <button class="ship destroyer btn button" @click="handler(this.event)" value="destroyer">Destroyer</button>
+            </div>
 
             <div class="row mt-4">
-                <div v-on:click="showBattleshipOptions" class="ship battleship"></div>
-                <p>Battleship</p>
+                <button class="ship patrolboat btn button" @click="handler(this.event)" value="p_boat">P Boat</button>
             </div>
-            <div v-show="battleshipOptions==true">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="battleshipHorizontal" value="battleshipHorizontal">
-                    <label class="form-check-label" for="battleshipHorizontal">Horizontal</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="battleshipVertical" value="battleshipVertical">
-                    <label class="form-check-label" for="battleshipVertical">Vertical</label>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div v-on:click="showSubmarineOptions" class="ship submarine"></div>
-                <p>Submarine</p>
-            </div>
-            <div v-show="submarineOptions==true">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="submarineHorizontal" value="submarineHorizontal">
-                    <label class="form-check-label" for="submarineHorizontal">Horizontal</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="submarineVertical" value="submarineVertical">
-                    <label class="form-check-label" for="submarineVertical">Vertical</label>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div v-on:click="showDestroyerOptions" class="ship destroyer"></div>
-                <p>Destroyer</p>
-            </div>
-            <div v-show="destroyerOptions==true">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="destroyerHorizontal" value="destroyerHorizontal">
-                    <label class="form-check-label" for="destroyerHorizontal">Horizontal</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="destroyerVertical" value="destroyerVertical">
-                    <label class="form-check-label" for="destroyerVertical">Vertical</label>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div v-on:click="showPatrolBoatOptions" class="ship patrolboat"></div>
-                <p>Patrol Boat</p>
-            </div>
-            <div v-show="patrolBoatOptions==true">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="patrolBoatHorizontal" value="patrolBoatHorizontal">
-                    <label class="form-check-label" for="patrolBoatHorizontal">Horizontal</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="patrolBoatVertical" value="patrolBoatVertical">
-                    <label class="form-check-label" for="patrolBoatVertical">Vertical</label>
-                </div>
-            </div>
+
             <button class="btn btn-primary mt-4" v-on:click="sendShips">Done</button>
         </div>
 

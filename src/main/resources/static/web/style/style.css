@@ -63,3 +63,13 @@
     height: 40px;
     width: 80px;
 }
+
+.button {
+    color: white;
+}
+.ship_hover{
+    background-color: rgba(51, 173, 227, 0.4);
+}
+.error_hover{
+    background-color: rgba(255, 0, 0, 0.48);
+}
