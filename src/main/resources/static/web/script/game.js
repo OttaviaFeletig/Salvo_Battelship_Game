@@ -32,6 +32,7 @@ var dataObject = new Vue({
         placingShipLocation: [],
         shipLength: null,
         errorLocation: [],
+        oneShip: {},
         aircraftCarrier: {
             "type": "",
             "location": []
@@ -202,57 +203,90 @@ var dataObject = new Vue({
             let oneShip = {}
             if (this.selectedShip == "aircraft_carrier") {
                 this.shipLength = 5;
-                oneShip = this.aircraftCarrier
+                this.oneShip = this.aircraftCarrier
             }
             if (this.selectedShip == "battleship") {
                 this.shipLength = 4
-                oneShip = this.battleship
+                this.oneShip = this.battleship
             }
             if (this.selectedShip == "submarine") {
                 this.shipLength = 3
-                oneShip = this.submarine
+                this.oneShip = this.submarine
             }
             if (this.selectedShip == "destroyer") {
                 this.shipLength = 3
-                oneShip = this.destroyer
+                this.oneShip = this.destroyer
             }
             if (this.selectedShip == "p_boat") {
                 this.shipLength = 2
-                oneShip = this.pBoat
+                this.oneShip = this.pBoat
             }
-            this.hoverShipOnGridHorizontal(location, this.shipLength, oneShip)
+            this.hoverShipOnGridHorizontal(location, this.shipLength)
 
 
         },
-        hoverShipOnGridHorizontal(location, shipLength, oneShip) {
-            if (this.selectedShip != null && this.selectedOrientation == "horizontal") {
-                var locationNumber = [];
+        hoverShipOnGridHorizontal(location, shipLength) {
+            if (this.selectedShip != null && this.selectedOrientation != null) {
+                var locationNumber = []
+                var asciiLocation = []
+                var locationLetter = []
                 for (var i = 0; i < shipLength; i++) {
                     locationNumber.push(parseInt(location.substr(1, 2)) + i)
+                    asciiLocation.push(location.charCodeAt(location.substr(0, 1)) + i)
+                    locationLetter.push(String.fromCharCode(asciiLocation[i]))
                 }
-                if (locationNumber[locationNumber.length - 1] < 11) {
-                    locationNumber
-                        .forEach(oneNumber => this.placingShipLocation.push(location.split("")[0] + oneNumber))
-                    if (this.checkIfShipLocationIsEqual() == false) {
-                        this.placingShipLocation
-                            .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("ship_hover"))
-                        oneShip.type = this.selectedShip
-                        oneShip.location = this.placingShipLocation
+                if (this.selectedOrientation == "horizontal") {
+                    if (locationNumber[locationNumber.length - 1] < 11) {
+                        locationNumber
+                            .forEach(oneNumber => this.placingShipLocation.push(location.split("")[0] + oneNumber))
+                        if (this.checkIfShipLocationIsEqual() == false) {
+                            this.showHoverBlueColor()
+                        } else {
+                            this.showOverlappingHoverRedColor()
+                        }
                     } else {
-                        this.placingShipLocation
-                            .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("error_hover"))
+                        var numberOutGrid = locationNumber.filter(oneLocation => oneLocation < 11)
+                        numberOutGrid.forEach(oneNumber => this.errorLocation.push(location.split("")[0] + oneNumber))
+                        this.errorLocation
+                            .map(oneCell => {
+                                document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
+                            })
                     }
-
-                } else {
-                    var numberOutGrid = locationNumber.filter(oneLocation => oneLocation < 11)
-                    numberOutGrid.forEach(oneNumber => this.errorLocation.push(location.split("")[0] + oneNumber))
-                    this.errorLocation
-                        .map(oneCell => {
-                            document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
-                        })
                 }
-
+                if (this.selectedOrientation == "vertical") {
+                    if (asciiLocation[asciiLocation.length - 1] < 75) {
+                        locationLetter
+                            .forEach(oneLetter => this.placingShipLocation.push(oneLetter + location.substr(1, 2)))
+                        if (this.checkIfShipLocationIsEqual() == false) {
+                            this.showHoverBlueColor()
+                        } else {
+                            this.showOverlappingHoverRedColor()
+                        }
+                    } else {
+                        var asciiOutGrid = asciiLocation.filter(oneLocation => oneLocation < 75)
+                        var letterOutGrid = []
+                        for (var i = 0; i < asciiOutGrid.length; i++) {
+                            letterOutGrid.push(String.fromCharCode(asciiOutGrid[i]))
+                        }
+                        console.log(letterOutGrid)
+                        letterOutGrid.forEach(oneLetter => this.errorLocation.push(oneLetter + location.substr(1, 2)))
+                        this.errorLocation
+                            .map(oneCell => {
+                                document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
+                            })
+                    }
+                }
             }
+        },
+        showHoverBlueColor() {
+            this.placingShipLocation
+                .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("ship_hover"))
+            this.oneShip.type = this.selectedShip
+            this.oneShip.location = this.placingShipLocation
+        },
+        showOverlappingHoverRedColor() {
+            this.placingShipLocation
+                .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("error_hover"))
         },
         removeHover(location) {
             if (this.selectedShip != null && this.selectedOrientation != null) {
