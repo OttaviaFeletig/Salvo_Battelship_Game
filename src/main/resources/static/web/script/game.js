@@ -32,13 +32,28 @@ var dataObject = new Vue({
         placingShipLocation: [],
         shipLength: null,
         errorLocation: [],
-
-
-
         aircraftCarrier: {
             "type": "",
             "location": []
         },
+        battleship: {
+            "type": "",
+            "location": []
+        },
+        submarine: {
+            "type": "",
+            "location": []
+        },
+        destroyer: {
+            "type": "",
+            "location": []
+        },
+        pBoat: {
+            "type": "",
+            "location": []
+        },
+        test: false,
+        allShipsLocation: [],
         shipList: []
     },
     created() {
@@ -67,13 +82,14 @@ var dataObject = new Vue({
                     console.log(this.ships)
                     this.gamePlayers = data.gamePlayers;
                     this.salvos = data.salvos;
-                    console.log(this.data);
-                    console.log(this.salvos)
+                    //                    console.log(this.data);
+                    //                    console.log(this.salvos)
                     this.renderGamePlayers();
                     this.convertDate();
                     this.renderShips(this.ships);
                     this.renderSalvosPrincipal(this.salvos);
                     this.renderSalvosOpponent(this.salvos);
+
                 })
         },
         changeDinamicallyUrl() {
@@ -95,7 +111,7 @@ var dataObject = new Vue({
         },
         renderShips(ships) {
             ships.forEach(ship => ship.location.forEach(location => this.shipLocations.push(location)))
-            console.log(this.shipLocations)
+            //            console.log(this.shipLocations)
             this.shipLocations.forEach(loc => document.querySelector(`#g1${loc}`).classList.add("ship"))
         },
         renderGamePlayers() {
@@ -183,21 +199,32 @@ var dataObject = new Vue({
             this.orientationOption = true;
         },
         recognizeShip(location) {
+            let oneShip = {}
             if (this.selectedShip == "aircraft_carrier") {
                 this.shipLength = 5;
+                oneShip = this.aircraftCarrier
             }
             if (this.selectedShip == "battleship") {
                 this.shipLength = 4
+                oneShip = this.battleship
             }
-            if (this.selectedShip == "submarine" || this.selectedShip == "destroyer") {
+            if (this.selectedShip == "submarine") {
                 this.shipLength = 3
+                oneShip = this.submarine
+            }
+            if (this.selectedShip == "destroyer") {
+                this.shipLength = 3
+                oneShip = this.destroyer
             }
             if (this.selectedShip == "p_boat") {
                 this.shipLength = 2
+                oneShip = this.pBoat
             }
-            this.hoverShipOnGridHorizontal(location, this.shipLength)
+            this.hoverShipOnGridHorizontal(location, this.shipLength, oneShip)
+
+
         },
-        hoverShipOnGridHorizontal(location, shipLength) {
+        hoverShipOnGridHorizontal(location, shipLength, oneShip) {
             if (this.selectedShip != null && this.selectedOrientation == "horizontal") {
                 var locationNumber = [];
                 for (var i = 0; i < shipLength; i++) {
@@ -206,8 +233,16 @@ var dataObject = new Vue({
                 if (locationNumber[locationNumber.length - 1] < 11) {
                     locationNumber
                         .forEach(oneNumber => this.placingShipLocation.push(location.split("")[0] + oneNumber))
-                    this.placingShipLocation
-                        .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("ship_hover"))
+                    if (this.checkIfShipLocationIsEqual() == false) {
+                        this.placingShipLocation
+                            .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("ship_hover"))
+                        oneShip.type = this.selectedShip
+                        oneShip.location = this.placingShipLocation
+                    } else {
+                        this.placingShipLocation
+                            .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("error_hover"))
+                    }
+
                 } else {
                     var numberOutGrid = locationNumber.filter(oneLocation => oneLocation < 11)
                     numberOutGrid.forEach(oneNumber => this.errorLocation.push(location.split("")[0] + oneNumber))
@@ -216,27 +251,76 @@ var dataObject = new Vue({
                             document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
                         })
                 }
+
             }
         },
         removeHover(location) {
             if (this.selectedShip != null && this.selectedOrientation != null) {
                 this.placingShipLocation
-                    .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.remove("ship_hover"))
+                    .map(oneCell => {
+                        document.querySelector(`#g1${oneCell}`).classList.remove("ship_hover")
+                        document.querySelector(`#g1${oneCell}`).classList.remove("error_hover")
+                    })
                 this.placingShipLocation = []
                 this.errorLocation
                     .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.remove("error_hover"))
                 this.errorLocation = []
             }
         },
-        placeShipOnGrid(location) {
+        placeShipOnGrid() {
             if (this.selectedShip != null && this.selectedOrientation != null) {
-                this.aircraftCarrier.type = this.selectedShip
-                this.aircraftCarrier.location = this.placingShipLocation
-                console.log(this.aircraftCarrier)
-                this.ships.push(this.aircraftCarrier)
-                console.log(this.ships)
-                this.renderShips(this.ships);
+                if (this.placingShipLocation.length == this.shipLength) {
+                    if (this.checkIfShipLocationIsEqual() == false) {
+                        if (this.selectedShip == "aircraft_carrier") {
+                            this.ships.push(this.aircraftCarrier)
+                        }
+                        if (this.selectedShip == "battleship") {
+                            this.ships.push(this.battleship)
+                        }
+                        if (this.selectedShip == "submarine") {
+                            this.ships.push(this.submarine)
+                        }
+                        if (this.selectedShip == "destroyer") {
+                            this.ships.push(this.destroyer)
+                        }
+                        if (this.selectedShip == "p_boat") {
+                            this.ships.push(this.pBoat)
+                        }
+                        console.log(this.ships)
+                        this.placingShipLocation.forEach(loc => {
+                            document.querySelector(`#g1${loc}`).classList.remove("ship_hover")
+                            document.querySelector(`#g1${loc}`).classList.add("ship")
+                        })
+                        this.selectedShip = null
+                        this.placingShipLocation = []
+                        this.allShipsLocation = []
+                    } else {
+                        alert("You can't place the ship there!")
+                    }
+                } else {
+                    alert("You can't place the ship there!")
+                }
             }
+
+        },
+        checkIfShipLocationIsEqual() {
+            if (this.ships.length == 0) {
+                //                console.log("false")
+                return false
+            } else {
+
+                this.allShipsLocation = [].concat.apply([], this.ships.map(oneShip => oneShip.location))
+                //                console.log(this.allShipsLocation)
+                for (var i = 0; i < this.allShipsLocation.length; i++) {
+                    if (this.placingShipLocation.includes(this.allShipsLocation[i])) {
+                        //                        console.log("no")
+                        return true
+                    }
+                }
+                //                console.log("yes")
+                return false
+            }
+
         }
     }
 
