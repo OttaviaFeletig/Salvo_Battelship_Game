@@ -55,7 +55,8 @@ var dataObject = new Vue({
         },
         test: false,
         allShipsLocation: [],
-        shipList: []
+        allShipType: [],
+        temporaryLocation: []
     },
     created() {
 
@@ -188,19 +189,56 @@ var dataObject = new Vue({
                 })
         },
         handler(event) {
-            this.getShipValue(event)
-            this.showOrientation()
+            if (this.checkIfShipAlreadyExists(event.toElement.value) == false) {
+                this.getShipValue(event)
+                this.showOrientation()
+            } else {
+                this.removeShip(event.toElement.value)
+            }
+
+        },
+        checkIfShipAlreadyExists(buttonValue) {
+            if (this.ships.length != 0) {
+                this.allShipType = this.ships.map(oneShip => oneShip.type)
+                if (this.allShipType.includes(buttonValue)) {
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return false
+            }
         },
         getShipValue(event) {
             console.log(event.toElement.value)
             this.selectedShip = event.toElement.value
             this.selectedOrientation = null
+
+        },
+        removeShip(buttonValue) {
+            this.ships.forEach(ship => {
+                if (buttonValue == ship.type) {
+                    this.temporaryLocation = ship.location
+                    //                    console.log(this.temporaryLocation)
+                    ship.location = []
+                    this.selectedShip = ship.type
+                }
+            })
+            for (var i = 0; i < this.temporaryLocation.length; i++) {
+                document.querySelector(`#g1${this.temporaryLocation[i]}`).classList.remove("ship")
+            }
+            this.showOrientation()
+            //            this.recognizeShip(this.temporaryLocation[1])
+            console.log(this.ships)
+            //            console.log(this.selectedShip)
         },
         showOrientation() {
             this.orientationOption = true;
         },
         recognizeShip(location) {
-            let oneShip = {}
+            //            console.log(this.selectedShip)
+            //            console.log(location)
+            //            let oneShip = {}
             if (this.selectedShip == "aircraft_carrier") {
                 this.shipLength = 5;
                 this.oneShip = this.aircraftCarrier
@@ -221,6 +259,7 @@ var dataObject = new Vue({
                 this.shipLength = 2
                 this.oneShip = this.pBoat
             }
+            //            console.log(this.oneShip)
             this.hoverShipOnGridHorizontal(location, this.shipLength)
 
 
@@ -268,7 +307,7 @@ var dataObject = new Vue({
                         for (var i = 0; i < asciiOutGrid.length; i++) {
                             letterOutGrid.push(String.fromCharCode(asciiOutGrid[i]))
                         }
-                        console.log(letterOutGrid)
+                        //                        console.log(letterOutGrid)
                         letterOutGrid.forEach(oneLetter => this.errorLocation.push(oneLetter + location.substr(1, 2)))
                         this.errorLocation
                             .map(oneCell => {
@@ -276,13 +315,15 @@ var dataObject = new Vue({
                             })
                     }
                 }
+                console.log(this.placingShipLocation)
             }
+
         },
         showHoverBlueColor() {
             this.placingShipLocation
                 .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("ship_hover"))
-            this.oneShip.type = this.selectedShip
-            this.oneShip.location = this.placingShipLocation
+            //            this.oneShip.type = this.selectedShip
+            //            this.oneShip.location = this.placingShipLocation
         },
         showOverlappingHoverRedColor() {
             this.placingShipLocation
@@ -303,43 +344,75 @@ var dataObject = new Vue({
         },
         placeShipOnGrid() {
             if (this.selectedShip != null && this.selectedOrientation != null) {
-                if (this.placingShipLocation.length == this.shipLength) {
-                    if (this.checkIfShipLocationIsEqual() == false) {
-                        if (this.selectedShip == "aircraft_carrier") {
-                            this.ships.push(this.aircraftCarrier)
+                if (this.checkIfShipAlreadyExists(this.selectedShip) == false) {
+
+                    if (this.placingShipLocation.length == this.shipLength) {
+
+                        if (this.checkIfShipLocationIsEqual() == false) {
+                            if (this.selectedShip == "aircraft_carrier") {
+                                this.oneShip.type = this.selectedShip
+                                this.oneShip.location = this.placingShipLocation
+                                this.ships.push(this.aircraftCarrier)
+                            }
+                            if (this.selectedShip == "battleship") {
+                                this.oneShip.type = this.selectedShip
+                                this.oneShip.location = this.placingShipLocation
+                                this.ships.push(this.battleship)
+                            }
+                            if (this.selectedShip == "submarine") {
+                                this.oneShip.type = this.selectedShip
+                                this.oneShip.location = this.placingShipLocation
+                                this.ships.push(this.submarine)
+                            }
+                            if (this.selectedShip == "destroyer") {
+                                this.oneShip.type = this.selectedShip
+                                this.oneShip.location = this.placingShipLocation
+                                this.ships.push(this.destroyer)
+                            }
+                            if (this.selectedShip == "p_boat") {
+                                this.oneShip.type = this.selectedShip
+                                this.oneShip.location = this.placingShipLocation
+                                this.ships.push(this.pBoat)
+                            }
+                            console.log(this.ships)
+                            this.placingShipLocation.forEach(loc => {
+                                document.querySelector(`#g1${loc}`).classList.remove("ship_hover")
+                                document.querySelector(`#g1${loc}`).classList.add("ship")
+                            })
+                            this.selectedShip = null
+                            this.selectedOrientation = null
+                            this.orientationOption = false
+                            this.placingShipLocation = []
+                            this.allShipsLocation = []
+                        } else {
+                            alert("You can't place the ship there!")
                         }
-                        if (this.selectedShip == "battleship") {
-                            this.ships.push(this.battleship)
-                        }
-                        if (this.selectedShip == "submarine") {
-                            this.ships.push(this.submarine)
-                        }
-                        if (this.selectedShip == "destroyer") {
-                            this.ships.push(this.destroyer)
-                        }
-                        if (this.selectedShip == "p_boat") {
-                            this.ships.push(this.pBoat)
-                        }
-                        console.log(this.ships)
-                        this.placingShipLocation.forEach(loc => {
-                            document.querySelector(`#g1${loc}`).classList.remove("ship_hover")
-                            document.querySelector(`#g1${loc}`).classList.add("ship")
-                        })
-                        this.selectedShip = null
-                        this.placingShipLocation = []
-                        this.allShipsLocation = []
                     } else {
                         alert("You can't place the ship there!")
                     }
-                } else {
-                    alert("You can't place the ship there!")
+                }else{
+                    for(var i = 0; i < this.ships.length; i++){
+                        if(this.ships[i].type == this.selectedShip){
+                            this.ships[i].location = this.placingShipLocation;
+                            break;
+                        }
+                    }
+                    this.placingShipLocation.forEach(loc => {
+                                document.querySelector(`#g1${loc}`).classList.remove("ship_hover")
+                                document.querySelector(`#g1${loc}`).classList.add("ship")
+                            })
+                            this.selectedShip = null
+                            this.selectedOrientation = null
+                            this.orientationOption = false
+                            this.placingShipLocation = []
+                            this.allShipsLocation = []
                 }
             }
 
         },
         checkIfShipLocationIsEqual() {
-            if (this.ships.length == 0) {
-                //                console.log("false")
+            if (this.ships.length == 0 || (this.ships.length == 1 && this.ships[0].location.length == 0)) {
+                console.log("false")
                 return false
             } else {
 
@@ -347,11 +420,11 @@ var dataObject = new Vue({
                 //                console.log(this.allShipsLocation)
                 for (var i = 0; i < this.allShipsLocation.length; i++) {
                     if (this.placingShipLocation.includes(this.allShipsLocation[i])) {
-                        //                        console.log("no")
+                        console.log("no")
                         return true
                     }
                 }
-                //                console.log("yes")
+                console.log("yes")
                 return false
             }
 
