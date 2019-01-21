@@ -102,24 +102,24 @@
                 <p>To remove a ship, click again on the ship button</p>
             </div>
             <div class="row mt-4 ml-2">
-                <button @click="handler(this.event)" class="btn button ship aircraft" value="aircraft_carrier">Aircraft Carrier
+                <button id="aircraft_carrier" @click="handler(this.event)" class="btn button ship aircraft" value="aircraft_carrier">Aircraft Carrier
                 </button>
             </div>
  
             <div class="row mt-4 ml-2">
-                <button class="ship battleship btn button" @click="handler(this.event)" value="battleship">Battleship</button>
+                <button id="battleship" class="ship battleship btn button" @click="handler(this.event)" value="battleship">Battleship</button>
             </div>
 
             <div class="row mt-4 ml-2">
-                <button class="ship submarine btn button" @click="handler(this.event)" value="submarine">Submarine</button>
+                <button id="submarine" class="ship submarine btn button" @click="handler(this.event)" value="submarine">Submarine</button>
             </div>
 
             <div class="row mt-4 ml-2">
-                <button class="ship destroyer btn button" @click="handler(this.event)" value="destroyer">Destroyer</button>
+                <button id="destroyer" class="ship destroyer btn button" @click="handler(this.event)" value="destroyer">Destroyer</button>
             </div>
 
             <div class="row mt-4 ml-2">
-                <button class="ship patrolboat btn button" @click="handler(this.event)" value="p_boat">P Boat</button>
+                <button id="p_boat" class="ship patrolboat btn button" @click="handler(this.event)" value="p_boat">P Boat</button>
             </div>
 
             <button class="btn btn-primary mt-4 ml-1" v-on:click="sendShips">Done</button>

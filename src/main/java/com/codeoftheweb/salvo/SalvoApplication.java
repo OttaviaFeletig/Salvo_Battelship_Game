@@ -37,7 +37,7 @@ public class SalvoApplication {
 	@Bean
 	public CommandLineRunner initData(PlayerRepository repositoryPlayer, GameRepository repositoryGame, GamePlayerRepository repositoryGamePlayer, ShipRepository repositoryShip, SalvoRepository repositorySalvo, ScoreRepository repositoryScore) {
 		return (args -> {
-				Player username1 = new Player("j.bauer@ctu.gov", "24", "Jack Bauer");
+			Player username1 = new Player("j.bauer@ctu.gov", "24", "Jack Bauer");
 		    Player username2 = new Player("c.obrian@ctu.gov", "42", "Chloe O'Brian");
 		    Player username3 = new Player("kim_bauer@gmail.com", "kb", "Kim Bauer");
 		    Player username4 = new Player("t.almeida@ctu.gov", "mole", "Tony Almeida");

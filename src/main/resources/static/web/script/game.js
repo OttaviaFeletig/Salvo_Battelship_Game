@@ -201,10 +201,20 @@ var dataObject = new Vue({
             if (this.checkIfShipAlreadyExists(event.toElement.value) == false) {
                 this.getShipValue(event)
                 this.showOrientation()
+
             } else {
                 this.removeShip(event.toElement.value)
+                this.unfadeButton(event.target.id)
             }
 
+        },
+        fadeButton(buttonId){
+//            console.log(event)
+            document.querySelector(`#${buttonId}`).classList.add("fade_button")
+//            document.querySelector(`#${event.target.id}`).classList.add("fade_button")
+        },
+        unfadeButton(buttonId){
+            document.querySelector(`#${buttonId}`).classList.remove("fade_button")
         },
         checkIfShipAlreadyExists(buttonValue) {
             if (this.ships.length != 0) {
@@ -293,7 +303,7 @@ var dataObject = new Vue({
                         } else {
                             this.showOverlappingHoverRedColor()
                            
-                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+//                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                         }
                     } else {
                         var numberOutGrid = locationNumber.filter(oneLocation => oneLocation < 11)
@@ -302,7 +312,7 @@ var dataObject = new Vue({
                             .map(oneCell => {
                                 document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
                             })
-                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+//                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                     }
                 }
                 if (this.selectedOrientation == "vertical") {
@@ -313,7 +323,7 @@ var dataObject = new Vue({
                             this.showHoverBlueColor()
                         } else {
                             this.showOverlappingHoverRedColor()
-                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+//                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                         }
                     } else {
                         var asciiOutGrid = asciiLocation.filter(oneLocation => oneLocation < 75)
@@ -327,7 +337,7 @@ var dataObject = new Vue({
                             .map(oneCell => {
                                 document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
                             })
-                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+//                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                     }
                 }
                 console.log(this.placingShipLocation)
@@ -357,7 +367,7 @@ var dataObject = new Vue({
                 this.errorLocation = []
             }
         },
-        placeShipOnGrid() {
+        placeShipOnGrid(location) {
             if (this.selectedShip != null && this.selectedOrientation != null) {
                 if (this.checkIfShipAlreadyExists(this.selectedShip) == false) {
 
@@ -368,26 +378,31 @@ var dataObject = new Vue({
                                 this.oneShip.shipType = this.selectedShip
                                 this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.aircraftCarrier)
+                                this.fadeButton("aircraft_carrier")
                             }
                             if (this.selectedShip == "battleship") {
                                 this.oneShip.shipType = this.selectedShip
                                 this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.battleship)
+                                this.fadeButton("battleship")
                             }
                             if (this.selectedShip == "submarine") {
                                 this.oneShip.shipType = this.selectedShip
                                 this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.submarine)
+                                this.fadeButton("submarine")
                             }
                             if (this.selectedShip == "destroyer") {
                                 this.oneShip.shipType = this.selectedShip
                                 this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.destroyer)
+                                this.fadeButton("destroyer")
                             }
                             if (this.selectedShip == "p_boat") {
                                 this.oneShip.shipType = this.selectedShip
                                 this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.pBoat)
+                                this.fadeButton("p_boat")
                             }
                             console.log(this.ships)
                             this.placingShipLocation.forEach(loc => {
@@ -395,23 +410,24 @@ var dataObject = new Vue({
                                 document.querySelector(`#g1${loc}`).classList.add("ship")
                             })
                             this.selectedShip = null
-//                            this.selectedOrientation = null
+                            this.selectedOrientation = "horizontal"
                             this.orientationOption = false
                             this.placingShipLocation = []
                             this.allShipsLocation = []
                             this.messageToRemoveShip = true
-                        } 
-//                        else {
-//                            alert("You can't place the ship there!")
-//                        }
-                    } 
-//                    else {
-//                        alert("You can't place the ship there!")
-//                    }
+                            
+                        }else {
+//                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+                            alert("You can't place the ship there!")
+                        }
+                    }else {
+                        alert("You can't place the ship there!")
+                    }
                 }else{
                     for(var i = 0; i < this.ships.length; i++){
                         if(this.ships[i].shipType == this.selectedShip){
                             this.ships[i].shipLocations = this.placingShipLocation;
+                            
                             break;
                         }
                     }
@@ -419,11 +435,13 @@ var dataObject = new Vue({
                                 document.querySelector(`#g1${loc}`).classList.remove("ship_hover")
                                 document.querySelector(`#g1${loc}`).classList.add("ship")
                             })
+                            this.fadeButton(this.selectedShip)
                             this.selectedShip = null
-                            this.selectedOrientation = null
+                            this.selectedOrientation = "horizontal"
                             this.orientationOption = false
                             this.placingShipLocation = []
                             this.allShipsLocation = []
+                            
                 }
             }
 

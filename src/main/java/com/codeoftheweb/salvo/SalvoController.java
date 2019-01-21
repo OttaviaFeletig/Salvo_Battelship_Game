@@ -99,9 +99,6 @@ public class SalvoController {
     @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> getShipLocation(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody List<Ship> shipList){
         GamePlayer currentGamePlayer = gamePlayerRepository.findByGamePlayerId(gamePlayerId);
-        System.out.println(shipList);
-        System.out.println(gamePlayerId);
-//        Game currentGame = currentGamePlayer.getGame();
         Integer currentGameShips = currentGamePlayer.getShipTypes().size();
         if(authentication.getName().isEmpty()){
             return new ResponseEntity<>(makeMapForResponseEntity("error", "The player is not logged in"), HttpStatus.UNAUTHORIZED);
@@ -116,16 +113,9 @@ public class SalvoController {
             return new ResponseEntity<>(makeMapForResponseEntity("error", "The ships have already been added"), HttpStatus.FORBIDDEN);
         }
         shipList.forEach(ship -> {
-//            System.out.println(ship);
             System.out.println(currentGamePlayer);
-//            String newShipType = new String(ship.getShipType());
-//            List<String> newShipLocations = new ArrayList<>(ship.getShipLocations());
-//            Ship newShip = new Ship(newShipType, newShipLocations);
-//            gamePlayerRepository.save(currentGamePlayer);
-            shipRepository.save(ship);
             currentGamePlayer.addShipTypes(ship);
-//            System.out.println(currentGamePlayer.getShipTypes());
-//            gamePlayerRepository.save(currentGamePlayer);
+            shipRepository.save(ship);
         });
 
         return new ResponseEntity<>(makeMapForResponseEntity("success", "The ships have been added successfully"), HttpStatus.CREATED);
@@ -194,9 +184,6 @@ public class SalvoController {
     @RequestMapping("/game_view/{gamePlayerId}")
     private Object gameView(@PathVariable Long gamePlayerId, Authentication authentication){
         GamePlayer gamePlayer = gamePlayerRepository.findByGamePlayerId(gamePlayerId);
-        System.out.println(gamePlayerId);
-        System.out.println(gamePlayer);
-        System.out.println(gamePlayer.getShipTypes());
         if(getLoggedInGamePlayer(authentication, gamePlayer)){
             return getOneGame(gamePlayer);
         }else{

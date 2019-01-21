@@ -67,6 +67,9 @@
 .button {
     color: white;
 }
+.fade_button{
+    background-color: grey;
+}
 .ship_hover{
     background-color: rgba(51, 173, 227, 0.4);
 }
