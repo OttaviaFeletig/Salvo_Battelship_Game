@@ -83,7 +83,8 @@
                     </table>
                 </div>
             </div>
-            <div class="row">
+            <div v-show="shipAlreadyPlaced==false">
+            <div class="row mt-4 ml-2">
                 <p>You selected: {{selectedShip}}</p>
                 <div class="ml-4" v-show="orientationOption==true">
                     <div class="form-check form-check-inline">
@@ -95,33 +96,36 @@
                         <label class="form-check-label" for="vertical">Vertical</label>
                     </div>
                 </div>
-                <p>{{selectedOrientation}}</p>
+<!--                <p>{{selectedOrientation}}</p>-->
             </div>
-            <div class="row mt-4">
+            <div class="row ml-2" v-show="messageToRemoveShip==true">
+                <p>To remove a ship, click again on the ship button</p>
+            </div>
+            <div class="row mt-4 ml-2">
                 <button @click="handler(this.event)" class="btn button ship aircraft" value="aircraft_carrier">Aircraft Carrier
                 </button>
             </div>
  
-            <div class="row mt-4">
+            <div class="row mt-4 ml-2">
                 <button class="ship battleship btn button" @click="handler(this.event)" value="battleship">Battleship</button>
             </div>
 
-            <div class="row mt-4">
+            <div class="row mt-4 ml-2">
                 <button class="ship submarine btn button" @click="handler(this.event)" value="submarine">Submarine</button>
             </div>
 
-            <div class="row mt-4">
+            <div class="row mt-4 ml-2">
                 <button class="ship destroyer btn button" @click="handler(this.event)" value="destroyer">Destroyer</button>
             </div>
 
-            <div class="row mt-4">
+            <div class="row mt-4 ml-2">
                 <button class="ship patrolboat btn button" @click="handler(this.event)" value="p_boat">P Boat</button>
             </div>
 
-            <button class="btn btn-primary mt-4" v-on:click="sendShips">Done</button>
+            <button class="btn btn-primary mt-4 ml-1" v-on:click="sendShips">Done</button>
         </div>
 
-
+        </div>
 
     </div>
 

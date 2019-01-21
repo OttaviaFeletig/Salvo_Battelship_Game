@@ -34,32 +34,33 @@ var dataObject = new Vue({
         errorLocation: [],
         oneShip: {},
         aircraftCarrier: {
-            "type": "",
-            "location": []
+            "shipType": "",
+            "shipLocations": []
         },
         battleship: {
-            "type": "",
-            "location": []
+            "shipType": "",
+            "shipLocations": []
         },
         submarine: {
-            "type": "",
-            "location": []
+            "shipType": "",
+            "shipLocations": []
         },
         destroyer: {
-            "type": "",
-            "location": []
+            "shipType": "",
+            "shipLocations": []
         },
         pBoat: {
-            "type": "",
-            "location": []
+            "shipType": "",
+            "shipLocations": []
         },
         test: false,
         allShipsLocation: [],
         allShipType: [],
-        temporaryLocation: []
+        temporaryLocation: [],
+        messageToRemoveShip: false,
+        shipAlreadyPlaced: false
     },
     created() {
-
         this.createGridCellsLocation();
         this.changeDinamicallyUrl();
         this.loadFetchGameView(this.urlGameView + this.gamePlayerId)
@@ -91,6 +92,9 @@ var dataObject = new Vue({
                     this.renderShips(this.ships);
                     this.renderSalvosPrincipal(this.salvos);
                     this.renderSalvosOpponent(this.salvos);
+                if(this.ships.length > 0){
+                    this.shipAlreadyPlaced = true
+                }
 
                 })
         },
@@ -170,14 +174,15 @@ var dataObject = new Vue({
                 })
         },
         sendShips() {
-            fetch("/api/games/players/" + this.gamePlayerId + "/ships", {
+            if(this.ships.length == 5){
+                fetch("/api/games/players/" + this.gamePlayerId + "/ships", {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(this.testShipList)
+                    body: JSON.stringify(this.ships)
                 })
                 .then(response => {
                     console.log(response)
@@ -185,8 +190,12 @@ var dataObject = new Vue({
                 })
                 .then(data => {
                     console.log(data)
-                    window.location.reload()
+//                    window.location.reload()
                 })
+            }else{
+                alert("You still have to place some ships!")
+            }
+            
         },
         handler(event) {
             if (this.checkIfShipAlreadyExists(event.toElement.value) == false) {
@@ -199,7 +208,7 @@ var dataObject = new Vue({
         },
         checkIfShipAlreadyExists(buttonValue) {
             if (this.ships.length != 0) {
-                this.allShipType = this.ships.map(oneShip => oneShip.type)
+                this.allShipType = this.ships.map(oneShip => oneShip.shipType)
                 if (this.allShipType.includes(buttonValue)) {
                     return true
                 } else {
@@ -212,16 +221,16 @@ var dataObject = new Vue({
         getShipValue(event) {
             console.log(event.toElement.value)
             this.selectedShip = event.toElement.value
-            this.selectedOrientation = null
+            this.selectedOrientation = 'horizontal'
 
         },
         removeShip(buttonValue) {
             this.ships.forEach(ship => {
-                if (buttonValue == ship.type) {
-                    this.temporaryLocation = ship.location
+                if (buttonValue == ship.shipType) {
+                    this.temporaryLocation = ship.shipLocations
                     //                    console.log(this.temporaryLocation)
-                    ship.location = []
-                    this.selectedShip = ship.type
+                    ship.shipLocations = []
+                    this.selectedShip = ship.shipType
                 }
             })
             for (var i = 0; i < this.temporaryLocation.length; i++) {
@@ -269,6 +278,7 @@ var dataObject = new Vue({
                 var locationNumber = []
                 var asciiLocation = []
                 var locationLetter = []
+                console.log(location)
                 for (var i = 0; i < shipLength; i++) {
                     locationNumber.push(parseInt(location.substr(1, 2)) + i)
                     asciiLocation.push(location.charCodeAt(location.substr(0, 1)) + i)
@@ -282,6 +292,8 @@ var dataObject = new Vue({
                             this.showHoverBlueColor()
                         } else {
                             this.showOverlappingHoverRedColor()
+                           
+                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                         }
                     } else {
                         var numberOutGrid = locationNumber.filter(oneLocation => oneLocation < 11)
@@ -290,6 +302,7 @@ var dataObject = new Vue({
                             .map(oneCell => {
                                 document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
                             })
+                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                     }
                 }
                 if (this.selectedOrientation == "vertical") {
@@ -300,6 +313,7 @@ var dataObject = new Vue({
                             this.showHoverBlueColor()
                         } else {
                             this.showOverlappingHoverRedColor()
+                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                         }
                     } else {
                         var asciiOutGrid = asciiLocation.filter(oneLocation => oneLocation < 75)
@@ -313,6 +327,7 @@ var dataObject = new Vue({
                             .map(oneCell => {
                                 document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
                             })
+                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                     }
                 }
                 console.log(this.placingShipLocation)
@@ -350,28 +365,28 @@ var dataObject = new Vue({
 
                         if (this.checkIfShipLocationIsEqual() == false) {
                             if (this.selectedShip == "aircraft_carrier") {
-                                this.oneShip.type = this.selectedShip
-                                this.oneShip.location = this.placingShipLocation
+                                this.oneShip.shipType = this.selectedShip
+                                this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.aircraftCarrier)
                             }
                             if (this.selectedShip == "battleship") {
-                                this.oneShip.type = this.selectedShip
-                                this.oneShip.location = this.placingShipLocation
+                                this.oneShip.shipType = this.selectedShip
+                                this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.battleship)
                             }
                             if (this.selectedShip == "submarine") {
-                                this.oneShip.type = this.selectedShip
-                                this.oneShip.location = this.placingShipLocation
+                                this.oneShip.shipType = this.selectedShip
+                                this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.submarine)
                             }
                             if (this.selectedShip == "destroyer") {
-                                this.oneShip.type = this.selectedShip
-                                this.oneShip.location = this.placingShipLocation
+                                this.oneShip.shipType = this.selectedShip
+                                this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.destroyer)
                             }
                             if (this.selectedShip == "p_boat") {
-                                this.oneShip.type = this.selectedShip
-                                this.oneShip.location = this.placingShipLocation
+                                this.oneShip.shipType = this.selectedShip
+                                this.oneShip.shipLocations = this.placingShipLocation
                                 this.ships.push(this.pBoat)
                             }
                             console.log(this.ships)
@@ -380,20 +395,23 @@ var dataObject = new Vue({
                                 document.querySelector(`#g1${loc}`).classList.add("ship")
                             })
                             this.selectedShip = null
-                            this.selectedOrientation = null
+//                            this.selectedOrientation = null
                             this.orientationOption = false
                             this.placingShipLocation = []
                             this.allShipsLocation = []
-                        } else {
-                            alert("You can't place the ship there!")
-                        }
-                    } else {
-                        alert("You can't place the ship there!")
-                    }
+                            this.messageToRemoveShip = true
+                        } 
+//                        else {
+//                            alert("You can't place the ship there!")
+//                        }
+                    } 
+//                    else {
+//                        alert("You can't place the ship there!")
+//                    }
                 }else{
                     for(var i = 0; i < this.ships.length; i++){
-                        if(this.ships[i].type == this.selectedShip){
-                            this.ships[i].location = this.placingShipLocation;
+                        if(this.ships[i].shipType == this.selectedShip){
+                            this.ships[i].shipLocations = this.placingShipLocation;
                             break;
                         }
                     }
@@ -411,12 +429,12 @@ var dataObject = new Vue({
 
         },
         checkIfShipLocationIsEqual() {
-            if (this.ships.length == 0 || (this.ships.length == 1 && this.ships[0].location.length == 0)) {
+            if (this.ships.length == 0 || (this.ships.length == 1 && this.ships[0].shipLocations.length == 0)) {
                 console.log("false")
                 return false
             } else {
 
-                this.allShipsLocation = [].concat.apply([], this.ships.map(oneShip => oneShip.location))
+                this.allShipsLocation = [].concat.apply([], this.ships.map(oneShip => oneShip.shipLocations))
                 //                console.log(this.allShipsLocation)
                 for (var i = 0; i < this.allShipsLocation.length; i++) {
                     if (this.placingShipLocation.includes(this.allShipsLocation[i])) {
@@ -430,13 +448,5 @@ var dataObject = new Vue({
 
         }
     }
-
-
-
-
-
-
-
-
 
 })

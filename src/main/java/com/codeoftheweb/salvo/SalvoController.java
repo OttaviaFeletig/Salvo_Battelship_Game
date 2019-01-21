@@ -99,6 +99,8 @@ public class SalvoController {
     @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> getShipLocation(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody List<Ship> shipList){
         GamePlayer currentGamePlayer = gamePlayerRepository.findByGamePlayerId(gamePlayerId);
+        System.out.println(shipList);
+        System.out.println(gamePlayerId);
 //        Game currentGame = currentGamePlayer.getGame();
         Integer currentGameShips = currentGamePlayer.getShipTypes().size();
         if(authentication.getName().isEmpty()){
@@ -114,24 +116,26 @@ public class SalvoController {
             return new ResponseEntity<>(makeMapForResponseEntity("error", "The ships have already been added"), HttpStatus.FORBIDDEN);
         }
         shipList.forEach(ship -> {
-
+//            System.out.println(ship);
+            System.out.println(currentGamePlayer);
 //            String newShipType = new String(ship.getShipType());
 //            List<String> newShipLocations = new ArrayList<>(ship.getShipLocations());
 //            Ship newShip = new Ship(newShipType, newShipLocations);
 //            gamePlayerRepository.save(currentGamePlayer);
             shipRepository.save(ship);
             currentGamePlayer.addShipTypes(ship);
+//            System.out.println(currentGamePlayer.getShipTypes());
 //            gamePlayerRepository.save(currentGamePlayer);
         });
 
         return new ResponseEntity<>(makeMapForResponseEntity("success", "The ships have been added successfully"), HttpStatus.CREATED);
     }
 
-    private List<Ship> makeListForShipResponseEntity(Ship ship){
-        List<Ship> listOfShips = new ArrayList<>();
-        listOfShips.add(ship);
-        return listOfShips;
-    }
+//    private List<Ship> makeListForShipResponseEntity(Ship ship){
+//        List<Ship> listOfShips = new ArrayList<>();
+//        listOfShips.add(ship);
+//        return listOfShips;
+//    }
 
     @RequestMapping("/games")
     public HashMap<String, Object> getGames(Authentication authentication){
@@ -189,7 +193,10 @@ public class SalvoController {
 
     @RequestMapping("/game_view/{gamePlayerId}")
     private Object gameView(@PathVariable Long gamePlayerId, Authentication authentication){
-        GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        GamePlayer gamePlayer = gamePlayerRepository.findByGamePlayerId(gamePlayerId);
+        System.out.println(gamePlayerId);
+        System.out.println(gamePlayer);
+        System.out.println(gamePlayer.getShipTypes());
         if(getLoggedInGamePlayer(authentication, gamePlayer)){
             return getOneGame(gamePlayer);
         }else{
@@ -227,6 +234,8 @@ public class SalvoController {
     }
 
     private List<Map<String, Object>> getGamePlayerShipType(GamePlayer gamePlayers){
+        System.out.println(gamePlayers);
+        System.out.println(gamePlayers.getShipTypes());
         return gamePlayers.getShipTypes()
                 .stream()
                 .map(ship -> new LinkedHashMap<String, Object>(){{
