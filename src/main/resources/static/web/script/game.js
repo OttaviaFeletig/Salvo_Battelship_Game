@@ -17,15 +17,6 @@ var dataObject = new Vue({
         gridLetters: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         cellsLocation: [],
         isLoading: true,
-        testShipList: [{
-                "shipType": "destroyer",
-                "shipLocations": ["A1", "B1", "C1"]
-            },
-            {
-                "shipType": "patrol boat",
-                "shipLocations": ["H5", "H6"]
-            }
-        ],
         orientationOption: false,
         selectedShip: null,
         selectedOrientation: null,
@@ -53,12 +44,14 @@ var dataObject = new Vue({
             "shipType": "",
             "shipLocations": []
         },
-        test: false,
+//        test: false,
         allShipsLocation: [],
         allShipType: [],
         temporaryLocation: [],
         messageToRemoveShip: false,
-        shipAlreadyPlaced: false
+        shipAlreadyPlaced: false,
+        testSalvos: {"turnNumber": 1,
+                    salvoLocations: ["A1", "B5", "C6", "D5", "F9"]}
     },
     created() {
         this.createGridCellsLocation();
@@ -190,12 +183,31 @@ var dataObject = new Vue({
                 })
                 .then(data => {
                     console.log(data)
-//                    window.location.reload()
+                    window.location.reload()
                 })
             }else{
                 alert("You still have to place some ships!")
             }
             
+        },
+        sendSalvos(){
+            fetch("/api/games/players/" + this.gamePlayerId + "/salvos", {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.testSalvos)
+                })
+                .then(response => {
+                    console.log(response)
+                    return response.json()
+                })
+                .then(data => {
+                    console.log(data)
+//                    window.location.reload()
+                })
         },
         handler(event) {
             if (this.checkIfShipAlreadyExists(event.toElement.value) == false) {
@@ -279,11 +291,11 @@ var dataObject = new Vue({
                 this.oneShip = this.pBoat
             }
             //            console.log(this.oneShip)
-            this.hoverShipOnGridHorizontal(location, this.shipLength)
+            this.hoverShipOnGrid(location, this.shipLength)
 
 
         },
-        hoverShipOnGridHorizontal(location, shipLength) {
+        hoverShipOnGrid(location, shipLength) {
             if (this.selectedShip != null && this.selectedOrientation != null) {
                 var locationNumber = []
                 var asciiLocation = []
@@ -354,7 +366,7 @@ var dataObject = new Vue({
             this.placingShipLocation
                 .map(oneCell => document.querySelector(`#g1${oneCell}`).classList.add("error_hover"))
         },
-        removeHover(location) {
+        removeShipHover(location) {
             if (this.selectedShip != null && this.selectedOrientation != null) {
                 this.placingShipLocation
                     .map(oneCell => {
@@ -464,6 +476,13 @@ var dataObject = new Vue({
                 return false
             }
 
+        },
+        hoverSalvoOnGrid(location){
+//            document.querySelector(`#g2${location}`).innerHTML = `<div class='salvo_hover'></div>`
+            document.querySelector(`#g2${location}`).classList.add("salvo_hover")
+        },
+        removeSalvoHover(location){
+            document.querySelector(`#g2${location}`).classList.remove("salvo_hover")
         }
     }
 

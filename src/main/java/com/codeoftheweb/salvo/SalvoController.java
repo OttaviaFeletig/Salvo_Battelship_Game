@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +22,15 @@ public class SalvoController {
     private GamePlayerRepository gamePlayerRepository;
     private PlayerRepository playerRepository;
     private ShipRepository shipRepository;
+    private SalvoRepository salvoRepository;
 
     @Autowired
-    public SalvoController(GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, PlayerRepository playerRepository, ShipRepository shipRepository) {
+    public SalvoController(GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, PlayerRepository playerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository) {
         this.gameRepository = gameRepository;
         this.gamePlayerRepository = gamePlayerRepository;
         this.playerRepository = playerRepository;
         this.shipRepository = shipRepository;
+        this.salvoRepository = salvoRepository;
     }
 
     @RequestMapping("/leader_board")
@@ -121,11 +124,39 @@ public class SalvoController {
         return new ResponseEntity<>(makeMapForResponseEntity("success", "The ships have been added successfully"), HttpStatus.CREATED);
     }
 
-//    private List<Ship> makeListForShipResponseEntity(Ship ship){
-//        List<Ship> listOfShips = new ArrayList<>();
-//        listOfShips.add(ship);
-//        return listOfShips;
-//    }
+    @RequestMapping(path = "/games/players/{gamePlayerId}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> getSalvoLocation(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody Salvo currentSalvo){
+        GamePlayer currentGamePlayer = gamePlayerRepository.findByGamePlayerId(gamePlayerId);
+
+        if(authentication.getName().isEmpty()){
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "The player is not logged in"), HttpStatus.UNAUTHORIZED);
+        }
+        if(currentGamePlayer == null){
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "There is not current game player"), HttpStatus.UNAUTHORIZED);
+        }
+        if(!getLoggedInGamePlayer(authentication, currentGamePlayer)){
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "The current game player is not the logged in player"), HttpStatus.UNAUTHORIZED);
+        }
+        if(checkIfSalvoHasBeenAlreadyFired(currentGamePlayer, currentSalvo)){
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "The salvos have already been added"), HttpStatus.FORBIDDEN);
+        }
+        currentGamePlayer.addSalvos(currentSalvo);
+        salvoRepository.save(currentSalvo);
+
+        return new ResponseEntity<>(makeMapForResponseEntity("success", "The salvos have been added successfully"), HttpStatus.CREATED);
+    }
+
+    private boolean checkIfSalvoHasBeenAlreadyFired(GamePlayer currentGamePlayer, Salvo currentSalvo){
+        if(currentGamePlayer.getSalvos().size() > 0){
+            currentGamePlayer.getSalvos().stream().map(salvo -> {
+                if(salvo.getTurnNumber() == currentSalvo.getTurnNumber()){
+                    return true;
+                }
+                return false;
+            });
+        }
+        return false;
+    }
 
     @RequestMapping("/games")
     public HashMap<String, Object> getGames(Authentication authentication){
