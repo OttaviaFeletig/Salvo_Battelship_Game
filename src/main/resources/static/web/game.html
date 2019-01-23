@@ -58,6 +58,68 @@
                     </table>
                 </div>
                 <div class="col">
+
+                    <div class="row mt-4 ml-2">
+                        <div v-show="shipAlreadyPlaced==false">
+                            
+                                
+                                    <span>You selected: {{selectedShipForHtml}}</span>
+                              
+                                
+                                <span class="ml-4" v-show="orientationOption==true">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="horizontal" name="inlineRadioOptions" value="horizontal" v-model="selectedOrientation">
+                                        <label class="form-check-label" for="horizontal">Horizontal</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="vertical" name="inlineRadioOptions" value="vertical" v-model="selectedOrientation">
+                                        <label class="form-check-label" for="vertical">Vertical</label>
+                                    </div>
+                                </span>
+
+
+
+                           
+                            <div class="row ml-2" v-show="messageToRemoveShip==true">
+                                <p>To remove a ship, click again on the ship button</p>
+                            </div>
+                            <div class="row mt-4 ml-2">
+                                <button id="aircraft_carrier" @click="handler(this.event)" class="btn button ship aircraft" value="aircraft_carrier">Aircraft Carrier
+                                </button>
+                            </div>
+
+                            <div class="row mt-4 ml-2">
+                                <button id="battleship" class="ship battleship btn button" @click="handler(this.event)" value="battleship">Battleship</button>
+                            </div>
+
+                            <div class="row mt-4 ml-2">
+                                <button id="submarine" class="ship submarine btn button" @click="handler(this.event)" value="submarine">Submarine</button>
+                            </div>
+
+                            <div class="row mt-4 ml-2">
+                                <button id="destroyer" class="ship destroyer btn button" @click="handler(this.event)" value="destroyer">Destroyer</button>
+                            </div>
+
+                            <div class="row mt-4 ml-2">
+                                <button id="p_boat" class="ship patrolboat btn button" @click="handler(this.event)" value="p_boat">P Boat</button>
+                            </div>
+
+                            <button class="btn btn-primary mt-4 ml-1" v-on:click="sendShips">Done</button>
+                        </div>
+
+
+
+
+
+
+
+                    </div>
+
+
+
+
+                </div>
+                <div class="col" v-show="shipAlreadyPlaced==true">
                     <table class="table-bordered">
                         <thead>
                             <tr>
@@ -68,72 +130,33 @@
                         <tbody>
                             <tr v-for="(location, index) in cellsLocation" :key="index">
                                 <td :id=`g2${location[0]}` class="p-2 bold_grid">{{location[0]}}</td>
-                                <td :id=`g2${location[1]}` @mouseover="hoverSalvoOnGrid(location[1])"
-                                @mouseleave="removeSalvoHover(location[1])"></td>
-                                <td :id=`g2${location[2]}` @mouseover="hoverSalvoOnGrid(location[2])" @mouseleave="removeSalvoHover(location[2])"></td>
-                                <td :id=`g2${location[3]}` @mouseover="hoverSalvoOnGrid(location[3])" @mouseleave="removeSalvoHover(location[3])"></td>
-                                <td :id=`g2${location[4]}` @mouseover="hoverSalvoOnGrid(location[4])" @mouseleave="removeSalvoHover(location[4])"></td>
-                                <td :id=`g2${location[5]}` @mouseover="hoverSalvoOnGrid(location[5])" @mouseleave="removeSalvoHover(location[5])"></td>
-                                <td :id=`g2${location[6]}` @mouseover="hoverSalvoOnGrid(location[6])" @mouseleave="removeSalvoHover(location[6])"></td>
-                                <td :id=`g2${location[7]}` @mouseover="hoverSalvoOnGrid(location[7])" @mouseleave="removeSalvoHover(location[7])"></td>
-                                <td :id=`g2${location[8]}` @mouseover="hoverSalvoOnGrid(location[8])" @mouseleave="removeSalvoHover(location[8])"></td>
-                                <td :id=`g2${location[9]}` @mouseover="hoverSalvoOnGrid(location[9])" @mouseleave="removeSalvoHover(location[9])"></td>
-                                <td :id=`g2${location[10]}` @mouseover="hoverSalvoOnGrid(location[10])" @mouseleave="removeSalvoHover(location[10])"></td>
+                                <td :id=`g2${location[1]}` @mouseover="hoverSalvoOnGrid(location[1])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[1])"></td>
+                                <td :id=`g2${location[2]}` @mouseover="hoverSalvoOnGrid(location[2])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[2])"></td>
+                                <td :id=`g2${location[3]}` @mouseover="hoverSalvoOnGrid(location[3])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[3])"></td>
+                                <td :id=`g2${location[4]}` @mouseover="hoverSalvoOnGrid(location[4])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[4])"></td>
+                                <td :id=`g2${location[5]}` @mouseover="hoverSalvoOnGrid(location[5])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[5])"></td>
+                                <td :id=`g2${location[6]}` @mouseover="hoverSalvoOnGrid(location[6])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[6])"></td>
+                                <td :id=`g2${location[7]}` @mouseover="hoverSalvoOnGrid(location[7])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[7])"></td>
+                                <td :id=`g2${location[8]}` @mouseover="hoverSalvoOnGrid(location[8])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[8])"></td>
+                                <td :id=`g2${location[9]}` @mouseover="hoverSalvoOnGrid(location[9])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[9])"></td>
+                                <td :id=`g2${location[10]}` @mouseover="hoverSalvoOnGrid(location[10])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[10])"></td>
                             </tr>
                         </tbody>
                     </table>
+
+                    <p>It's now time to fire your Salvos!</p>
+                    <p>Turn number {{turnNumber}}</p>
+                    <button class="btn btn-primary mt-4 ml-1" v-on:click="sendSalvos">Done</button>
+
                 </div>
             </div>
-            <div v-show="shipAlreadyPlaced==false">
-            <div class="row mt-4 ml-2">
-               <div class="col">
-                   <p>You selected: {{selectedShip}}</p>
-                <div class="ml-4" v-show="orientationOption==true">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="horizontal" name="inlineRadioOptions" value="horizontal" v-model="selectedOrientation">
-                        <label class="form-check-label" for="horizontal">Horizontal</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="vertical" name="inlineRadioOptions" value="vertical" v-model="selectedOrientation">
-                        <label class="form-check-label" for="vertical">Vertical</label>
-                    </div>
-                </div>
-               </div>
-               <div class="col">
-                   <button class="btn btn-primary mt-4 ml-1" v-on:click="sendSalvos">Done</button>
-               </div>
-                
-            </div>
-            <div class="row ml-2" v-show="messageToRemoveShip==true">
-                <p>To remove a ship, click again on the ship button</p>
-            </div>
-            <div class="row mt-4 ml-2">
-                <button id="aircraft_carrier" @click="handler(this.event)" class="btn button ship aircraft" value="aircraft_carrier">Aircraft Carrier
-                </button>
-            </div>
- 
-            <div class="row mt-4 ml-2">
-                <button id="battleship" class="ship battleship btn button" @click="handler(this.event)" value="battleship">Battleship</button>
-            </div>
 
-            <div class="row mt-4 ml-2">
-                <button id="submarine" class="ship submarine btn button" @click="handler(this.event)" value="submarine">Submarine</button>
-            </div>
-
-            <div class="row mt-4 ml-2">
-                <button id="destroyer" class="ship destroyer btn button" @click="handler(this.event)" value="destroyer">Destroyer</button>
-            </div>
-
-            <div class="row mt-4 ml-2">
-                <button id="p_boat" class="ship patrolboat btn button" @click="handler(this.event)" value="p_boat">P Boat</button>
-            </div>
-
-            <button class="btn btn-primary mt-4 ml-1" v-on:click="sendShips">Done</button>
-        </div>
 
         </div>
 
     </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 

@@ -9,8 +9,9 @@ var dataObject = new Vue({
         shipLocations: [],
         gamePlayers: [],
         salvos: [],
-        salvoPrincipalLocations: [],
-        salvoOpponentLocations: [],
+        salvoLocations: [],
+        //        salvoPrincipalLocations: [],
+        //        salvoOpponentLocations: [],
         principalGamePlayer: "",
         opponentGamePlayer: "",
         gridNumbers: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
@@ -19,6 +20,7 @@ var dataObject = new Vue({
         isLoading: true,
         orientationOption: false,
         selectedShip: null,
+        selectedShipForHtml: null,
         selectedOrientation: null,
         placingShipLocation: [],
         shipLength: null,
@@ -44,14 +46,16 @@ var dataObject = new Vue({
             "shipType": "",
             "shipLocations": []
         },
-//        test: false,
+        //        test: false,
         allShipsLocation: [],
         allShipType: [],
         temporaryLocation: [],
         messageToRemoveShip: false,
         shipAlreadyPlaced: false,
-        testSalvos: {"turnNumber": 1,
-                    salvoLocations: ["A1", "B5", "C6", "D5", "F9"]}
+        sendingSalvos: {},
+        turnNumber: 1,
+        placingSalvoLocation: null,
+        allSalvosLocation: []
     },
     created() {
         this.createGridCellsLocation();
@@ -79,15 +83,16 @@ var dataObject = new Vue({
                     this.gamePlayers = data.gamePlayers;
                     this.salvos = data.salvos;
                     //                    console.log(this.data);
-                    //                    console.log(this.salvos)
+                    console.log(this.salvos)
                     this.renderGamePlayers();
                     this.convertDate();
                     this.renderShips(this.ships);
                     this.renderSalvosPrincipal(this.salvos);
                     this.renderSalvosOpponent(this.salvos);
-                if(this.ships.length > 0){
-                    this.shipAlreadyPlaced = true
-                }
+                    if (this.ships.length > 0) {
+                        this.shipAlreadyPlaced = true
+                    }
+                    this.turnNumber = this.salvos.length + 1
 
                 })
         },
@@ -167,15 +172,39 @@ var dataObject = new Vue({
                 })
         },
         sendShips() {
-            if(this.ships.length == 5){
+            if (this.ships.length == 5) {
                 fetch("/api/games/players/" + this.gamePlayerId + "/ships", {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.ships)
+                    })
+                    .then(response => {
+                        console.log(response)
+                        return response.json()
+                    })
+                    .then(data => {
+                        console.log(data)
+                        window.location.reload()
+                    })
+            } else {
+                alert("You still have to place some ships!")
+            }
+
+        },
+        sendSalvos() {
+            if(this.sendingSalvos.salvoLocations.length == 5){
+                fetch("/api/games/players/" + this.gamePlayerId + "/salvos", {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(this.ships)
+                    body: JSON.stringify(this.sendingSalvos)
                 })
                 .then(response => {
                     console.log(response)
@@ -184,48 +213,32 @@ var dataObject = new Vue({
                 .then(data => {
                     console.log(data)
                     window.location.reload()
+                    //                    this.sendingSalvos = {}
+                    console.log(this.turnNumber)
+                    console.log(this.sendingSalvos)
                 })
             }else{
-                alert("You still have to place some ships!")
+                alert("You still have to fire some salvos!")
             }
             
-        },
-        sendSalvos(){
-            fetch("/api/games/players/" + this.gamePlayerId + "/salvos", {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(this.testSalvos)
-                })
-                .then(response => {
-                    console.log(response)
-                    return response.json()
-                })
-                .then(data => {
-                    console.log(data)
-//                    window.location.reload()
-                })
         },
         handler(event) {
             if (this.checkIfShipAlreadyExists(event.toElement.value) == false) {
                 this.getShipValue(event)
                 this.showOrientation()
-
+                this.convertSelectedShipForHtml()
             } else {
                 this.removeShip(event.toElement.value)
                 this.unfadeButton(event.target.id)
             }
 
         },
-        fadeButton(buttonId){
-//            console.log(event)
+        fadeButton(buttonId) {
+            //            console.log(event)
             document.querySelector(`#${buttonId}`).classList.add("fade_button")
-//            document.querySelector(`#${event.target.id}`).classList.add("fade_button")
+            //            document.querySelector(`#${event.target.id}`).classList.add("fade_button")
         },
-        unfadeButton(buttonId){
+        unfadeButton(buttonId) {
             document.querySelector(`#${buttonId}`).classList.remove("fade_button")
         },
         checkIfShipAlreadyExists(buttonValue) {
@@ -314,8 +327,8 @@ var dataObject = new Vue({
                             this.showHoverBlueColor()
                         } else {
                             this.showOverlappingHoverRedColor()
-                           
-//                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+
+                            //                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                         }
                     } else {
                         var numberOutGrid = locationNumber.filter(oneLocation => oneLocation < 11)
@@ -324,7 +337,7 @@ var dataObject = new Vue({
                             .map(oneCell => {
                                 document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
                             })
-//                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+                        //                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                     }
                 }
                 if (this.selectedOrientation == "vertical") {
@@ -335,7 +348,7 @@ var dataObject = new Vue({
                             this.showHoverBlueColor()
                         } else {
                             this.showOverlappingHoverRedColor()
-//                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+                            //                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                         }
                     } else {
                         var asciiOutGrid = asciiLocation.filter(oneLocation => oneLocation < 75)
@@ -349,7 +362,7 @@ var dataObject = new Vue({
                             .map(oneCell => {
                                 document.querySelector(`#g1${oneCell}`).classList.add("error_hover")
                             })
-//                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
+                        //                        document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
                     }
                 }
                 console.log(this.placingShipLocation)
@@ -427,33 +440,27 @@ var dataObject = new Vue({
                             this.placingShipLocation = []
                             this.allShipsLocation = []
                             this.messageToRemoveShip = true
-                            
-                        }else {
-//                            document.querySelector(`#g1${location}`).removeEventListener("@click", this.placeShipOnGrid())
-                            alert("You can't place the ship there!")
                         }
-                    }else {
-                        alert("You can't place the ship there!")
                     }
-                }else{
-                    for(var i = 0; i < this.ships.length; i++){
-                        if(this.ships[i].shipType == this.selectedShip){
+                } else {
+                    for (var i = 0; i < this.ships.length; i++) {
+                        if (this.ships[i].shipType == this.selectedShip) {
                             this.ships[i].shipLocations = this.placingShipLocation;
-                            
+
                             break;
                         }
                     }
                     this.placingShipLocation.forEach(loc => {
-                                document.querySelector(`#g1${loc}`).classList.remove("ship_hover")
-                                document.querySelector(`#g1${loc}`).classList.add("ship")
-                            })
-                            this.fadeButton(this.selectedShip)
-                            this.selectedShip = null
-                            this.selectedOrientation = "horizontal"
-                            this.orientationOption = false
-                            this.placingShipLocation = []
-                            this.allShipsLocation = []
-                            
+                        document.querySelector(`#g1${loc}`).classList.remove("ship_hover")
+                        document.querySelector(`#g1${loc}`).classList.add("ship")
+                    })
+                    this.fadeButton(this.selectedShip)
+                    this.selectedShip = null
+                    this.selectedOrientation = "horizontal"
+                    this.orientationOption = false
+                    this.placingShipLocation = []
+                    this.allShipsLocation = []
+
                 }
             }
 
@@ -477,12 +484,63 @@ var dataObject = new Vue({
             }
 
         },
-        hoverSalvoOnGrid(location){
-//            document.querySelector(`#g2${location}`).innerHTML = `<div class='salvo_hover'></div>`
-            document.querySelector(`#g2${location}`).classList.add("salvo_hover")
+        convertSelectedShipForHtml() {
+            this.selectedShipForHtml = this.selectedShip.split("_").map(word => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")
         },
-        removeSalvoHover(location){
-            document.querySelector(`#g2${location}`).classList.remove("salvo_hover")
+        hoverSalvoOnGrid(location) {
+            this.placingSalvoLocation = location
+            if (this.checkIfSalvoLocationIsEqual() == false) {
+                document.querySelector(`#g2${this.placingSalvoLocation}`).classList.add("salvo_hover")
+            } else {
+                document.querySelector(`#g2${this.placingSalvoLocation}`).classList.add("error_hover")
+            }
+
+        },
+        removeSalvoHover(location) {
+            document.querySelector(`#g2${this.placingSalvoLocation}`).classList.remove("salvo_hover")
+            document.querySelector(`#g2${this.placingSalvoLocation}`).classList.remove("error_hover")
+        },
+        placeSalvoOnGrid(location) {
+            if (this.checkIfSalvoLocationIsEqual() == false) {
+                console.log(this.salvoLocations)
+                if (this.salvoLocations.includes(location)) {
+                    this.removeSalvoFromGrid(location)
+                } else {
+                    if(this.salvoLocations.length < 5){
+                        document.querySelector(`#g2${location}`).classList.add("salvo")
+                    this.salvoLocations.push(location)
+                    }
+                    
+                }
+
+            }
+
+
+            console.log(this.turnNumber)
+            this.sendingSalvos.turnNumber = this.turnNumber
+            this.sendingSalvos.salvoLocations = this.salvoLocations
+
+            console.log(this.sendingSalvos)
+
+        },
+        checkIfSalvoLocationIsEqual() {
+            this.allSalvosLocation = [].concat.apply([], this.salvos.map(oneSalvo => oneSalvo.location))
+            if (this.allSalvosLocation.length == 0) {
+                return false
+            } else {
+
+                if (this.allSalvosLocation.includes(this.placingSalvoLocation)) {
+                    return true
+                }
+                return false
+            }
+
+        },
+        removeSalvoFromGrid(location) {
+
+            document.querySelector(`#g2${location}`).classList.remove("salvo")
+            this.salvoLocations.splice(this.salvoLocations.indexOf(location), 1)
+
         }
     }
 
