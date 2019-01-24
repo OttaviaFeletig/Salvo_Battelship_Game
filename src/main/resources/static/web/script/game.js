@@ -56,30 +56,51 @@ var dataObject = new Vue({
         turnNumber: 1,
         placingSalvoLocation: null,
         allSalvosLocation: [],
-        testHit: [{
+        testHitPrincipal: [
+            {
                 "gamePlayerId": 1,
                 "turnNumber": 1,
                 "shipType": "p_boat",
-                "location": ["A3", "A4"],
+                "location": ["B4", "B5"],
                 "sunk": "Sunk!",
-                "boats_left": 1
+                "boats_left": 2
         },
+            {
+                "gamePlayerId": 1,
+                "turnNumber": 2,
+                "shipType": "submarine",
+                "location": ["E1"],
+                "sunk": null,
+                "boats_left": 2
+        },
+            {
+                "gamePlayerId": 1,
+                "turnNumber": 2,
+                "shipType": "destroyer",
+                "location": ["H3"],
+                "sunk": null,
+                "boats_left": 2
+        }
+            ],
+        testHitOpponent: [
             {
                 "gamePlayerId": 2,
                 "turnNumber": 1,
                 "shipType": "destroyer",
-                "location": ["B5"],
+                "location": ["C5"],
                 "sunk": null,
-                "boats_left": 2
+                "boats_left": 3
                  },
             {
                 "gamePlayerId": 2,
                 "turnNumber": 2,
                 "shipType": "destroyer",
-                "location": ["B6"],
+                "location": ["D5"],
                 "sunk": null,
-                "boats_left": 2
-                 }]
+                "boats_left": 3
+                 }
+        ],
+        allHitLocationOpponent: []
     },
     created() {
         this.createGridCellsLocation();
@@ -156,12 +177,19 @@ var dataObject = new Vue({
             this.data.created = new Date(this.data.created).toLocaleString()
         },
         renderSalvosPrincipal(salvos) {
+            this.allHitLocationOpponent = [].concat.apply([], this.testHitOpponent.map(oneHit => oneHit.location))
+            console.log(this.allHitLocationOpponent)
             for (var i = 0; i < salvos.length; i++) {
                 if (salvos[i].gamePlayerId == this.gamePlayerId) {
                     console.log(salvos[i])
                     salvos[i].location.forEach(location => {
-                        document.querySelector(`#g2${location}`).innerHTML = `<div class='salvo'>${salvos[i].turnNumber}</div>`;
-                        //                        document.querySelector(`#g2${location}`).innerHTML = salvos[i].turnNumber;
+                        if(this.allHitLocationOpponent.includes(location)){
+                            document.querySelector(`#g2${location}`).innerHTML = `<div class='hit'>${salvos[i].turnNumber}</div>`;
+                            document.querySelector(`#g2${location}`).classList.add("ship_opponent")
+                        }else{
+                            document.querySelector(`#g2${location}`).innerHTML = `<div class='salvo'>${salvos[i].turnNumber}</div>`;
+                        }
+                        
                     })
                 }
             }

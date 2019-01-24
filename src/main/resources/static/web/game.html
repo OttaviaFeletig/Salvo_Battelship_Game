@@ -166,12 +166,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(hit, index) in testHit" :key="index">
-                            <template v-if="hit.gamePlayerId == gamePlayerId">
+                        <tr v-for="(hit, index) in testHitPrincipal" :key="index">
+                            
                                 <td>{{hit.turnNumber}}</td>
                                 <td>{{hit.shipType}}, {{hit.location}} {{hit.sunk}}</td>
                                 <td>{{hit.boats_left}}</td>
-                            </template>
+                           
                         </tr>
                     </tbody>
                      <thead>
@@ -188,12 +188,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(hit, index) in testHit" :key="index">
-                            <template v-if="hit.gamePlayerId != gamePlayerId">
+                        <tr v-for="(hit, index) in testHitOpponent" :key="index">
+                            
                                 <td>{{hit.turnNumber}}</td>
                                 <td>{{hit.shipType}}, {{hit.location}} {{hit.sunk}}</td>
                                 <td>{{hit.boats_left}}</td>
-                            </template>
+                            
                         </tr>
                     </tbody>
                 </table>
