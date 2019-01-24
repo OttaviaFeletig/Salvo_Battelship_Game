@@ -55,7 +55,31 @@ var dataObject = new Vue({
         sendingSalvos: {},
         turnNumber: 1,
         placingSalvoLocation: null,
-        allSalvosLocation: []
+        allSalvosLocation: [],
+        testHit: [{
+                "gamePlayerId": 1,
+                "turnNumber": 1,
+                "shipType": "p_boat",
+                "location": ["A3", "A4"],
+                "sunk": "Sunk!",
+                "boats_left": 1
+        },
+            {
+                "gamePlayerId": 2,
+                "turnNumber": 1,
+                "shipType": "destroyer",
+                "location": ["B5"],
+                "sunk": null,
+                "boats_left": 2
+                 },
+            {
+                "gamePlayerId": 2,
+                "turnNumber": 2,
+                "shipType": "destroyer",
+                "location": ["B6"],
+                "sunk": null,
+                "boats_left": 2
+                 }]
     },
     created() {
         this.createGridCellsLocation();
@@ -78,6 +102,7 @@ var dataObject = new Vue({
                 }).then(data => {
                     this.isLoading = false;
                     this.data = data;
+                    console.log(data)
                     this.ships = data.ships;
                     console.log(this.ships)
                     this.gamePlayers = data.gamePlayers;
@@ -92,7 +117,7 @@ var dataObject = new Vue({
                     if (this.ships.length > 0) {
                         this.shipAlreadyPlaced = true
                     }
-                    this.turnNumber = this.salvos.length + 1
+                    this.turnNumber = (this.salvos.length / 2) + 1
 
                 })
         },
@@ -196,31 +221,31 @@ var dataObject = new Vue({
 
         },
         sendSalvos() {
-            if(this.sendingSalvos.salvoLocations.length == 5){
+            if (this.sendingSalvos.salvoLocations.length == 5) {
                 fetch("/api/games/players/" + this.gamePlayerId + "/salvos", {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(this.sendingSalvos)
-                })
-                .then(response => {
-                    console.log(response)
-                    return response.json()
-                })
-                .then(data => {
-                    console.log(data)
-                    window.location.reload()
-                    //                    this.sendingSalvos = {}
-                    console.log(this.turnNumber)
-                    console.log(this.sendingSalvos)
-                })
-            }else{
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.sendingSalvos)
+                    })
+                    .then(response => {
+                        console.log(response)
+                        return response.json()
+                    })
+                    .then(data => {
+                        console.log(data)
+                        window.location.reload()
+                        //                    this.sendingSalvos = {}
+                        console.log(this.turnNumber)
+                        console.log(this.sendingSalvos)
+                    })
+            } else {
                 alert("You still have to fire some salvos!")
             }
-            
+
         },
         handler(event) {
             if (this.checkIfShipAlreadyExists(event.toElement.value) == false) {
@@ -506,11 +531,11 @@ var dataObject = new Vue({
                 if (this.salvoLocations.includes(location)) {
                     this.removeSalvoFromGrid(location)
                 } else {
-                    if(this.salvoLocations.length < 5){
+                    if (this.salvoLocations.length < 5) {
                         document.querySelector(`#g2${location}`).classList.add("salvo")
-                    this.salvoLocations.push(location)
+                        this.salvoLocations.push(location)
                     }
-                    
+
                 }
 
             }
