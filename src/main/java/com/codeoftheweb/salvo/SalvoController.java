@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,7 +83,7 @@ public class SalvoController {
         if(currentGame.getPlayers().contains(player)){
             return new ResponseEntity<>(makeMapForResponseEntity("error", "You are already in this game"), HttpStatus.CONFLICT);
         }
-        System.out.println(currentGame.getPlayers().contains(authentication.getName()));
+//        System.out.println(currentGame.getPlayers().contains(authentication.getName()));
         Date newDate = new Date();
         GamePlayer newGamePlayer = new GamePlayer(newDate);
 
@@ -116,7 +115,7 @@ public class SalvoController {
             return new ResponseEntity<>(makeMapForResponseEntity("error", "The ships have already been added"), HttpStatus.FORBIDDEN);
         }
         shipList.forEach(ship -> {
-            System.out.println(currentGamePlayer);
+//            System.out.println(currentGamePlayer);
             currentGamePlayer.addShipTypes(ship);
             shipRepository.save(ship);
         });
@@ -229,14 +228,17 @@ public class SalvoController {
         return false;
     }
     private Map<String, Object> getOneGame(GamePlayer gamePlayer){
+
         return new LinkedHashMap<String, Object>(){{
             put("id", gamePlayer.getGame().getGameId());
             put("created", gamePlayer.getGame().getDate());
             put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
             put("ships", getGamePlayerShipType(gamePlayer));
             put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
+            put("hits", getGameHits(gamePlayer.getGame().getGamePlayers()));
         }};
     }
+
 
     private ResponseEntity<String> unauthorizedGameView(){
         return new ResponseEntity<>("You are not authorized", HttpStatus.UNAUTHORIZED);
@@ -252,8 +254,8 @@ public class SalvoController {
     }
 
     private List<Map<String, Object>> getGamePlayerShipType(GamePlayer gamePlayers){
-        System.out.println(gamePlayers);
-        System.out.println(gamePlayers.getShipTypes());
+//        System.out.println(gamePlayers);
+//        System.out.println(gamePlayers.getShipTypes());
         return gamePlayers.getShipTypes()
                 .stream()
                 .map(ship -> new LinkedHashMap<String, Object>(){{
@@ -273,6 +275,70 @@ public class SalvoController {
                             put("location", salvo.getSalvoLocations());
                         }})).collect(toList());
     }
+
+    private List<Object> getGameHits(Set<GamePlayer> gamePlayerSet){
+        return gamePlayerSet
+                .stream()
+                .map(gamePlayer -> new LinkedHashMap<String, Object>(){{
+                    put("gamePlayerId", gamePlayer.getGamePlayerId());
+                    put("turnNumber", gamePlayer.getSalvos().stream().map(salvo -> salvo.getTurnNumber()));
+                    put("ship", checkIfItIsAHit(gamePlayerSet));
+//                    put("shipType", gamePlayer.getShipTypes().stream().map(ship -> ship.getShipType()));
+                }}).collect(toList());
+    }
+
+    private Object checkIfItIsAHit(Set<GamePlayer> gamePlayerSet){
+        List<String> gameSalvoLocation = getGameSalvoLocation(gamePlayerSet);
+        List<String> gameShipLocation = getGameShipLocation(gamePlayerSet);
+//        Object hitShip;
+        return gameShipLocation
+                .stream()
+                .map(ship -> {
+            if(gameSalvoLocation.contains(ship)){
+                Object hitShip = shipRepository.findAll().stream().map(ship1 -> {
+                    if(ship1.getShipLocations().contains(ship)){
+                        System.out.println(ship1);
+                        return ship1;
+                    }
+                    return null;
+                });
+                        return hitShip;
+            }
+            return null;
+        });
+//        if(getGameSalvoLocation(gamePlayerSet).size() > 0){
+//            getGameSalvoLocation(gamePlayerSet).stream().map(salvo -> {
+//                if(getGameShipLocation(gamePlayerSet).contains(salvo)){
+//                    System.out.println("hit!");
+//                    return true;
+//                }
+//                return false;
+//            });
+//        }
+//        return false;
+
+    }
+
+    private List<String> getGameSalvoLocation(Set<GamePlayer> gamePlayerSet){
+        return gamePlayerSet
+                .stream()
+                .map(gamePlayer -> gamePlayer.getSalvos()
+                        .stream()
+                        .map(salvo -> salvo.getSalvoLocations()).flatMap(Collection::stream)
+                        .collect(toList())).flatMap(Collection::stream)
+                .collect(toList());
+    }
+
+    private List<String> getGameShipLocation(Set<GamePlayer> gamePlayerSet){
+        return gamePlayerSet
+                .stream()
+                .map(gamePlayer -> gamePlayer.getShipTypes()
+                        .stream()
+                        .map(ship -> ship.getShipLocations()).flatMap(Collection::stream)
+                        .collect(toList())).flatMap(Collection::stream)
+                .collect(toList());
+    }
+
 
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<HashMap<String, Object>> createPlayer(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("name") String name){

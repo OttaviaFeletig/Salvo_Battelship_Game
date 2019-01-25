@@ -138,7 +138,7 @@ var dataObject = new Vue({
                     if (this.ships.length > 0) {
                         this.shipAlreadyPlaced = true
                     }
-                    this.turnNumber = (this.salvos.length / 2) + 1
+                    this.turnNumber = this.salvos.length + 1
 
                 })
         },
