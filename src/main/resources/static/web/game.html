@@ -161,16 +161,16 @@
                         <tr>
                             <th>Turn</th>
                             <th>Hits</th>
-                            <th>Boats Left</th>
+                            
                             
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(hit, index) in testHitPrincipal" :key="index">
-                            
-                                <td>{{hit.turnNumber}}</td>
-                                <td>{{hit.shipType}}, {{hit.location}} {{hit.sunk}}</td>
-                                <td>{{hit.boats_left}}</td>
+                        <tr v-for="(turn, index) in hitAndSunkPrincipal" :key="index">
+                                
+                                <td>{{turn.turnNumber}}</td>
+                                <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.damage}}</td>
+                                
                            
                         </tr>
                     </tbody>
@@ -178,21 +178,26 @@
                         <tr>
                             <th></th>
                             <th>Hits on Opponent</th>
-                            <th></th>
+                            
                         </tr>
                         <tr>
                             <th>Turn</th>
                             <th>Hits</th>
-                            <th>Boats Left</th>
+                            
                             
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(hit, index) in testHitOpponent" :key="index">
+                        <tr v-for="(turn, index) in hitAndSunkOpponent" :key="index">
                             
-                                <td>{{hit.turnNumber}}</td>
-                                <td>{{hit.shipType}}, {{hit.location}} {{hit.sunk}}</td>
-                                <td>{{hit.boats_left}}</td>
+                                <td>{{turn.turnNumber}}</td>
+                            
+                                    
+                                    <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.damage}} </td>
+                                    
+                               
+                                
+                                
                             
                         </tr>
                     </tbody>

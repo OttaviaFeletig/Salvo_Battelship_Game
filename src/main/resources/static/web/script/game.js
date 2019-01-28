@@ -56,50 +56,70 @@ var dataObject = new Vue({
         turnNumber: 1,
         placingSalvoLocation: null,
         allSalvosLocation: [],
-        testHitPrincipal: [
-            {
+        testHitAndSunk: [{
                 "gamePlayerId": 1,
-                "turnNumber": 1,
-                "shipType": "p_boat",
-                "location": ["B4", "B5"],
-                "sunk": "Sunk!",
-                "boats_left": 2
+                "hitAndSunk": [
+                    {
+                        "turnNumber": 1,
+                        "hits": [{
+                                "shipType": "p_boat",
+                                "location": ["F1"],
+                                "damage": 1
+                },
+                            {
+                                "shipType": "destroyer",
+                                "location": ["B5", "C5"],
+                                "damage": 2
+                        }],
         },
-            {
-                "gamePlayerId": 1,
-                "turnNumber": 2,
-                "shipType": "submarine",
-                "location": ["E1"],
-                "sunk": null,
-                "boats_left": 2
-        },
-            {
-                "gamePlayerId": 1,
-                "turnNumber": 2,
-                "shipType": "destroyer",
-                "location": ["H3"],
-                "sunk": null,
-                "boats_left": 2
+                    {
+                        "turnNumber": 2,
+                        "hits": [{
+                                "shipType": "p_boat",
+                                "location": ["F2"],
+                                "damage": 2
+                },
+                            {
+                                "shipType": "destroyer",
+                                "location": ["D5"],
+                                "damage": 3
+                        }],
         }
-            ],
-        testHitOpponent: [
+            ]
+        },
             {
                 "gamePlayerId": 2,
-                "turnNumber": 1,
-                "shipType": "destroyer",
-                "location": ["C5"],
-                "sunk": null,
-                "boats_left": 3
-                 },
-            {
-                "gamePlayerId": 2,
-                "turnNumber": 2,
-                "shipType": "destroyer",
-                "location": ["D5"],
-                "sunk": null,
-                "boats_left": 3
-                 }
+                "hitAndSunk": [
+                    {
+                        "turnNumber": 1,
+                        "hits": [{
+                            "shipType": "p_boat",
+                            "location": ["B4", "B5"],
+                            "damage": 2
+                }],
+        },
+                    {
+                        "turnNumber": 2,
+                        "hits": [{
+                                "shipType": "submarine",
+                                "location": ["E1"],
+                                "damage": 1
+                },
+                            {
+                                "shipType": "destroyer",
+                                "location": ["H3"],
+                                "damage": 1
+                        }],
+        }
+            ]
+        },
+
+
+
+
         ],
+        hitAndSunkOpponent: [],
+        hitAndSunkPrincipal: [],
         allHitLocationOpponent: []
     },
     created() {
@@ -132,13 +152,23 @@ var dataObject = new Vue({
                     console.log(this.salvos)
                     this.renderGamePlayers();
                     this.convertDate();
+                    this.testHitAndSunk.forEach(oneGamePlayer => {
+                        if (oneGamePlayer.gamePlayerId == this.gamePlayerId) {
+                            this.hitAndSunkOpponent = oneGamePlayer.hitAndSunk
+                        } else {
+                            this.hitAndSunkPrincipal = oneGamePlayer.hitAndSunk
+                        }
+                    })
+                    console.log(this.hitAndSunkOpponent)
+                    console.log(this.hitAndSunkPrincipal)
                     this.renderShips(this.ships);
                     this.renderSalvosPrincipal(this.salvos);
                     this.renderSalvosOpponent(this.salvos);
                     if (this.ships.length > 0) {
                         this.shipAlreadyPlaced = true
                     }
-                    this.turnNumber = this.salvos.length + 1
+                    this.checkTurnNumber()
+
 
                 })
         },
@@ -177,19 +207,29 @@ var dataObject = new Vue({
             this.data.created = new Date(this.data.created).toLocaleString()
         },
         renderSalvosPrincipal(salvos) {
-            this.allHitLocationOpponent = [].concat.apply([], this.testHitOpponent.map(oneHit => oneHit.location))
+            let allHit = []
+            this.hitAndSunkOpponent.forEach(oneTurn => {
+                console.log(oneTurn)
+                oneTurn.hits.forEach(oneHit => {
+                    console.log(oneHit.location)
+                    allHit.push(oneHit.location)
+                })
+            })
+            console.log(allHit)
+            this.allHitLocationOpponent = [].concat.apply([], allHit)
             console.log(this.allHitLocationOpponent)
+
             for (var i = 0; i < salvos.length; i++) {
                 if (salvos[i].gamePlayerId == this.gamePlayerId) {
                     console.log(salvos[i])
                     salvos[i].location.forEach(location => {
-                        if(this.allHitLocationOpponent.includes(location)){
+                        if (this.allHitLocationOpponent.includes(location)) {
                             document.querySelector(`#g2${location}`).innerHTML = `<div class='hit'>${salvos[i].turnNumber}</div>`;
                             document.querySelector(`#g2${location}`).classList.add("ship_opponent")
-                        }else{
+                        } else {
                             document.querySelector(`#g2${location}`).innerHTML = `<div class='salvo'>${salvos[i].turnNumber}</div>`;
                         }
-                        
+
                     })
                 }
             }
@@ -593,6 +633,16 @@ var dataObject = new Vue({
 
             document.querySelector(`#g2${location}`).classList.remove("salvo")
             this.salvoLocations.splice(this.salvoLocations.indexOf(location), 1)
+
+        },
+        checkTurnNumber() {
+            let allTurn = []
+            for (var i = 0; i < this.salvos.length; i++) {
+                if (this.salvos[i].gamePlayerId == this.gamePlayerId) {
+                    allTurn.push(this.salvos[i].turnNumber)
+                }
+                this.turnNumber = allTurn.length + 1
+            }
 
         }
     }
