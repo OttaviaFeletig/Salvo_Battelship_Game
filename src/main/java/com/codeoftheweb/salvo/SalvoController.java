@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -237,52 +238,96 @@ public class SalvoController {
             put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
             put("ships", getGamePlayerShipType(gamePlayer));
             put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
-//            put("hits", getGameHits(gamePlayer));
+            put("hitAndSunk", getHitAndSunk(gamePlayer));
         }};
     }
 
-//    private List<Map<String, Object>> getGameHits(GamePlayer gamePlayer) {
-//        Set<Salvo> gamePlayerSalvo = getGamePlayerSalvo(gamePlayer);
-//        final GamePlayer[] opponentGamePlayer = new GamePlayer[1];
-//        gameRepository.findAll().forEach(game -> {
-//            if (game.getGamePlayers().contains(gamePlayer)) {
-//                game.getGamePlayers().forEach(gamePlayer1 -> {
-//                            if (gamePlayer1 != gamePlayer) {
-//                                opponentGamePlayer[0] = gamePlayer1;
-//                            }
-//                        });
-//            }
-//        });
-//        Set<Ship> opponentShip = opponentGamePlayer[0].getShipTypes();
-////        System.out.println(opponentShip);
-////        System.out.println(gamePlayerSalvo);
-//        return opponentShip.stream().map(ship -> {
-//            Map<String, Object> hitMap = new LinkedHashMap<String, Object>(){{
-//
-//                System.out.println(ship.getShipLocations());
-//                System.out.println(gamePlayerSalvo
-//                        .stream()
-//                        .map(salvo -> ship.getShipLocations()
-//                                .stream()
-//                                .anyMatch(loc -> salvo.getSalvoLocations()
-//                                        .contains(loc))));
-////                if(ship.getShipLocations().toString().equals(gamePlayerSalvo.stream().map(salvo -> salvo.getSalvoLocations().toString()))){
-////                    System.out.println(ship);
-////                    put("gamePlayerId", gamePlayer.getGamePlayerId());
-////                    put("ship", ship.getShipType());
-////                    put("location", ship.getShipLocations());
-////                }
-//            }};
-//
-//            return hitMap;
-//
-//        }).collect(Collectors.toList());
-//
-//    }
+    private Map<String, Object> getHitAndSunk(GamePlayer gamePlayer) {
+        Set<Salvo> gamePlayerSalvos = gamePlayer.getSalvos();
+        Set<Ship> gamePlayerShips = gamePlayer.getShipTypes();
+        GamePlayer opponentGamePlayer = findOpponentGamePlayer(gamePlayer);
+//        System.out.println(opponentGamePlayer.getPlayer().getEmail());
+        Set<Ship> opponentShips = opponentGamePlayer.getShipTypes();
+        Set<Salvo> opponentSalvos = opponentGamePlayer.getSalvos();
+//        System.out.println(opponentShips);
+        Map<String, Object> hitAndSunkMap = new LinkedHashMap<>();
 
-    private Set<Salvo> getGamePlayerSalvo(GamePlayer gamePlayer){
-        return gamePlayer.getSalvos();
+
+        hitAndSunkMap.put("gamePlayerId", gamePlayer.getGamePlayerId());
+        hitAndSunkMap.put("opponentHitAndSunk", getOneSalvo(gamePlayerSalvos, opponentShips));
+        hitAndSunkMap.put("opponentPlayerId", opponentGamePlayer.getGamePlayerId());
+        hitAndSunkMap.put("myHitAndSunk", getOneSalvo(opponentSalvos, gamePlayerShips));
+
+
+        return hitAndSunkMap;
     }
+
+    private List<Map<String, Object>> getOneSalvo(Set<Salvo> gamePlayerSalvos, Set<Ship> opponentShips){
+//        System.out.println(opponentShips);
+        return gamePlayerSalvos.stream().map(salvo -> new LinkedHashMap<String, Object>(){{
+
+            put("turnNumber", salvo.getTurnNumber());
+            put("hits", getHit(salvo, opponentShips));
+        }}).collect(Collectors.toList());
+    }
+
+    private List<Map<String, Object>> getHit(Salvo gamePlayerSalvo, Set<Ship> opponentShips){
+//        System.out.println(opponentShips);
+
+        List<Map<String, Object>> hitList = new ArrayList<>();
+
+        opponentShips.forEach(ship -> {
+            Map<String, Object> hitMap = new LinkedHashMap<>();
+
+//            System.out.println(ship);
+//            System.out.println(gamePlayerSalvo.getSalvoLocations());
+            if(getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship).isEmpty()){
+                hitMap.put("shipType", null);
+                hitMap.put("location", null);
+                hitMap.put("damage", null);
+            }else{
+                hitMap.put("shipType", ship.getShipType());
+                hitMap.put("location", getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship));
+                hitMap.put("damage", getDamage(getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship)));
+            }
+            hitList.add(hitMap);
+            System.out.println(hitMap);
+            System.out.println(hitList);
+        });
+//        System.out.println(hitList);
+        return hitList;
+    }
+
+    private List<String> getOneSalvoLocation(List gamePlayerSalvoLocations, Ship opponentShip){
+        List<String> hitLocation = new ArrayList<>();
+        for (int i = 0; i < gamePlayerSalvoLocations.size(); i++){
+            if(opponentShip.getShipLocations().contains(gamePlayerSalvoLocations.get(i))){
+                hitLocation.add(gamePlayerSalvoLocations.get(i).toString());
+            }
+        }
+        System.out.println(hitLocation);
+        return hitLocation;
+    }
+
+    private Integer getDamage(List locations){
+        return locations.size();
+    }
+
+    private GamePlayer findOpponentGamePlayer(GamePlayer gamePlayer){
+        Map<String, GamePlayer> helperMap = new HashMap<>();
+        gamePlayer.getGame().getGamePlayers()
+                .stream()
+                .forEach(gp -> {
+                    if(gp.getGamePlayerId() != gamePlayer.getGamePlayerId()){
+                        helperMap.put("opponent", gp);
+                    }
+                });
+        return helperMap.get("opponent");
+    }
+
+//    private Set<Salvo> getGamePlayerSalvo(GamePlayer gamePlayer){
+//        return gamePlayer.getSalvos();
+//    }
 
 
     private ResponseEntity<String> unauthorizedGameView() {
