@@ -151,7 +151,7 @@
                 </div>
             </div>
             <div>
-                <table class="table-bordered">
+                <table class="table mt-4">
                     <thead>
                         <tr>
                             <th></th>
@@ -169,7 +169,7 @@
                         <tr v-for="(turn, index) in hitAndSunkPrincipal" :key="index">
                                 
                                 <td>{{turn.turnNumber}}</td>
-                                <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.damage}}</td>
+                                <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.damage}} hit</td>
                                 
                            
                         </tr>
@@ -193,7 +193,7 @@
                                 <td>{{turn.turnNumber}}</td>
                             
                                     
-                                    <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.damage}} </td>
+                                    <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.damage}} hit </td>
                                     
                                
                                 

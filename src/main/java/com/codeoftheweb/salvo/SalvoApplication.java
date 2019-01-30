@@ -80,19 +80,19 @@ public class SalvoApplication {
 			List<String> shipLocation7 = Arrays.asList("A2", "A3", "A4");
 			List<String> shipLocation8 = Arrays.asList("G6", "H6");
 
-			Ship shipType1_1 = new Ship("Submarine", shipLocation2);
-			Ship shipType1_2 = new Ship("Destroyer", shipLocation1);
-			Ship shipType1_3 = new Ship("Patrol Boat", shipLocation3);
-			Ship shipType2_1 = new Ship("Submarine", shipLocation4);
-			Ship shipType2_2 = new Ship("Patrol Boat", shipLocation5);
-			Ship shipType3_1 = new Ship("Destroyer", shipLocation4);
-			Ship shipType3_2 = new Ship("Patrol Boat", shipLocation6);
-			Ship shipType4_1 = new Ship("Submarine", shipLocation7);
-			Ship shipType4_2 = new Ship("Patrol Boat", shipLocation8);
-			Ship shipType5_1 = new Ship("Destroyer", shipLocation6);
-			Ship shipType5_2 = new Ship("Patrol Boat", shipLocation3);
-			Ship shipType6_1 = new Ship("Patrol Boat", shipLocation2);
-			Ship shipType6_2 = new Ship("Submarine", shipLocation7);
+			Ship shipType1_1 = new Ship("submarine", shipLocation2);
+			Ship shipType1_2 = new Ship("destroyer", shipLocation1);
+			Ship shipType1_3 = new Ship("p_boat", shipLocation3);
+			Ship shipType2_1 = new Ship("submarine", shipLocation4);
+			Ship shipType2_2 = new Ship("p_boat", shipLocation5);
+			Ship shipType3_1 = new Ship("destroyer", shipLocation4);
+			Ship shipType3_2 = new Ship("p_boat", shipLocation6);
+			Ship shipType4_1 = new Ship("submarine", shipLocation7);
+			Ship shipType4_2 = new Ship("p_boat", shipLocation8);
+			Ship shipType5_1 = new Ship("destroyer", shipLocation6);
+			Ship shipType5_2 = new Ship("p_boat", shipLocation3);
+			Ship shipType6_1 = new Ship("p_boat", shipLocation2);
+			Ship shipType6_2 = new Ship("submarine", shipLocation7);
 
 			List<String> salvoLocation1 = Arrays.asList("B5", "C5", "F1");
 			List<String> salvoLocation2 = Arrays.asList("F2", "D5", "H2");
