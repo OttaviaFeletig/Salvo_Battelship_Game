@@ -23,11 +23,18 @@ public class Ship {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
+    private Integer damage;
+    private Integer shipLength;
+    private boolean isSunk;
+
     public Ship() { }
 
     public Ship(String shipType, List<String> shipLocations){
         this.shipType = shipType;
         this.shipLocations = shipLocations;
+        this.damage = 0;
+        this.shipLength = shipLocations.size();
+        this.isSunk = false;
     }
 
     public long getShipId() {
@@ -61,4 +68,29 @@ public class Ship {
     public void setGamePlayer(GamePlayer gamePlayer) {
         this.gamePlayer = gamePlayer;
     }
+
+    public Integer getDamage() {
+        return damage;
+    }
+
+    public void setDamage(Integer damage) {
+        this.damage = damage;
+    }
+
+    public Integer getShipLength() {
+        return shipLength;
+    }
+
+    public void setShipLength(Integer shipLength) {
+        this.shipLength = shipLength;
+    }
+
+    public boolean isSunk() {
+        return isSunk;
+    }
+
+    public void setSunk(boolean sunk) {
+        isSunk = sunk;
+    }
+
 }

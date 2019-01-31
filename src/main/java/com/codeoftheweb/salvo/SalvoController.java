@@ -1,7 +1,6 @@
 
 package com.codeoftheweb.salvo;
 
-import com.sun.javafx.scene.text.HitInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -255,94 +254,71 @@ public class SalvoController {
             Set<Salvo> opponentSalvos = opponentGamePlayer.getSalvos();
 //        System.out.println(opponentShips);
 
-            hitAndSunkMap.put("opponentHitAndSunk", getOneSalvo(gamePlayer, gamePlayerSalvos, opponentShips));
-            hitAndSunkMap.put("opponentTotalDamage", getTotalHit(getOneSalvo(gamePlayer, gamePlayerSalvos, opponentShips)));
-            hitAndSunkMap.put("myHitAndSunk", getOneSalvo(opponentGamePlayer, opponentSalvos, gamePlayerShips));
-            hitAndSunkMap.put("myTotalDamage", getTotalHit(getOneSalvo(opponentGamePlayer, opponentSalvos, gamePlayerShips)));
+            List<Map<String, Object>> opponentHitAndSunk = getOneSalvo(gamePlayer, gamePlayerSalvos, opponentShips);
+            List<Map<String, Object>> myHitAndSunk = getOneSalvo(opponentGamePlayer, opponentSalvos, gamePlayerShips);
+
+
+            hitAndSunkMap.put("opponentHitAndSunk", opponentHitAndSunk);
+            hitAndSunkMap.put("myHitAndSunk", myHitAndSunk);
         }
 
         return hitAndSunkMap;
     }
 
-    private List<Map<String, Object>> getOneSalvo(GamePlayer gamePlayer, Set<Salvo> gamePlayerSalvos, Set<Ship> opponentShips){
+    private List<Map<String, Object>> getOneSalvo(GamePlayer gamePlayer, Set<Salvo> salvos, Set<Ship> ships){
 //        System.out.println(opponentShips);
-        return gamePlayerSalvos.stream().map(salvo -> {
+        return salvos.stream().map(salvo -> {
             Map<String, Object> turnMap = new LinkedHashMap<>();
 
             turnMap.put("gamePlayerId", gamePlayer.getGamePlayerId());
             turnMap.put("turnNumber", salvo.getTurnNumber());
 
-            turnMap.put("hits", getHit(salvo, opponentShips));
-//            turnMap.put("totalDamage", getTotalHit(getHit(salvo, opponentShips)));
+            turnMap.put("hits", getHit(salvo, ships));
             return turnMap;
         }).collect(Collectors.toList());
     }
 
-    private Map<String, Integer> getTotalHit(List<Map<String, Object>> hitList){
-        Map<String, Integer> totalDamageMap = new LinkedHashMap<>();
-        List<Map<String, Object>> myHitList = hitList;
-//        System.out.println("hitList" + hitList);
-        totalDamageMap.put("p_boat", 0);
-        totalDamageMap.put("destroyer", 0);
-        totalDamageMap.put("submarine", 0);
-        totalDamageMap.put("battleship", 0);
-        totalDamageMap.put("aircraft_carrier", 0);
-//        for (int i = 0; i < myHitList.size(); i++){
-//            myHitList.get(i).ge
-////                for (Map.Entry<String, Object> entry: hitList.get(i).entrySet())
-//
-//        }
-        myHitList.forEach(hit -> {
-//            System.out.println("oneHit" + hit);
-
-            if(hit.get("hits").toString().contains("p_boat")){
-                totalDamageMap.put("p_boat", totalDamageMap.get("p_boat") + getTurnDamage((List<Map<String, Object>>) hit.get("hits")));
-            }
-            if(hit.get("hits").toString().contains("destroyer")){
-                totalDamageMap.put("destroyer", totalDamageMap.get("destroyer") + getTurnDamage((List<Map<String, Object>>) hit.get("hits")));
-            }
-            if(hit.get("hits").toString().contains("submarine")){
-                totalDamageMap.put("submarine", totalDamageMap.get("submarine") + getTurnDamage((List<Map<String, Object>>) hit.get("hits")));
-            }
-            if(hit.get("hits").toString().contains("battleship")){
-                totalDamageMap.put("battleship", totalDamageMap.get("battleship") + getTurnDamage((List<Map<String, Object>>) hit.get("hits")));
-            }
-            if(hit.get("hits").toString().contains("aircraft_carrier")){
-                totalDamageMap.put("aircraft_carrier", totalDamageMap.get("aircraft_carrier") + getTurnDamage((List<Map<String, Object>>) hit.get("hits")));
-            }
-        });
-        return totalDamageMap;
-    }
-
     private Integer getTurnDamage(List<Map<String, Object>> hit){
         List<Map<String, Object>> turnHit = hit;
-        System.out.println("turnHit" + turnHit);
+//        System.out.println("turnHit" + turnHit);
         Map<String, Integer> turnDamage = new HashMap<>();
 
-        turnHit.forEach(oneTurnHit -> {
-            turnDamage.put("damage", (Integer) oneTurnHit.get("damage"));
-        });
+        turnHit.forEach(oneTurnHit ->
+            turnDamage.put("damage", (Integer) oneTurnHit.get("damage"))
+        );
         return turnDamage.get("damage");
 
     }
 
-    private List<Map<String, Object>> getHit(Salvo gamePlayerSalvo, Set<Ship> opponentShips){
+    private List<Map> getHit(Salvo gamePlayerSalvo, Set<Ship> opponentShips){
 //        System.out.println(opponentShips);
 
-        List<Map<String, Object>> hitList = new ArrayList<>();
+        List<Map> hitList = new ArrayList<>();
 
         opponentShips.forEach(ship -> {
 
 
 //            System.out.println(ship);
 //            System.out.println(gamePlayerSalvo.getSalvoLocations());
-            if(!getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship).isEmpty()){
+            // TODO: add var for getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship)
+            List<String> hitLocation = getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship);
+            if(!hitLocation.isEmpty()){
+                Map<String, Integer> hitMap2 = new HashMap<>();
+                hitMap2.put(ship.getShipType(), getDamage(hitLocation));
+                ship.setDamage(ship.getDamage() + hitLocation.size());
+                if(ship.getDamage() == ship.getShipLength()){
+                    ship.setSunk(true);
+                }
                 Map<String, Object> hitMap = new LinkedHashMap<>();
                 hitMap.put("shipType", ship.getShipType());
-                hitMap.put("location", getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship));
-                hitMap.put("damage", getDamage(getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship)));
+                hitMap.put("hitsLocation", hitLocation);
+                hitMap.put("turnShipDamage", hitLocation.size());
+                hitMap.put("totalDamage", ship.getDamage());
+                hitMap.put("shipLength", ship.getShipLength());
+                hitMap.put("isSunk", ship.isSunk());
 
                 hitList.add(hitMap);
+//                hitList.add(hitMap2);
             }
 
 //            System.out.println(hitMap);

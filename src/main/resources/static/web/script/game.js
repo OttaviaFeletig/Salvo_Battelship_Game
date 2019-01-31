@@ -215,7 +215,7 @@ var dataObject = new Vue({
 //                    console.log(oneTurn)
                     oneTurn.hits.forEach(oneHit => {
 //                        console.log(oneHit.location)
-                        allHit.push(oneHit.location)
+                        allHit.push(oneHit.hitsLocation)
                     })
                 })
 //                console.log(allHit)
@@ -651,13 +651,11 @@ var dataObject = new Vue({
 
         },
         calculateTotalDamage() {
-            let oneTurn = {}
             this.hitAndSunkOpponent.forEach(turn => {
-                
+                let oneTurn = {}
                 oneTurn = turn.turnNumber
-                
+                this.opponentTotalDamage.push(oneTurn)
             })
-            this.opponentTotalDamage.push(oneTurn)
             console.log(this.opponentTotalDamage)
         }
     }
