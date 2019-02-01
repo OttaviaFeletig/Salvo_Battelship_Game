@@ -169,12 +169,16 @@
                         <tr v-for="(turn, index) in hitAndSunkPrincipal" :key="index">
                                 
                                 <td>{{turn.turnNumber}}</td>
-                                <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.damage}} hit</td>
+                                <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.turnShipDamage}} hit, total damage: {{hit.totalDamage}}</td>
                                 
                            
                         </tr>
                     </tbody>
-                     <thead>
+                     
+                </table>
+                
+                <table>
+                    <thead>
                         <tr>
                             <th></th>
                             <th>Hits on Opponent</th>
@@ -193,7 +197,7 @@
                                 <td>{{turn.turnNumber}}</td>
                             
                                     
-                                    <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.damage}} hit </td>
+                                    <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.turnShipDamage}} hit, total damage: {{hit.totalDamage}} </td>
                                     
                                
                                 

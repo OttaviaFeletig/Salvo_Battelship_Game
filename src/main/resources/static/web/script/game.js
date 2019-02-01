@@ -9,6 +9,8 @@ var dataObject = new Vue({
         shipLocations: [],
         gamePlayers: [],
         salvos: [],
+        mySalvos: [],
+        opponentSalvos: [],
         salvoLocations: [],
         //        salvoPrincipalLocations: [],
         //        salvoOpponentLocations: [],
@@ -149,6 +151,13 @@ var dataObject = new Vue({
 //                    console.log(this.ships)
                     this.gamePlayers = data.gamePlayers;
                     this.salvos = data.salvos;
+                    this.salvos.forEach(salvo => {
+                        if(salvo.gamePlayerId == this.gamePlayerId){
+                            this.mySalvos.push(salvo)
+                        }else{
+                            this.opponentSalvos.push(salvo)
+                        }
+                    })
                     //                    console.log(this.data);
 //                    console.log(this.salvos)
                     this.renderGamePlayers();
@@ -622,7 +631,8 @@ var dataObject = new Vue({
 
         },
         checkIfSalvoLocationIsEqual() {
-            this.allSalvosLocation = [].concat.apply([], this.salvos.map(oneSalvo => oneSalvo.location))
+            this.allSalvosLocation = [].concat.apply([], this.mySalvos.map(oneSalvo => oneSalvo.location))
+//            console.log(this.allSalvosLocation)
             if (this.allSalvosLocation.length == 0) {
                 return false
             } else {

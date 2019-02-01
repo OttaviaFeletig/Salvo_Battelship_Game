@@ -259,15 +259,35 @@ public class SalvoController {
 
 
             hitAndSunkMap.put("opponentHitAndSunk", opponentHitAndSunk);
+//            hitAndSunkMap.put("opponentTotalDamage", getTotalDamage(opponentHitAndSunk));
             hitAndSunkMap.put("myHitAndSunk", myHitAndSunk);
         }
 
         return hitAndSunkMap;
     }
 
+//    private List<Map<String, Object>> getTotalDamage(List<Map<String, Object>> turnList){
+//        List<Map<String, Object>> hitList = new ArrayList<>();
+//        turnList.forEach(turn ->
+//            hitList.add((Map<String, Object>) turn.get("hits"))
+//        );
+//        System.out.println(hitList);
+//        return hitList;
+//    }
+
     private List<Map<String, Object>> getOneSalvo(GamePlayer gamePlayer, Set<Salvo> salvos, Set<Ship> ships){
-//        System.out.println(opponentShips);
-        return salvos.stream().map(salvo -> {
+
+        List<Salvo> salvoList = salvos.stream().collect(toList());
+        Comparator<Salvo> comparator = new Comparator<Salvo>() {
+            @Override
+            public int compare(Salvo o1, Salvo o2) {
+                return o1.getTurnNumber().compareTo(o2.getTurnNumber());
+            }
+        };
+
+        Collections.sort(salvoList, comparator);
+//        System.out.println(salvos);
+        return salvoList.stream().map(salvo -> {
             Map<String, Object> turnMap = new LinkedHashMap<>();
 
             turnMap.put("gamePlayerId", gamePlayer.getGamePlayerId());
@@ -278,17 +298,17 @@ public class SalvoController {
         }).collect(Collectors.toList());
     }
 
-    private Integer getTurnDamage(List<Map<String, Object>> hit){
-        List<Map<String, Object>> turnHit = hit;
-//        System.out.println("turnHit" + turnHit);
-        Map<String, Integer> turnDamage = new HashMap<>();
-
-        turnHit.forEach(oneTurnHit ->
-            turnDamage.put("damage", (Integer) oneTurnHit.get("damage"))
-        );
-        return turnDamage.get("damage");
-
-    }
+//    private Integer getTurnDamage(List<Map<String, Object>> hit){
+//        List<Map<String, Object>> turnHit = hit;
+////        System.out.println("turnHit" + turnHit);
+//        Map<String, Integer> turnDamage = new HashMap<>();
+//
+//        turnHit.forEach(oneTurnHit ->
+//            turnDamage.put("damage", (Integer) oneTurnHit.get("damage"))
+//        );
+//        return turnDamage.get("damage");
+//
+//    }
 
     private List<Map> getHit(Salvo gamePlayerSalvo, Set<Ship> opponentShips){
 //        System.out.println(opponentShips);

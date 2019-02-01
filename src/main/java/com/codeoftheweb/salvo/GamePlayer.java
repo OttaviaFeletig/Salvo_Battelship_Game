@@ -4,10 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.Authentication;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class GamePlayer {
