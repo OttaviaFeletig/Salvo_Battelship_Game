@@ -167,8 +167,8 @@ var dataObject = new Vue({
                         this.hitAndSunkPrincipal = data.hitAndSunk.myHitAndSunk
                         console.log(this.hitAndSunkOpponent)
                         console.log(this.hitAndSunkPrincipal)
-                        this.calculateTotalDamage()
-
+                        this.calculateOpponentTotalDamage()
+                        this.calculateMyTotalDamage()
 
 
 
@@ -660,13 +660,43 @@ var dataObject = new Vue({
             }
 
         },
-        calculateTotalDamage() {
+        calculateOpponentTotalDamage() {
             this.hitAndSunkOpponent.forEach(turn => {
-                let oneTurn = {}
-                oneTurn = turn.turnNumber
-                this.opponentTotalDamage.push(oneTurn)
+                if(turn.totalDamage.p_boat == 2){
+                    document.getElementById("opponent_ship_p_boat").classList.add("sunk_ship")
+                }
+                if(turn.totalDamage.submarine == 3){
+                    document.getElementById("opponent_ship_submarine").classList.add("sunk_ship")
+                }
+                if(turn.totalDamage.destroyer == 3){
+                    document.getElementById("opponent_ship_destroyer").classList.add("sunk_ship")
+                }
+                if(turn.totalDamage.battleship == 4){
+                    document.getElementById("opponent_ship_battleship").classList.add("sunk_ship")
+                }
+                if(turn.totalDamage.aircraft_carrier == 5){
+                    document.getElementById("opponent_ship_aircraft_carrier").classList.add("sunk_ship")
+                }
             })
-            console.log(this.opponentTotalDamage)
+        },
+        calculateMyTotalDamage() {
+            this.hitAndSunkPrincipal.forEach(turn => {
+                if(turn.totalDamage.p_boat == 2){
+                    document.getElementById("my_ship_p_boat").classList.add("sunk_ship")
+                }
+                if(turn.totalDamage.submarine == 3){
+                    document.getElementById("my_ship_submarine").classList.add("sunk_ship")
+                }
+                if(turn.totalDamage.destroyer == 3){
+                    document.getElementById("my_ship_destroyer").classList.add("sunk_ship")
+                }
+                if(turn.totalDamage.battleship == 4){
+                    document.getElementById("my_ship_battleship").classList.add("sunk_ship")
+                }
+                if(turn.totalDamage.aircraft_carrier == 5){
+                    document.getElementById("my_ship_aircraft_carrier").classList.add("sunk_ship")
+                }
+            })
         }
     }
 

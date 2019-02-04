@@ -294,8 +294,23 @@ public class SalvoController {
             turnMap.put("turnNumber", salvo.getTurnNumber());
 
             turnMap.put("hits", getHit(salvo, ships));
+            turnMap.put("totalDamage", getTotalDamage((List<Map>) turnMap.get("hits"), ships));
             return turnMap;
         }).collect(Collectors.toList());
+    }
+
+    private Map<String, Object> getTotalDamage(List<Map> hitList, Set<Ship> ships){
+        Map<String, Object> totalDamageMap = new LinkedHashMap<>();
+
+        ships.forEach(ship ->
+            hitList.forEach(hit -> {
+                if(ship.getShipType() == hit.get("shipType")){
+                    ship.setDamage(ship.getDamage() + (Integer) hit.get("turnShipDamage"));
+                    System.out.println(ship.getShipType() + ship.getDamage());
+                }
+                totalDamageMap.put(ship.getShipType(), ship.getDamage());
+            }));
+        return totalDamageMap;
     }
 
 //    private Integer getTurnDamage(List<Map<String, Object>> hit){
@@ -323,19 +338,19 @@ public class SalvoController {
             // TODO: add var for getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship)
             List<String> hitLocation = getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship);
             if(!hitLocation.isEmpty()){
-                Map<String, Integer> hitMap2 = new HashMap<>();
-                hitMap2.put(ship.getShipType(), getDamage(hitLocation));
-                ship.setDamage(ship.getDamage() + hitLocation.size());
-                if(ship.getDamage() == ship.getShipLength()){
-                    ship.setSunk(true);
-                }
+//                Map<String, Integer> hitMap2 = new HashMap<>();
+//                hitMap2.put(ship.getShipType(), getDamage(hitLocation));
+//                ship.setDamage(ship.getDamage() + hitLocation.size());
+//                if(ship.getDamage() == ship.getShipLength()){
+//                    ship.setSunk(true);
+//                }
                 Map<String, Object> hitMap = new LinkedHashMap<>();
                 hitMap.put("shipType", ship.getShipType());
                 hitMap.put("hitsLocation", hitLocation);
                 hitMap.put("turnShipDamage", hitLocation.size());
-                hitMap.put("totalDamage", ship.getDamage());
+//                hitMap.put("totalDamage", ship.getDamage());
                 hitMap.put("shipLength", ship.getShipLength());
-                hitMap.put("isSunk", ship.isSunk());
+//                hitMap.put("isSunk", ship.isSunk());
 
                 hitList.add(hitMap);
 //                hitList.add(hitMap2);

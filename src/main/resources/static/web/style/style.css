@@ -88,3 +88,19 @@
 .ship_opponent{
     background-color: #03553f;
 }
+.floating_ships {
+    background-color: #33ade3;
+    height: 30px;
+    width: 150px;
+    color: white;
+    text-align: center;
+    margin: 10px;
+}
+.sunk_ship{
+    background-color: #9b0606;
+    height: 30px;
+    width: 150px;
+    color: white;
+    text-align: center;
+    margin: 10px;
+}

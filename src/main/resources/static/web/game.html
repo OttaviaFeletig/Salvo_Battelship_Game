@@ -161,51 +161,69 @@
                         <tr>
                             <th>Turn</th>
                             <th>Hits</th>
-                            
-                            
+
+
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(turn, index) in hitAndSunkPrincipal" :key="index">
-                                
-                                <td>{{turn.turnNumber}}</td>
-                                <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.turnShipDamage}} hit, total damage: {{hit.totalDamage}}</td>
-                                
-                           
+
+                            <td>{{turn.turnNumber}}</td>
+                            <td v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.turnShipDamage}}</td>
+
+
                         </tr>
                     </tbody>
-                     
+
                 </table>
-                
-                <table>
+                <div class="row">
+                    <div id="my_ship_aircraft_carrier" class="floating_ships">Aircraft Carrier</div>
+                    <div id="my_ship_battleship" class="floating_ships">Battleship</div>
+                    <div id="my_ship_submarine" class="floating_ships">Submarine</div>
+                    <div id="my_ship_destroyer" class="floating_ships">Destroyer</div>
+                    <div id="my_ship_p_boat" class="floating_ships">P_Boat</div>
+
+                </div>
+
+
+                <table class="table mt-4">
                     <thead>
                         <tr>
                             <th></th>
                             <th>Hits on Opponent</th>
-                            
+
                         </tr>
                         <tr>
                             <th>Turn</th>
                             <th>Hits</th>
-                            
-                            
+
+
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(turn, index) in hitAndSunkOpponent" :key="index">
-                            
-                                <td>{{turn.turnNumber}}</td>
-                            
-                                    
-                                    <td  v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.turnShipDamage}} hit, total damage: {{hit.totalDamage}} </td>
-                                    
-                               
-                                
-                                
-                            
+
+                            <td>{{turn.turnNumber}}</td>
+
+
+                            <td v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.turnShipDamage}} hit</td>
+
+
+
+
+
                         </tr>
                     </tbody>
                 </table>
+                
+                <div class="row">
+                    <div id="opponent_ship_aircraft_carrier" class="floating_ships">Aircraft Carrier</div>
+                    <div id="opponent_ship_battleship" class="floating_ships">Battleship</div>
+                    <div id="opponent_ship_submarine" class="floating_ships">Submarine</div>
+                    <div id="opponent_ship_destroyer" class="floating_ships">Destroyer</div>
+                    <div id="opponent_ship_p_boat" class="floating_ships">P_Boat</div>
+
+                </div>
 
 
 
