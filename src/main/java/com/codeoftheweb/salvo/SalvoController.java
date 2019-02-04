@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -147,13 +148,9 @@ public class SalvoController {
     }
 
     private boolean checkIfSalvoHasBeenAlreadyFired(GamePlayer currentGamePlayer, Salvo currentSalvo) {
-        if (currentGamePlayer.getSalvos().size() > 0) {
-            currentGamePlayer.getSalvos().stream().map(salvo -> {
-                if (salvo.getTurnNumber() == currentSalvo.getTurnNumber()) {
-                    return true;
-                }
-                return false;
-            });
+        List<Integer> gamePlayerTurn = currentGamePlayer.getSalvos().stream().map(salvo -> salvo.getTurnNumber()).collect(toList());
+        if(gamePlayerTurn.contains(currentSalvo.getTurnNumber())){
+            return true;
         }
         return false;
     }
@@ -306,7 +303,7 @@ public class SalvoController {
             hitList.forEach(hit -> {
                 if(ship.getShipType() == hit.get("shipType")){
                     ship.setDamage(ship.getDamage() + (Integer) hit.get("turnShipDamage"));
-                    System.out.println(ship.getShipType() + ship.getDamage());
+//                    System.out.println(ship.getShipType() + ship.getDamage());
                 }
                 totalDamageMap.put(ship.getShipType(), ship.getDamage());
             }));
