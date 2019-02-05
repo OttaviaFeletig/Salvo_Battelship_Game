@@ -23,7 +23,7 @@ public class Ship {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    private Integer damage;
+    private Integer damage = 0;
     private Integer shipLength;
     private boolean isSunk;
 
@@ -32,7 +32,8 @@ public class Ship {
     public Ship(String shipType, List<String> shipLocations){
         this.shipType = shipType;
         this.shipLocations = shipLocations;
-        this.damage = 0;
+//        this.damage = 0;
+
         this.shipLength = shipLocations.size();
         this.isSunk = false;
     }

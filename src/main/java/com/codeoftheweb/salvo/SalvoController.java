@@ -128,7 +128,8 @@ public class SalvoController {
     @RequestMapping(path = "/games/players/{gamePlayerId}/salvos", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> getSalvoLocation(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody Salvo currentSalvo) {
         GamePlayer currentGamePlayer = gamePlayerRepository.findByGamePlayerId(gamePlayerId);
-
+        Set<GamePlayer> gamePlayerSet = currentGamePlayer.getGame().getGamePlayers();
+        GamePlayer opponentGamePlayer = findOpponentGamePlayer(currentGamePlayer);
         if (authentication.getName().isEmpty()) {
             return new ResponseEntity<>(makeMapForResponseEntity("error", "The player is not logged in"), HttpStatus.UNAUTHORIZED);
         }
@@ -138,9 +139,21 @@ public class SalvoController {
         if (!getLoggedInGamePlayer(authentication, currentGamePlayer)) {
             return new ResponseEntity<>(makeMapForResponseEntity("error", "The current game player is not the logged in player"), HttpStatus.UNAUTHORIZED);
         }
-        if (checkIfSalvoHasBeenAlreadyFired(currentGamePlayer, currentSalvo)) {
-            return new ResponseEntity<>(makeMapForResponseEntity("error", "The salvos have already been added"), HttpStatus.FORBIDDEN);
+        if(opponentGamePlayer == null){
+            return new ResponseEntity<>(makeMapForResponseEntity("error", "You have no opponent"), HttpStatus.SERVICE_UNAVAILABLE);
+        }else{
+            if (checkIfSalvoHasBeenAlreadyFired(currentGamePlayer, currentSalvo)) {
+                return new ResponseEntity<>(makeMapForResponseEntity("error", "The salvos have already been added"), HttpStatus.FORBIDDEN);
+            }
+            if(checkTurn(gamePlayerSet, currentGamePlayer).get("myLastTurn") > checkTurn(gamePlayerSet, currentGamePlayer).get("opponentLastTurn")){
+                return new ResponseEntity<>(makeMapForResponseEntity("error", "You have to wait"), HttpStatus.NOT_ACCEPTABLE);
+            }
+            if(opponentGamePlayer.getShipTypes().isEmpty()){
+                return new ResponseEntity<>(makeMapForResponseEntity("error", "Your have to wait"), HttpStatus.CONFLICT);
+            }
         }
+
+
         currentGamePlayer.addSalvos(currentSalvo);
         salvoRepository.save(currentSalvo);
 
@@ -236,7 +249,41 @@ public class SalvoController {
             put("ships", getGamePlayerShipType(gamePlayer));
             put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
             put("hitAndSunk", getHitAndSunk(gamePlayer));
+            put("checkTurn", checkTurn(gamePlayer.getGame().getGamePlayers(), gamePlayer));
         }};
+    }
+
+    private Map<String, Integer> checkTurn(Set<GamePlayer> gamePlayerSet, GamePlayer currentGamePlayer){
+        Map<String, Integer> lastTurnMap = new LinkedHashMap<>();
+        gamePlayerSet.forEach(gamePlayer -> {
+            if (gamePlayer.getGamePlayerId() != currentGamePlayer.getGamePlayerId()){
+                lastTurnMap.put("opponentLastTurn", getLastSalvoTurn(gamePlayer.getSalvos()));
+            }else{
+                lastTurnMap.put("myLastTurn", getLastSalvoTurn(currentGamePlayer.getSalvos()));
+
+            }
+        });
+        return lastTurnMap;
+    }
+
+    private Integer getLastSalvoTurn(Set<Salvo> salvoSet){
+        Integer lastSalvoTurn = 0;
+        List<Salvo> salvoList = salvoSet.stream().collect(toList());
+        Comparator<Salvo> comparator = new Comparator<Salvo>() {
+            @Override
+            public int compare(Salvo o1, Salvo o2) {
+                return o1.getTurnNumber().compareTo(o2.getTurnNumber());
+            }
+        };
+
+        Collections.sort(salvoList, comparator);
+        if(salvoList.size() != 0){
+            lastSalvoTurn = salvoList.get(salvoList.size() - 1).getTurnNumber();
+        }else{
+            lastSalvoTurn = 0;
+        }
+
+        return lastSalvoTurn;
     }
 
     private Map<String, Object> getHitAndSunk(GamePlayer gamePlayer) {
@@ -262,15 +309,6 @@ public class SalvoController {
 
         return hitAndSunkMap;
     }
-
-//    private List<Map<String, Object>> getTotalDamage(List<Map<String, Object>> turnList){
-//        List<Map<String, Object>> hitList = new ArrayList<>();
-//        turnList.forEach(turn ->
-//            hitList.add((Map<String, Object>) turn.get("hits"))
-//        );
-//        System.out.println(hitList);
-//        return hitList;
-//    }
 
     private List<Map<String, Object>> getOneSalvo(GamePlayer gamePlayer, Set<Salvo> salvos, Set<Ship> ships){
 
@@ -298,29 +336,16 @@ public class SalvoController {
 
     private Map<String, Object> getTotalDamage(List<Map> hitList, Set<Ship> ships){
         Map<String, Object> totalDamageMap = new LinkedHashMap<>();
-
-        ships.forEach(ship ->
-            hitList.forEach(hit -> {
-                if(ship.getShipType() == hit.get("shipType")){
-                    ship.setDamage(ship.getDamage() + (Integer) hit.get("turnShipDamage"));
-//                    System.out.println(ship.getShipType() + ship.getDamage());
-                }
-                totalDamageMap.put(ship.getShipType(), ship.getDamage());
-            }));
+            ships.forEach(ship ->
+                    hitList.forEach(hit -> {
+                            if(ship.getShipType() == hit.get("shipType")){
+                                System.out.println(ship.getDamage());
+                                ship.setDamage(ship.getDamage() + (Integer) hit.get("turnShipDamage"));
+                            }
+                        totalDamageMap.put(ship.getShipType(), ship.getDamage());
+                    }));
         return totalDamageMap;
     }
-
-//    private Integer getTurnDamage(List<Map<String, Object>> hit){
-//        List<Map<String, Object>> turnHit = hit;
-////        System.out.println("turnHit" + turnHit);
-//        Map<String, Integer> turnDamage = new HashMap<>();
-//
-//        turnHit.forEach(oneTurnHit ->
-//            turnDamage.put("damage", (Integer) oneTurnHit.get("damage"))
-//        );
-//        return turnDamage.get("damage");
-//
-//    }
 
     private List<Map> getHit(Salvo gamePlayerSalvo, Set<Ship> opponentShips){
 //        System.out.println(opponentShips);
@@ -329,12 +354,8 @@ public class SalvoController {
 
         opponentShips.forEach(ship -> {
 
-
-//            System.out.println(ship);
-//            System.out.println(gamePlayerSalvo.getSalvoLocations());
-            // TODO: add var for getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship)
             List<String> hitLocation = getOneSalvoLocation(gamePlayerSalvo.getSalvoLocations(), ship);
-            if(!hitLocation.isEmpty()){
+            if(!hitLocation.isEmpty() && hitLocation != null){
 //                Map<String, Integer> hitMap2 = new HashMap<>();
 //                hitMap2.put(ship.getShipType(), getDamage(hitLocation));
 //                ship.setDamage(ship.getDamage() + hitLocation.size());
@@ -371,19 +392,20 @@ public class SalvoController {
         return hitLocation;
     }
 
-    private Integer getDamage(List locations){
-        return locations.size();
-    }
-
     private GamePlayer findOpponentGamePlayer(GamePlayer gamePlayer){
         Map<String, GamePlayer> helperMap = new HashMap<>();
-        gamePlayer.getGame().getGamePlayers()
-                .stream()
-                .forEach(gp -> {
-                    if(gp.getGamePlayerId() != gamePlayer.getGamePlayerId()){
-                        helperMap.put("opponent", gp);
-                    }
-                });
+        if(gamePlayer.getGame().getGamePlayers().size() == 2){
+            gamePlayer.getGame().getGamePlayers()
+                    .stream()
+                    .forEach(gp -> {
+                        if(gp.getGamePlayerId() != gamePlayer.getGamePlayerId()){
+                            helperMap.put("opponent", gp);
+                        }
+                    });
+        }else{
+            helperMap.put("opponent", null);
+        }
+
         return helperMap.get("opponent");
     }
 

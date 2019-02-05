@@ -123,7 +123,8 @@ var dataObject = new Vue({
         hitAndSunkOpponent: [],
         hitAndSunkPrincipal: [],
         allHitLocationOpponent: [],
-        opponentTotalDamage: []
+        opponentTotalDamage: [],
+        checkTurn: {}
     },
     created() {
         this.createGridCellsLocation();
@@ -146,7 +147,7 @@ var dataObject = new Vue({
                 }).then(data => {
                     this.isLoading = false;
                     this.data = data;
-                    //                    console.log(data)
+                    console.log(data)
                     this.ships = data.ships;
                     //                    console.log(this.ships)
                     this.gamePlayers = data.gamePlayers;
@@ -181,8 +182,9 @@ var dataObject = new Vue({
                     if (this.ships.length > 0) {
                         this.shipAlreadyPlaced = true
                     }
-                    this.checkTurnNumber()
-
+                    this.displayTurnNumber()
+                    this.checkTurn = data.checkTurn;
+                    console.log(this.checkTurn)
 
                 })
         },
@@ -293,12 +295,12 @@ var dataObject = new Vue({
                         body: JSON.stringify(this.ships)
                     })
                     .then(response => {
-                        if(response.status == 200){
+                        if (response.status == 201) {
                             return response.json()
-                        }else{
+                        } else {
                             alert("You already placed your ships!")
                         }
-                        
+
                     })
                     .then(data => {
                         //                        console.log(data)
@@ -321,16 +323,22 @@ var dataObject = new Vue({
                         body: JSON.stringify(this.sendingSalvos)
                     })
                     .then(response => {
-                    console.log(response.status)
-                        if(response.status == 201){
+                        console.log(response.status)
+                        if (response.status == 201) {
                             return response.json()
-                        }else{
+                        } else if (response.status == 406) {
+                            alert("You have to wait!")
+                        }else if(response.status == 409){
+                            alert("Your opponent haven't placed the ships yet, you have to wait!")
+                        }else if(response.status == 503){
+                            alert("You don't have an opponent!")
+                        }else {
                             alert("You already fired your salvos!")
                         }
                     })
                     .then(data => {
                         //                        console.log(data)
-//                        window.location.reload()
+                        window.location.reload()
                         //                    this.sendingSalvos = {}
                         //                        console.log(this.turnNumber)
                         //                        console.log(this.sendingSalvos)
@@ -661,7 +669,7 @@ var dataObject = new Vue({
             this.salvoLocations.splice(this.salvoLocations.indexOf(location), 1)
 
         },
-        checkTurnNumber() {
+        displayTurnNumber() {
             let allTurn = []
             for (var i = 0; i < this.salvos.length; i++) {
                 if (this.salvos[i].gamePlayerId == this.gamePlayerId) {
