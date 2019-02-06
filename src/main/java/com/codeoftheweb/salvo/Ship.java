@@ -24,17 +24,15 @@ public class Ship {
     private GamePlayer gamePlayer;
 
     private Integer damage = 0;
-    private Integer shipLength;
+    private Integer shipLength = 0;
     private boolean isSunk;
 
-    public Ship() { }
+    public Ship() {}
 
     public Ship(String shipType, List<String> shipLocations){
         this.shipType = shipType;
         this.shipLocations = shipLocations;
-//        this.damage = 0;
-
-        this.shipLength = shipLocations.size();
+        this.shipLength = this.shipLocations.size();
         this.isSunk = false;
     }
 

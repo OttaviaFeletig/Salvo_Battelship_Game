@@ -330,8 +330,71 @@ public class SalvoController {
 
             turnMap.put("hits", getHit(salvo, ships));
             turnMap.put("totalDamage", getTotalDamage((List<Map>) turnMap.get("hits"), ships));
+            turnMap.put("gameIsOver", checkIfGameIsOver((Map) turnMap.get("totalDamage"), ships));
             return turnMap;
         }).collect(Collectors.toList());
+    }
+
+    private boolean checkIfGameIsOver(Map totalDamageMap, Set<Ship> ships){
+        List<Ship> shipList = ships.stream().collect(toList());
+        Map<String, Integer> totalSunkShip = new HashMap<>();
+        Map<String, Boolean> checkIfGameIsOverMap = new HashMap<>();
+
+        if(!totalDamageMap.isEmpty()){
+            List<Ship> newShipList = shipList
+                    .stream()
+                    .filter(ship -> ship.getShipLocations().size() == (Integer) totalDamageMap.get(ship.getShipType()))
+                    .collect(toList());
+            System.out.println(newShipList);
+            if(newShipList.size() == 5){
+                checkIfGameIsOverMap.put("gameIsOver", true);
+            }else{
+                checkIfGameIsOverMap.put("gameIsOver", false);
+            }
+        }else{
+            checkIfGameIsOverMap.put("gameIsOver", false);
+        }
+
+
+//        if(!totalDamageMap.isEmpty()){
+//            for (int i = 0; i < shipList.size(); i++){
+//                if(shipList.get(i).getShipLocations().size() != (Integer) totalDamageMap.get(shipList.get(i).getShipType())){
+//                    System.out.println("the game is not over");
+//                    checkIfGameIsOverMap.put("gameIsOver", false);
+//                }else{
+//                    System.out.println("the game is over");
+//                    checkIfGameIsOverMap.put("gameIsOver", true);
+//                }
+//            }
+//        }else{
+//            checkIfGameIsOverMap.put("gameIsOver", false);
+//        }
+
+
+//        if(!totalDamageMap.isEmpty()){
+//            System.out.println("is not empty");
+//            ships.forEach(ship -> {
+//                if(ship.getShipLocations().size() == (Integer) totalDamageMap.get(ship.getShipType())){
+//                    if(totalSunkShip.isEmpty()){
+//                        totalSunkShip.put("totalSunk", 1);
+//                    }else{
+//                        totalSunkShip.put("totalSunk", totalSunkShip.get("totalSunk") + 1);
+//                    }
+//                }else{
+//                    totalSunkShip.put("totalSunk", 0);
+//                }
+//                System.out.println(totalSunkShip.get("totalSunk"));
+//            });
+//        }else{
+//            System.out.println("is empty");
+//        }
+//        System.out.println(totalSunkShip.get("totalSunk"));
+//        if(totalSunkShip.get("totalSunk") == 5){
+//            checkIfGameIsOverMap.put("gameIsOver", true);
+//        }else{
+//            checkIfGameIsOverMap.put("gameIsOver", false);
+//        }
+        return checkIfGameIsOverMap.get("gameIsOver");
     }
 
     private Map<String, Object> getTotalDamage(List<Map> hitList, Set<Ship> ships){
@@ -339,7 +402,7 @@ public class SalvoController {
             ships.forEach(ship ->
                     hitList.forEach(hit -> {
                             if(ship.getShipType() == hit.get("shipType")){
-                                System.out.println(ship.getDamage());
+//                                System.out.println(ship.getDamage());
                                 ship.setDamage(ship.getDamage() + (Integer) hit.get("turnShipDamage"));
                             }
                         totalDamageMap.put(ship.getShipType(), ship.getDamage());
