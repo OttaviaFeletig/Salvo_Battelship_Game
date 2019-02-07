@@ -241,16 +241,75 @@ public class SalvoController {
     }
 
     private Map<String, Object> getOneGame(GamePlayer gamePlayer) {
+        Map<String, Object> oneGameMap = new LinkedHashMap<>();
+        oneGameMap.put("id", gamePlayer.getGame().getGameId());
+        oneGameMap.put("created", gamePlayer.getGame().getDate());
+        oneGameMap.put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
+        oneGameMap.put("ships", getGamePlayerShipType(gamePlayer));
+        oneGameMap.put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
+        oneGameMap.put("hitAndSunk", getHitAndSunk(gamePlayer));
+        oneGameMap.put("checkTurn", checkTurn(gamePlayer.getGame().getGamePlayers(), gamePlayer));
+        oneGameMap.put("winner", getWinner((Map) oneGameMap.get("hitAndSunk"),gamePlayer));
 
-        return new LinkedHashMap<String, Object>() {{
-            put("id", gamePlayer.getGame().getGameId());
-            put("created", gamePlayer.getGame().getDate());
-            put("gamePlayers", getGamePlayers(gamePlayer.getGame()));
-            put("ships", getGamePlayerShipType(gamePlayer));
-            put("salvos", getGameSalvos(gamePlayer.getGame().getGamePlayers()));
-            put("hitAndSunk", getHitAndSunk(gamePlayer));
-            put("checkTurn", checkTurn(gamePlayer.getGame().getGamePlayers(), gamePlayer));
-        }};
+        return oneGameMap;
+    }
+
+    private Object getWinner(Map hitAndSunkMap, GamePlayer gamePlayer){
+        List<Map<String, Object>> opponentHitAndSunk = (List<Map<String, Object>>) hitAndSunkMap.get("opponentHitAndSunk");
+        List<Map<String, Object>> myHitAndSunk = (List<Map<String, Object>>) hitAndSunkMap.get("myHitAndSunk");
+//        System.out.println(opponentHitAndSunk);
+//        System.out.println(myHitAndSunk);
+        Object looser = checkIfGameIsOver(opponentHitAndSunk, myHitAndSunk, gamePlayer);
+        System.out.println(looser);
+        Map<String, Object> winner = new HashMap<>();
+        if(looser != null){
+            System.out.println("game is over");
+
+            if(looser != "tie"){
+                Map<String, Object> looserMap = (Map<String, Object>) looser;
+                System.out.println("is not a tie");
+                if(gamePlayer.getGamePlayerId() != (long) looserMap.get("gamePlayerId")){
+                    winner.put("winner" ,findOpponentGamePlayer(gamePlayer).getPlayer().getName());
+                }else{
+                    winner.put("winner", gamePlayer.getPlayer().getName());
+                }
+            }else{
+                System.out.println("is a tie");
+                List<String> tieMatch = new ArrayList<>();
+                tieMatch.add(gamePlayer.getPlayer().getName());
+                tieMatch.add(findOpponentGamePlayer(gamePlayer).getPlayer().getName());
+                winner.put("winner", tieMatch);
+            }
+        }else{
+            System.out.println("game is not over");
+            winner.put("winner", null);
+        }
+        return winner.get("winner");
+    }
+
+    private Object checkIfGameIsOver(List<Map<String, Object>> opponentHitAndSunk, List<Map<String, Object>> myHitAndSunk, GamePlayer gamePlayer){
+        Map<String, Object> opponentGameIsOver = opponentHitAndSunk.get(opponentHitAndSunk.size() - 1);
+        Map<String, Object> myGameIsOver = myHitAndSunk.get(myHitAndSunk.size() - 1);
+        Map<String, Integer> checkTurnMap = checkTurn(gamePlayer.getGame().getGamePlayers(), gamePlayer);
+//        System.out.println(opponentGameIsOver);
+//        System.out.println(myGameIsOver);
+        Map<String, Object> gameIsOver = new HashMap<>();
+        if(checkTurnMap.get("opponentLastTurn") == checkTurnMap.get("myLastTurn")){
+            if(opponentGameIsOver.containsValue(true) && myGameIsOver.containsValue(true)){
+                gameIsOver.put("looser", "tie");
+            }else if(opponentGameIsOver.containsValue(true)){
+                gameIsOver.put("looser", opponentHitAndSunk.get(opponentHitAndSunk.size() - 1));
+            }else if(myGameIsOver.containsValue(true)){
+                gameIsOver.put("looser", myHitAndSunk.get(myHitAndSunk.size() - 1));
+            }else{
+                gameIsOver.put("looser", null);
+            }
+        }else{
+            gameIsOver.put("looser", null);
+        }
+
+        return gameIsOver.get("looser");
+
     }
 
     private Map<String, Integer> checkTurn(Set<GamePlayer> gamePlayerSet, GamePlayer currentGamePlayer){
@@ -258,6 +317,7 @@ public class SalvoController {
         gamePlayerSet.forEach(gamePlayer -> {
             if (gamePlayer.getGamePlayerId() != currentGamePlayer.getGamePlayerId()){
                 lastTurnMap.put("opponentLastTurn", getLastSalvoTurn(gamePlayer.getSalvos()));
+
             }else{
                 lastTurnMap.put("myLastTurn", getLastSalvoTurn(currentGamePlayer.getSalvos()));
 
@@ -275,14 +335,12 @@ public class SalvoController {
                 return o1.getTurnNumber().compareTo(o2.getTurnNumber());
             }
         };
-
         Collections.sort(salvoList, comparator);
         if(salvoList.size() != 0){
             lastSalvoTurn = salvoList.get(salvoList.size() - 1).getTurnNumber();
         }else{
             lastSalvoTurn = 0;
         }
-
         return lastSalvoTurn;
     }
 
@@ -292,26 +350,17 @@ public class SalvoController {
         if(opponentGamePlayer != null){
             Set<Salvo> gamePlayerSalvos = gamePlayer.getSalvos();
             Set<Ship> gamePlayerShips = gamePlayer.getShipTypes();
-
-//        System.out.println(opponentGamePlayer.getPlayer().getEmail());
             Set<Ship> opponentShips = opponentGamePlayer.getShipTypes();
             Set<Salvo> opponentSalvos = opponentGamePlayer.getSalvos();
-//        System.out.println(opponentShips);
-
             List<Map<String, Object>> opponentHitAndSunk = getOneSalvo(gamePlayer, gamePlayerSalvos, opponentShips);
             List<Map<String, Object>> myHitAndSunk = getOneSalvo(opponentGamePlayer, opponentSalvos, gamePlayerShips);
-
-
             hitAndSunkMap.put("opponentHitAndSunk", opponentHitAndSunk);
-//            hitAndSunkMap.put("opponentTotalDamage", getTotalDamage(opponentHitAndSunk));
             hitAndSunkMap.put("myHitAndSunk", myHitAndSunk);
         }
-
         return hitAndSunkMap;
     }
 
     private List<Map<String, Object>> getOneSalvo(GamePlayer gamePlayer, Set<Salvo> salvos, Set<Ship> ships){
-
         List<Salvo> salvoList = salvos.stream().collect(toList());
         Comparator<Salvo> comparator = new Comparator<Salvo>() {
             @Override
@@ -319,33 +368,27 @@ public class SalvoController {
                 return o1.getTurnNumber().compareTo(o2.getTurnNumber());
             }
         };
-
         Collections.sort(salvoList, comparator);
-//        System.out.println(salvos);
         return salvoList.stream().map(salvo -> {
             Map<String, Object> turnMap = new LinkedHashMap<>();
-
             turnMap.put("gamePlayerId", gamePlayer.getGamePlayerId());
             turnMap.put("turnNumber", salvo.getTurnNumber());
-
             turnMap.put("hits", getHit(salvo, ships));
             turnMap.put("totalDamage", getTotalDamage((List<Map>) turnMap.get("hits"), ships));
-            turnMap.put("gameIsOver", checkIfGameIsOver((Map) turnMap.get("totalDamage"), ships));
+            turnMap.put("gameIsOver", getGameIsOver((Map) turnMap.get("totalDamage"), ships));
             return turnMap;
         }).collect(Collectors.toList());
     }
 
-    private boolean checkIfGameIsOver(Map totalDamageMap, Set<Ship> ships){
+    private boolean getGameIsOver(Map totalDamageMap, Set<Ship> ships){
         List<Ship> shipList = ships.stream().collect(toList());
-        Map<String, Integer> totalSunkShip = new HashMap<>();
         Map<String, Boolean> checkIfGameIsOverMap = new HashMap<>();
-
         if(!totalDamageMap.isEmpty()){
             List<Ship> newShipList = shipList
                     .stream()
                     .filter(ship -> ship.getShipLocations().size() == (Integer) totalDamageMap.get(ship.getShipType()))
                     .collect(toList());
-            System.out.println(newShipList);
+//            System.out.println(newShipList);
             if(newShipList.size() == 5){
                 checkIfGameIsOverMap.put("gameIsOver", true);
             }else{
@@ -354,46 +397,6 @@ public class SalvoController {
         }else{
             checkIfGameIsOverMap.put("gameIsOver", false);
         }
-
-
-//        if(!totalDamageMap.isEmpty()){
-//            for (int i = 0; i < shipList.size(); i++){
-//                if(shipList.get(i).getShipLocations().size() != (Integer) totalDamageMap.get(shipList.get(i).getShipType())){
-//                    System.out.println("the game is not over");
-//                    checkIfGameIsOverMap.put("gameIsOver", false);
-//                }else{
-//                    System.out.println("the game is over");
-//                    checkIfGameIsOverMap.put("gameIsOver", true);
-//                }
-//            }
-//        }else{
-//            checkIfGameIsOverMap.put("gameIsOver", false);
-//        }
-
-
-//        if(!totalDamageMap.isEmpty()){
-//            System.out.println("is not empty");
-//            ships.forEach(ship -> {
-//                if(ship.getShipLocations().size() == (Integer) totalDamageMap.get(ship.getShipType())){
-//                    if(totalSunkShip.isEmpty()){
-//                        totalSunkShip.put("totalSunk", 1);
-//                    }else{
-//                        totalSunkShip.put("totalSunk", totalSunkShip.get("totalSunk") + 1);
-//                    }
-//                }else{
-//                    totalSunkShip.put("totalSunk", 0);
-//                }
-//                System.out.println(totalSunkShip.get("totalSunk"));
-//            });
-//        }else{
-//            System.out.println("is empty");
-//        }
-//        System.out.println(totalSunkShip.get("totalSunk"));
-//        if(totalSunkShip.get("totalSunk") == 5){
-//            checkIfGameIsOverMap.put("gameIsOver", true);
-//        }else{
-//            checkIfGameIsOverMap.put("gameIsOver", false);
-//        }
         return checkIfGameIsOverMap.get("gameIsOver");
     }
 
