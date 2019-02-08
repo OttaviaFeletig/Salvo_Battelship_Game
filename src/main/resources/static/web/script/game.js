@@ -117,8 +117,13 @@ var dataObject = new Vue({
                     this.renderShips(this.ships);
                     this.renderSalvosPrincipal(this.salvos);
                     this.renderSalvosOpponent(this.salvos);
+                    this.checkTurn = data.checkTurn;
+                    console.log(this.checkTurn);
                     if (this.ships.length > 0) {
                         this.shipAlreadyPlaced = true;
+                        if(this.checkTurn.myLastTurn > this.checkTurn.opponentLastTurn){
+                            this.refreshPage();
+                        }
                     };
                     this.displayTurnNumber();
                     this.checkTurn = data.checkTurn;
@@ -129,6 +134,7 @@ var dataObject = new Vue({
                         this.showModal = true;
                         this.showWinner();
                     };
+                    
 
                 })
         },
@@ -676,6 +682,9 @@ var dataObject = new Vue({
             }else{
                 this.showWhoWin = "It's a tie."
             }
+        },
+        refreshPage(){
+            setTimeout(function(){window.location.reload()}, 10000)
         }
     }
 

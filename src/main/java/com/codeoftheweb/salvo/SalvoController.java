@@ -153,9 +153,6 @@ public class SalvoController {
             if(opponentGamePlayer.getShipTypes().isEmpty()){
                 return new ResponseEntity<>(makeMapForResponseEntity("error", "Your have to wait"), HttpStatus.CONFLICT);
             }
-//            if(getOneGame(currentGamePlayer).get("winner") != null){
-//                return new ResponseEntity<>(makeMapForResponseEntity("error", "The game is finished"), HttpStatus.valueOf("the game is over"));
-//            }
             if(methodCall == true){
                 return new ResponseEntity<>(makeMapForResponseEntity("error", "The game is finished"), HttpStatus.METHOD_NOT_ALLOWED);
             }
