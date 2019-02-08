@@ -12,8 +12,6 @@ var dataObject = new Vue({
         mySalvos: [],
         opponentSalvos: [],
         salvoLocations: [],
-        //        salvoPrincipalLocations: [],
-        //        salvoOpponentLocations: [],
         principalGamePlayer: "",
         opponentGamePlayer: "",
         gridNumbers: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
@@ -48,7 +46,6 @@ var dataObject = new Vue({
             "shipType": "",
             "shipLocations": []
         },
-        //        test: false,
         allShipsLocation: [],
         allShipType: [],
         temporaryLocation: [],
@@ -58,73 +55,14 @@ var dataObject = new Vue({
         turnNumber: 1,
         placingSalvoLocation: null,
         allSalvosLocation: [],
-        //        testHitAndSunk: [{
-        //                "gamePlayerId": 1,
-        //                "hitAndSunk": [
-        //                    {
-        //                        "turnNumber": 1,
-        //                        "hits": [{
-        //                                "shipType": "p_boat",
-        //                                "location": ["F1"],
-        //                                "damage": 1
-        //                },
-        //                            {
-        //                                "shipType": "destroyer",
-        //                                "location": ["B5", "C5"],
-        //                                "damage": 2
-        //                        }],
-        //        },
-        //                    {
-        //                        "turnNumber": 2,
-        //                        "hits": [{
-        //                                "shipType": "p_boat",
-        //                                "location": ["F2"],
-        //                                "damage": 2
-        //                },
-        //                            {
-        //                                "shipType": "destroyer",
-        //                                "location": ["D5"],
-        //                                "damage": 3
-        //                        }],
-        //        }
-        //            ]
-        //        },
-        //            {
-        //                "gamePlayerId": 2,
-        //                "hitAndSunk": [
-        //                    {
-        //                        "turnNumber": 1,
-        //                        "hits": [{
-        //                            "shipType": "p_boat",
-        //                            "location": ["B4", "B5"],
-        //                            "damage": 2
-        //                }],
-        //        },
-        //                    {
-        //                        "turnNumber": 2,
-        //                        "hits": [{
-        //                                "shipType": "submarine",
-        //                                "location": ["E1"],
-        //                                "damage": 1
-        //                },
-        //                            {
-        //                                "shipType": "destroyer",
-        //                                "location": ["H3"],
-        //                                "damage": 1
-        //                        }],
-        //        }
-        //            ]
-        //        },
-        //
-        //
-        //
-        //
-        //        ],
         hitAndSunkOpponent: [],
         hitAndSunkPrincipal: [],
         allHitLocationOpponent: [],
         opponentTotalDamage: [],
-        checkTurn: {}
+        checkTurn: {},
+        winner: [],
+        showModal: false,
+        showWhoWin: ""
     },
     created() {
         this.createGridCellsLocation();
@@ -154,24 +92,24 @@ var dataObject = new Vue({
                     this.salvos = data.salvos;
                     this.salvos.forEach(salvo => {
                         if (salvo.gamePlayerId == this.gamePlayerId) {
-                            this.mySalvos.push(salvo)
+                            this.mySalvos.push(salvo);
                         } else {
-                            this.opponentSalvos.push(salvo)
+                            this.opponentSalvos.push(salvo);
                         }
-                    })
+                    });
                     //                    console.log(this.data);
                     //                    console.log(this.salvos)
                     this.renderGamePlayers();
                     this.convertDate();
 
-                    this.hitAndSunkOpponent = data.hitAndSunk.opponentHitAndSunk
-                    this.hitAndSunkPrincipal = data.hitAndSunk.myHitAndSunk
-                    console.log(this.hitAndSunkOpponent)
-                    console.log(this.hitAndSunkPrincipal)
+                    this.hitAndSunkOpponent = data.hitAndSunk.opponentHitAndSunk;
+                    this.hitAndSunkPrincipal = data.hitAndSunk.myHitAndSunk;
+                    console.log(this.hitAndSunkOpponent);
+                    console.log(this.hitAndSunkPrincipal);
                     if (this.hitAndSunkOpponent != undefined && this.hitAndSunkPrincipal != undefined) {
-                        this.calculateOpponentTotalDamage()
-                        this.calculateMyTotalDamage()
-                    }
+                        this.calculateOpponentTotalDamage();
+                        this.calculateMyTotalDamage();
+                    };
 
 
 
@@ -180,11 +118,17 @@ var dataObject = new Vue({
                     this.renderSalvosPrincipal(this.salvos);
                     this.renderSalvosOpponent(this.salvos);
                     if (this.ships.length > 0) {
-                        this.shipAlreadyPlaced = true
-                    }
-                    this.displayTurnNumber()
+                        this.shipAlreadyPlaced = true;
+                    };
+                    this.displayTurnNumber();
                     this.checkTurn = data.checkTurn;
-                    console.log(this.checkTurn)
+                    console.log(this.checkTurn);
+                    this.winner = data.winner;
+                    console.log(this.winner);
+                    if (this.winner != null) {
+                        this.showModal = true;
+                        this.showWinner();
+                    };
 
                 })
         },
@@ -328,11 +272,13 @@ var dataObject = new Vue({
                             return response.json()
                         } else if (response.status == 406) {
                             alert("You have to wait!")
-                        }else if(response.status == 409){
+                        } else if (response.status == 409) {
                             alert("Your opponent haven't placed the ships yet, you have to wait!")
-                        }else if(response.status == 503){
+                        } else if (response.status == 503) {
                             alert("You don't have an opponent!")
-                        }else {
+                        } else if (response.status == 405) {
+                            alert("The game is over!")
+                        } else {
                             alert("You already fired your salvos!")
                         }
                     })
@@ -717,6 +663,19 @@ var dataObject = new Vue({
                     document.getElementById("my_ship_aircraft_carrier").classList.add("sunk_ship")
                 }
             })
+        },
+        showWinner() {
+            console.log("game is over")
+            if(typeof this.winner == "string"){
+                
+                if(this.winner == this.principalGamePlayer){
+                   this.showWhoWin = "You won!" 
+                }else{
+                    this.showWhoWin = "You lost..."
+                }
+            }else{
+                this.showWhoWin = "It's a tie."
+            }
         }
     }
 

@@ -18,7 +18,33 @@
             <div class="lds-dual-ring"></div>
         </div>
 
-        <div v-show="isLoading==false" class="container mt-4">
+        <div id="gameContainer" v-show="isLoading==false" class="container mt-4">
+
+
+          
+                <transition v-if="showModal" name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container w-75">
+
+          <div class="modal-body">
+            <slot name="body">
+              <h3 class="text-center">{{showWhoWin}}</h3>
+            </slot>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </transition>
+           
+
+
+
+
+
+
             <form class="form-inline" onsubmit="return false">
                 <button type="logout" class="btn btn-primary mb-2" v-on:click="logOut">LogOut</button>
             </form>
@@ -215,7 +241,7 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div class="row">
                     <div id="opponent_ship_aircraft_carrier" class="floating_ships">Aircraft Carrier</div>
                     <div id="opponent_ship_battleship" class="floating_ships">Battleship</div>
