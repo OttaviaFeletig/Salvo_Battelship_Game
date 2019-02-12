@@ -266,12 +266,14 @@ public class SalvoController {
         List<Map<String, Object>> opponentHitAndSunk = (List<Map<String, Object>>) hitAndSunk.get("opponentHitAndSunk");
         List<Map<String, Object>> myHitAndSunk = (List<Map<String, Object>>) hitAndSunk.get("myHitAndSunk");
 
-        if(opponentHitAndSunk.isEmpty() && myHitAndSunk.isEmpty()){
-            return null;
-        }
+//        if(opponentHitAndSunk.isEmpty() && myHitAndSunk.isEmpty()){
+//            return null;
+//        }
         if(opponentHitAndSunk.isEmpty() || myHitAndSunk.isEmpty()){
             return null;
         }
+        System.out.println(opponentHitAndSunk.get(opponentHitAndSunk.size() - 1).get("turnNumber"));
+        System.out.println(myHitAndSunk.get(myHitAndSunk.size() - 1).get("turnNumber"));
         Map<String, Object> opponentTotalDamage = (Map<String, Object>) opponentHitAndSunk.get(opponentHitAndSunk.size() - 1).get("totalDamage");
         Map<String, Object> myTotalDamage = (Map<String, Object>) myHitAndSunk.get(myHitAndSunk.size() - 1).get("totalDamage");
         GamePlayer opponentGamePlayer = findOpponentGamePlayer(gamePlayer);
@@ -363,10 +365,12 @@ public class SalvoController {
             Set<Ship> gamePlayerShips = gamePlayer.getShipTypes();
             Set<Ship> opponentShips = opponentGamePlayer.getShipTypes();
             Set<Salvo> opponentSalvos = opponentGamePlayer.getSalvos();
+
             List<Map<String, Object>> opponentHitAndSunk = getOneSalvo(gamePlayer, gamePlayerSalvos, opponentShips);
             List<Map<String, Object>> myHitAndSunk = getOneSalvo(opponentGamePlayer, opponentSalvos, gamePlayerShips);
             hitAndSunkMap.put("opponentHitAndSunk", opponentHitAndSunk);
             hitAndSunkMap.put("myHitAndSunk", myHitAndSunk);
+
         }
         return hitAndSunkMap;
     }
@@ -380,23 +384,60 @@ public class SalvoController {
             }
         };
         Collections.sort(salvoList, comparator);
-        return salvoList.stream().map(salvo -> {
+
+
+
+        List<Map<String, Object>> turnList = new ArrayList<>();
+
+        if(salvoList.isEmpty()){
+            return turnList;
+        }
+        salvoList.forEach(salvo -> {
             Map<String, Object> turnMap = new LinkedHashMap<>();
             turnMap.put("gamePlayerId", findOpponentGamePlayer(gamePlayer).getGamePlayerId());
             turnMap.put("turnNumber", salvo.getTurnNumber());
             turnMap.put("hits", getHit(salvo, ships));
-            turnMap.put("totalDamage", getTotalDamage((List<Map>) turnMap.get("hits"), ships));
-            turnMap.put("gameIsOver", gameIsOver((Map) turnMap.get("totalDamage"), ships));
-            totalDamageDebug ++;
-            System.out.println("total damage in getOneSalvo function " + turnMap.get("totalDamage"));
-            System.out.println("total damage debug in getOneSalvo function " + totalDamageDebug);
+            turnList.add(turnMap);
 
-            return turnMap;
-        }).collect(Collectors.toList());
+            Object lastTurn = turnList.get(turnList.size() - 1);
+            turnMap.put("totalDamage", getTotalDamage((List<Map>) ((Map) lastTurn).get("hits"), ships));
+            turnMap.put("gameIsOver", gameIsOver((Map) turnMap.get("totalDamage"), ships));
+
+//            turnList.add(turnMap);
+
+
+
+        });
+        return turnList;
+//        return salvoList.stream().map(salvo -> {
+//            Map<String, Object> turnMap = new LinkedHashMap<>();
+//            turnMap.put("gamePlayerId", findOpponentGamePlayer(gamePlayer).getGamePlayerId());
+//            turnMap.put("turnNumber", salvo.getTurnNumber());
+//            turnMap.put("hits", getHit(salvo, ships));
+//            turnMap.put("totalDamage", getTotalDamage((List<Map>) turnMap.get("hits"), ships));
+//            turnMap.put("gameIsOver", gameIsOver((Map) turnMap.get("totalDamage"), ships));
+////            totalDamageDebug ++;
+////            System.out.println("total damage in getOneSalvo function " + turnMap.get("totalDamage"));
+////            System.out.println("total damage debug in getOneSalvo function " + totalDamageDebug);
+//
+//            return turnMap;
+//        }).collect(Collectors.toList());
     }
 
     private Map<String, Object> getTotalDamage(List<Map> hitList, Set<Ship> ships){
         Map<String, Object> totalDamageMap = new LinkedHashMap<>();
+        System.out.println(hitList);
+        if (hitList.isEmpty()){
+            return totalDamageMap;
+        }
+//        Map<String, Object> lastHit = hitList.get(hitList.size() - 1);
+//        ships.forEach(ship -> {
+//            if (ship.getShipType() == lastHit.get("shipType")){
+//                ship.setDamage(ship.getDamage() + (Integer) lastHit.get("turnShipDamage"));
+//            }
+//            totalDamageMap.put(ship.getShipType(), ship.getDamage());
+//        });
+
         ships.forEach(ship ->
                 hitList.forEach(hit -> {
                         if(ship.getShipType() == hit.get("shipType")){
@@ -404,9 +445,6 @@ public class SalvoController {
                         }
                     totalDamageMap.put(ship.getShipType(), ship.getDamage());
                 }));
-        totalDamageDebug++;
-        System.out.println("total damage in getTotalDamage function " + totalDamageMap);
-        System.out.println("total damage debug in getTotalDamage function " + totalDamageDebug);
 
         return totalDamageMap;
     }
@@ -415,9 +453,9 @@ public class SalvoController {
         if(totalDamageMap.isEmpty()){
            return false;
         }
-        totalDamageDebug++;
-        System.out.println("total damage in gameIsOver function " + totalDamageMap);
-        System.out.println("total damage debug in gameIsOver function " + totalDamageDebug);
+//        totalDamageDebug++;
+//        System.out.println("total damage in gameIsOver function " + totalDamageMap);
+//        System.out.println("total damage debug in gameIsOver function " + totalDamageDebug);
 
         List<Ship> shipList = ships.stream().collect(toList());
         List<Ship> newShipList = shipList
