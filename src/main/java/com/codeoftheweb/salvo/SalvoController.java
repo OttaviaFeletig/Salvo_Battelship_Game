@@ -285,8 +285,6 @@ public class SalvoController {
             winner.put("winner", getTieHelper(gamePlayer, opponentGamePlayer, finishDate));
             return winner.get("winner");
         }
-
-
 //        Map<String, Object> looserMap = (Map<String, Object>) looser;
         System.out.println("is not a tie");
         System.out.println(looser);
@@ -337,18 +335,19 @@ public class SalvoController {
     }
 
     private Object checkIfGameIsOver(List<Map<String, Object>> opponentHitAndSunk, List<Map<String, Object>> myHitAndSunk, GamePlayer gamePlayer){
-        Map<String, Object> gameIsOver = new HashMap<>();
+//        Map<String, Object> gameIsOver = new HashMap<>();
         if(opponentHitAndSunk.isEmpty() && myHitAndSunk.isEmpty()) {
-            gameIsOver.put("looser", null);
-            return gameIsOver.get("looser");
+//            gameIsOver.put("looser", null);
+//            return gameIsOver.get("looser");
+            return null;
         }
-//        Map<String, Object> opponentGameIsOver = opponentHitAndSunk.get(opponentHitAndSunk.size() - 1);
+
         List<Map<String, Object>> opponentGameIsOver = opponentHitAndSunk
                 .stream()
                 .filter(oneHit -> (boolean) oneHit.get("gameIsOver") == true)
                 .collect(toList());
         System.out.println(opponentGameIsOver);
-//        Map<String, Object> myGameIsOver = myHitAndSunk.get(myHitAndSunk.size() - 1);
+
         List<Map<String, Object>> myGameIsOver = myHitAndSunk
                 .stream()
                 .filter(oneHit -> (boolean) oneHit.get("gameIsOver") == true)
@@ -356,19 +355,26 @@ public class SalvoController {
         System.out.println(myGameIsOver);
 
         Map<String, Integer> checkTurnMap = checkTurn(gamePlayer.getGame().getGamePlayers(), gamePlayer);
-        if(checkTurnMap.get("opponentLastTurn") == checkTurnMap.get("myLastTurn")){
-            if(!opponentGameIsOver.isEmpty() && !myGameIsOver.isEmpty()){
-                gameIsOver.put("looser", "tie");
-            }else if(!opponentGameIsOver.isEmpty() && myGameIsOver.isEmpty()){
-                gameIsOver.put("looser", opponentHitAndSunk.get(opponentHitAndSunk.size() - 1).get("gamePlayerId"));
-            }else if(!myGameIsOver.isEmpty() && opponentGameIsOver.isEmpty()){
-                gameIsOver.put("looser", myHitAndSunk.get(myHitAndSunk.size() - 1).get("gamePlayerId"));
-            }else{
-                gameIsOver.put("looser", null);
-            }
+        if(checkTurnMap.get("opponentLastTurn") != checkTurnMap.get("myLastTurn")){
+            return null;
         }
 
-        return gameIsOver.get("looser");
+        if(!opponentGameIsOver.isEmpty() && !myGameIsOver.isEmpty()){
+            return "tie";
+//            gameIsOver.put("looser", "tie");
+        }else if(!opponentGameIsOver.isEmpty() && myGameIsOver.isEmpty()){
+            return findOpponentGamePlayer(gamePlayer).getGamePlayerId();
+//            gameIsOver.put("looser", opponentHitAndSunk.get(opponentHitAndSunk.size() - 1).get("gamePlayerId"));
+        }else if(!myGameIsOver.isEmpty() && opponentGameIsOver.isEmpty()){
+            return gamePlayer.getGamePlayerId();
+//            gameIsOver.put("looser", myHitAndSunk.get(myHitAndSunk.size() - 1).get("gamePlayerId"));
+        }else{
+            return null;
+//            gameIsOver.put("looser", null);
+        }
+
+
+//        return gameIsOver.get("looser");
     }
 
     private Map<String, Integer> checkTurn(Set<GamePlayer> gamePlayerSet, GamePlayer currentGamePlayer){
@@ -447,7 +453,7 @@ public class SalvoController {
         if(!totalDamageMap.isEmpty()){
             List<Ship> newShipList = shipList
                     .stream()
-                    .filter(ship -> ship.getShipLocations().size() <= (Integer) totalDamageMap.get(ship.getShipType()))
+                    .filter(ship -> ship.getShipLocations().size() == (Integer) totalDamageMap.get(ship.getShipType()))
                     .collect(toList());
 //            System.out.println(newShipList);
             if(newShipList.size() == 5){
