@@ -24,20 +24,26 @@ var dataObj = new Vue({
             Promise.all(urlArray
                     .map(url => fetch(url)
                         .then(response => response.json())))
-                        .then(values => {
-                            this.isLoading = false;
-                            this.playerLoggedIn = values[0].player
-                            console.log(this.playerLoggedIn)
-                            this.gameList = values[0].games;
-                            console.log(this.gameList)
-                            this.playersList = values[1];
-                            console.log(this.gameList)
-                            console.log(this.playersList)
-                            this.convertDate();
-                            this.calculateTotalScore();
-                            this.calculateResults();
-                        })
-                        .catch(err=> console.log(err))
+                .then(values => {
+                    this.isLoading = false;
+                console.log(values)
+                    this.playerLoggedIn = values[0].player
+                    console.log(this.playerLoggedIn)
+                    this.gameList = values[0].games;
+                    console.log(this.gameList)
+                    this.playersList = values[1];
+                    console.log(this.gameList)
+                    console.log(this.playersList)
+                    this.convertDate();
+                    this.calculateTotalScore();
+                    this.calculateResults();
+//                    if (this.playerLoggedIn != null) {
+//                        setTimeout(function () {
+//                            window.location.reload()
+//                        }, 20000)
+//                    }
+                })
+                .catch(err => console.log(err))
         },
         convertDate() {
             this.gameList.map(game => {
@@ -97,7 +103,6 @@ var dataObj = new Vue({
                     if (response.status == 200) {
                         console.log("logged in!")
                         window.location.reload();
-
                     } else {
                         alert("Invalid email or password")
                     }
