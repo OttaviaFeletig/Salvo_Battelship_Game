@@ -18,7 +18,7 @@ public class Game {
     private long gameId;
 
     private Date date;
-//    private boolean gameIsOver;
+    private boolean gameIsOver;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
@@ -30,7 +30,7 @@ public class Game {
 
     public Game(Date date) {
         this.date = date;
-//        this.gameIsOver = false;
+        this.gameIsOver = false;
     }
 
     public long getGameId() {

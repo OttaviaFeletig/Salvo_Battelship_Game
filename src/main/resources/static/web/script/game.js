@@ -672,9 +672,10 @@ var dataObject = new Vue({
         },
         showWinner() {
             console.log("game is over")
-            if(typeof this.winner == "string"){
-                
-                if(this.winner == this.principalGamePlayer){
+            console.log(this.winner)
+            console.log(this.principalGamePlayer)
+            if(this.winner != "tie"){
+                if(this.winner == this.gamePlayerId){
                    this.showWhoWin = "You won!" 
                 }else{
                     this.showWhoWin = "You lost..."
@@ -683,9 +684,9 @@ var dataObject = new Vue({
                 this.showWhoWin = "It's a tie."
             }
         },
-        refreshPage(){
-            setTimeout(function(){window.location.reload()}, 10000)
-        }
+//        refreshPage(){
+//            setTimeout(function(){window.location.reload()}, 10000)
+//        }
     }
 
 })
