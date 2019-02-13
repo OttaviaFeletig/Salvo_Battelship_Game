@@ -4,7 +4,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Ship {
@@ -24,16 +26,21 @@ public class Ship {
     private GamePlayer gamePlayer;
 
     private Integer damage = 0;
-    private Integer shipLength = 0;
-    private boolean isSunk;
+//    private Integer shipLength = 0;
+    @ElementCollection
+    @Column(name = "ship_hit")
+    private Set<String> hits = new HashSet<>();
+//    private Set<String> hits;
+//    private boolean isSunk;
 
     public Ship() {}
 
     public Ship(String shipType, List<String> shipLocations){
         this.shipType = shipType;
         this.shipLocations = shipLocations;
-        this.shipLength = this.shipLocations.size();
-        this.isSunk = false;
+//        this.shipLength = this.shipLocations.size();
+
+//        this.isSunk = false;
     }
 
     public long getShipId() {
@@ -76,20 +83,28 @@ public class Ship {
         this.damage = damage;
     }
 
-    public Integer getShipLength() {
-        return shipLength;
+//    public Integer getShipLength() {
+//        return shipLength;
+//    }
+//
+//    public void setShipLength(Integer shipLength) {
+//        this.shipLength = shipLength;
+//    }
+
+//    public boolean isSunk() {
+//        return isSunk;
+//    }
+//
+//    public void setSunk(boolean sunk) {
+//        isSunk = sunk;
+//    }
+
+
+    public Set<String> getHits() {
+        return hits;
     }
 
-    public void setShipLength(Integer shipLength) {
-        this.shipLength = shipLength;
+    public void setHits(Set<String> hits) {
+        this.hits = hits;
     }
-
-    public boolean isSunk() {
-        return isSunk;
-    }
-
-    public void setSunk(boolean sunk) {
-        isSunk = sunk;
-    }
-
 }
