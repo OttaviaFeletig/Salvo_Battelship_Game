@@ -684,9 +684,9 @@ var dataObject = new Vue({
                 this.showWhoWin = "It's a tie."
             }
         },
-//        refreshPage(){
-//            setTimeout(function(){window.location.reload()}, 10000)
-//        }
+        refreshPage(){
+            setTimeout(function(){window.location.reload()}, 10000)
+        }
     }
 
 })
