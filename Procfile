@@ -1,1 +1,1 @@
-web: target/start -Dhttp.port=${PORT} ${JAVA_OPTS} -DapplyEvolutions.default=true -Ddb.default.driver=org.postgresql.Driver -Ddb.default.url=${DATABASE_URL}
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/salvo-0.0.1-SNAPSHOT.jar
