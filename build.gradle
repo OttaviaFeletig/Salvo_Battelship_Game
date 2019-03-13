@@ -16,6 +16,7 @@ apply plugin: 'org.springframework.boot'
 
 group = 'com.codeoftheweb'
 version = '0.0.1-SNAPSHOT'
+//version = 'org.gradle:gradle-core:2.2'
 sourceCompatibility = 1.8
 
 repositories {
@@ -31,7 +32,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-data-rest')
 	implementation('org.springframework.boot:spring-boot-starter-web')
 //	runtimeOnly('com.h2database:h2')
-	compile group: 'mysql', name: 'mysql-connector-java', version '5.1.47'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.47'
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	compile("org.springframework.boot:spring-boot-starter-security")
 }
