@@ -16,7 +16,6 @@ apply plugin: 'org.springframework.boot'
 
 group = 'com.codeoftheweb'
 version = '0.0.1-SNAPSHOT'
-//version = 'org.gradle:gradle-core:2.2'
 sourceCompatibility = 1.8
 
 repositories {
