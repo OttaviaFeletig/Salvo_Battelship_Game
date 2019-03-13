@@ -397,8 +397,6 @@ public class SalvoController {
         };
         Collections.sort(salvoList, comparator);
 
-
-
         List<Map<String, Object>> turnList = new ArrayList<>();
 
         if(salvoList.isEmpty()){
