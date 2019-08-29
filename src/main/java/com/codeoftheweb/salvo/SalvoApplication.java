@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -36,10 +37,10 @@ public class SalvoApplication {
 	@Bean
 	public CommandLineRunner initData(PlayerRepository repositoryPlayer, GameRepository repositoryGame, GamePlayerRepository repositoryGamePlayer, ShipRepository repositoryShip, SalvoRepository repositorySalvo, ScoreRepository repositoryScore) {
 	return (args -> {
-			Player username1 = new Player("j.bauer@ctu.gov", "24", "Jack Bauer");
-		    Player username2 = new Player("c.obrian@ctu.gov", "42", "Chloe O'Brian");
-		    Player username3 = new Player("kim_bauer@gmail.com", "kb", "Kim Bauer");
-		    Player username4 = new Player("t.almeida@ctu.gov", "mole", "Tony Almeida");
+			Player username1 = new Player("j.bauer@ctu.gov", passwordEncoder().encode("24"), "Jack Bauer");
+		    Player username2 = new Player("c.obrian@ctu.gov", passwordEncoder().encode("42"), "Chloe O'Brian");
+		    Player username3 = new Player("kim_bauer@gmail.com", passwordEncoder().encode("kb"), "Kim Bauer");
+		    Player username4 = new Player("t.almeida@ctu.gov", passwordEncoder().encode("mole"), "Tony Almeida");
 
 			Date date = new Date();
 			Date date1 = Date.from(date.toInstant().plusSeconds(3600));

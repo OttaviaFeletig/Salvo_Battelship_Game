@@ -3,10 +3,13 @@ package com.codeoftheweb.salvo;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -514,7 +517,10 @@ public class SalvoController {
                             put("location", salvo.getSalvoLocations());
                         }})).collect(toList());
     }
-
+    @Bean
+    public PasswordEncoder passwordEncoder2(){
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<HashMap<String, Object>> createPlayer(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("name") String name) {
         if (email.isEmpty()) {
@@ -524,7 +530,7 @@ public class SalvoController {
         if (player != null) {
             return new ResponseEntity<>(makeMapForResponseEntity("error", "Email already used"), HttpStatus.CONFLICT);
         }
-        Player newPlayer = playerRepository.save(new Player(email, password, name));
+        Player newPlayer = playerRepository.save(new Player(email, passwordEncoder2().encode(password), name));
         return new ResponseEntity<>(makeMapForResponseEntity("email", newPlayer.getEmail()), HttpStatus.CREATED);
     }
 
