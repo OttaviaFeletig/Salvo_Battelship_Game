@@ -34,9 +34,9 @@ public class SalvoApplication {
 		SpringApplication.run(SalvoApplication.class, args);
 	}
 
-//	@Bean
-//	public CommandLineRunner initData(PlayerRepository repositoryPlayer, GameRepository repositoryGame, GamePlayerRepository repositoryGamePlayer, ShipRepository repositoryShip, SalvoRepository repositorySalvo, ScoreRepository repositoryScore) {
-//		return (args -> {
+	@Bean
+	public CommandLineRunner initData(PlayerRepository repositoryPlayer, GameRepository repositoryGame, GamePlayerRepository repositoryGamePlayer, ShipRepository repositoryShip, SalvoRepository repositorySalvo, ScoreRepository repositoryScore) {
+	return (args -> {
 //			Player username1 = new Player("j.bauer@ctu.gov", "24", "Jack Bauer");
 //		    Player username2 = new Player("c.obrian@ctu.gov", "42", "Chloe O'Brian");
 //		    Player username3 = new Player("kim_bauer@gmail.com", "kb", "Kim Bauer");
@@ -423,8 +423,8 @@ public class SalvoApplication {
 //			repositoryScore.save(score3);
 //			repositoryScore.save(score4);
 //
-//        });
-//	}
+      });
+}
 
 	@Bean
     public PasswordEncoder passwordEncoder(){

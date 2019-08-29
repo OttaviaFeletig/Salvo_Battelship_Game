@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ship Locations!</title>
+    
+    <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="style/style.css">
+</head>
+
+<body>
+
+    <div id="gameView">
+
+        <div v-show="isLoading==true">
+            <div class="lds-dual-ring"></div>
+        </div>
+
+        <div id="gameContainer" v-show="isLoading==false" class="container mt-4">
+
+
+          
+                <transition v-if="showModal" name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container w-75">
+
+          <div class="modal-body">
+            <slot name="body">
+              <h3 class="text-center">{{showWhoWin}}</h3>
+            </slot>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </transition>
+           
+
+
+
+
+
+
+            <form class="form-inline" onsubmit="return false">
+                <button type="logout" class="btn btn-primary mb-2" v-on:click="logOut">LogOut</button>
+            </form>
+            <div class="row">
+                <p>GAME {{data.id}}, {{data.created}}</p>
+            </div>
+            <div class="row">
+                <p>{{principalGamePlayer}} vs {{opponentGamePlayer}}</p>
+            </div>
+
+
+
+            <div class="row">
+                <div class="col">
+                    <table id="g1" class="table-bordered">
+                        <thead>
+                            <tr>
+                                <th v-for="(number, index) in gridNumbers" :key="index" class="p-3">{{number}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(location, index) in cellsLocation" :key="index">
+                                <td :id=`g1${location[0]}` class=" bold_grid p-2">{{location[0]}}</td>
+                                <td :id=`g1${location[1]}` @mouseover="recognizeShip(location[1])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[2]}` @mouseover="recognizeShip(location[2])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[3]}` @mouseover="recognizeShip(location[3])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[4]}` @mouseover="recognizeShip(location[4])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[5]}` @mouseover="recognizeShip(location[5])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[6]}` @mouseover="recognizeShip(location[6])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[7]}` @mouseover="recognizeShip(location[7])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[8]}` @mouseover="recognizeShip(location[8])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[9]}` @mouseover="recognizeShip(location[9])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                                <td :id=`g1${location[10]}` @mouseover="recognizeShip(location[10])" @mouseleave="removeShipHover" @click="placeShipOnGrid"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+
+                    <div class="row mt-4 ml-2">
+                        <div v-show="shipAlreadyPlaced==false">
+
+
+                            <span>You selected: {{selectedShipForHtml}}</span>
+
+
+                            <span class="ml-4" v-show="orientationOption==true">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="horizontal" name="inlineRadioOptions" value="horizontal" v-model="selectedOrientation">
+                                    <label class="form-check-label" for="horizontal">Horizontal</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="vertical" name="inlineRadioOptions" value="vertical" v-model="selectedOrientation">
+                                    <label class="form-check-label" for="vertical">Vertical</label>
+                                </div>
+                            </span>
+
+
+
+
+                            <div class="row ml-2" v-show="messageToRemoveShip==true">
+                                <p>To remove a ship, click again on the ship button</p>
+                            </div>
+                            <div class="row mt-4 ml-2">
+                                <button id="aircraft_carrier" @click="handler(this.event)" class="btn button ship aircraft" value="aircraft_carrier">Aircraft Carrier
+                                </button>
+                            </div>
+
+                            <div class="row mt-4 ml-2">
+                                <button id="battleship" class="ship battleship btn button" @click="handler(this.event)" value="battleship">Battleship</button>
+                            </div>
+
+                            <div class="row mt-4 ml-2">
+                                <button id="submarine" class="ship submarine btn button" @click="handler(this.event)" value="submarine">Submarine</button>
+                            </div>
+
+                            <div class="row mt-4 ml-2">
+                                <button id="destroyer" class="ship destroyer btn button" @click="handler(this.event)" value="destroyer">Destroyer</button>
+                            </div>
+
+                            <div class="row mt-4 ml-2">
+                                <button id="p_boat" class="ship patrolboat btn button" @click="handler(this.event)" value="p_boat">P Boat</button>
+                            </div>
+
+                            <button class="btn btn-primary mt-4 ml-1" v-on:click="sendShips">Done</button>
+                        </div>
+
+
+
+
+
+
+
+                    </div>
+
+
+
+
+                </div>
+                <div class="col" v-show="shipAlreadyPlaced==true">
+                    <table class="table-bordered">
+                        <thead>
+                            <tr>
+                                <th v-for="(number, index) in gridNumbers" :key="index" class="p-3"> {{number}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(location, index) in cellsLocation" :key="index">
+                                <td :id=`g2${location[0]}` class="p-2 bold_grid">{{location[0]}}</td>
+                                <td :id=`g2${location[1]}` @mouseover="hoverSalvoOnGrid(location[1])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[1])"></td>
+                                <td :id=`g2${location[2]}` @mouseover="hoverSalvoOnGrid(location[2])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[2])"></td>
+                                <td :id=`g2${location[3]}` @mouseover="hoverSalvoOnGrid(location[3])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[3])"></td>
+                                <td :id=`g2${location[4]}` @mouseover="hoverSalvoOnGrid(location[4])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[4])"></td>
+                                <td :id=`g2${location[5]}` @mouseover="hoverSalvoOnGrid(location[5])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[5])"></td>
+                                <td :id=`g2${location[6]}` @mouseover="hoverSalvoOnGrid(location[6])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[6])"></td>
+                                <td :id=`g2${location[7]}` @mouseover="hoverSalvoOnGrid(location[7])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[7])"></td>
+                                <td :id=`g2${location[8]}` @mouseover="hoverSalvoOnGrid(location[8])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[8])"></td>
+                                <td :id=`g2${location[9]}` @mouseover="hoverSalvoOnGrid(location[9])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[9])"></td>
+                                <td :id=`g2${location[10]}` @mouseover="hoverSalvoOnGrid(location[10])" @mouseleave="removeSalvoHover" @click="placeSalvoOnGrid(location[10])"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>It's now time to fire your Salvos!</p>
+                    <p>Turn number {{turnNumber}}</p>
+                    <button class="btn btn-primary mt-4 ml-1" v-on:click="sendSalvos">Done</button>
+
+                </div>
+            </div>
+            <div>
+                <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Hits on You</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <th>Turn</th>
+                            <th>Hits</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(turn, index) in hitAndSunkPrincipal" :key="index">
+
+                            <td>{{turn.turnNumber}}</td>
+                            <td v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.turnShipDamage}}</td>
+
+
+                        </tr>
+                    </tbody>
+
+                </table>
+                <div class="row">
+                    <div id="my_ship_aircraft_carrier" class="floating_ships">Aircraft Carrier</div>
+                    <div id="my_ship_battleship" class="floating_ships">Battleship</div>
+                    <div id="my_ship_submarine" class="floating_ships">Submarine</div>
+                    <div id="my_ship_destroyer" class="floating_ships">Destroyer</div>
+                    <div id="my_ship_p_boat" class="floating_ships">P_Boat</div>
+
+                </div>
+
+
+                <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Hits on Opponent</th>
+
+                        </tr>
+                        <tr>
+                            <th>Turn</th>
+                            <th>Hits</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(turn, index) in hitAndSunkOpponent" :key="index">
+
+                            <td>{{turn.turnNumber}}</td>
+
+
+                            <td v-for="(hit, index) in turn.hits" :key="index">{{hit.shipType}}, {{hit.turnShipDamage}} hit</td>
+
+
+
+
+
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="row">
+                    <div id="opponent_ship_aircraft_carrier" class="floating_ships">Aircraft Carrier</div>
+                    <div id="opponent_ship_battleship" class="floating_ships">Battleship</div>
+                    <div id="opponent_ship_submarine" class="floating_ships">Submarine</div>
+                    <div id="opponent_ship_destroyer" class="floating_ships">Destroyer</div>
+                    <div id="opponent_ship_p_boat" class="floating_ships">P_Boat</div>
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script src="script/game.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+</body>
+
+</html>
